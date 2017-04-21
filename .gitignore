@@ -1,0 +1,9 @@
+*.class
+egg/
+doc/
+*.iml
+*.idea/
+out/
+tests/*.tam
+tests/*.tamo
+tests/*.ast
