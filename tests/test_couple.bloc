@@ -2,7 +2,7 @@ test_couple {
     < int, int > c = {2, 3};
     print(fst c);
     print(snd c);
-// Should this instruction work?
+// Instruction should not work
 //    print(c);
     int i = 42;
     <int, int> cm = {41, i};

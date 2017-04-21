@@ -8,8 +8,11 @@ test_complex {
    int i = - 1;
    const int j = 2;
    struct T { int n; int m; } s = { 4, 5};
+   print(i);
    i = s.n;
+   print(i);
    i = i + j * 3 + s.n * s.m ;
+   print(i);
 // i = (s).m; ne peut pas marcher car Facteur -> identificateur ... avec identificateur match "[a-z][a-zA-Z0-9_]*"
    s.m = 6;
 }
