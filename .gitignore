@@ -7,3 +7,4 @@ out/
 tests/*.tam
 tests/*.tamo
 tests/*.ast
+tests/*.res

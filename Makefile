@@ -43,6 +43,7 @@ clean :
 	-rm -rf tests/*.tam
 	-rm -rf tests/*.tamo
 	-rm -rf tests/*.ast
+	-rm -rf tests/*.res
 
 debug : clean legg compile
 	$(JAVA) -classpath $(EGGJAR):. Main tests/test_array.bloc;
