@@ -1,0 +1,5 @@
+test_chained_assignement_bad {
+    int i = 0;
+    int j = 0;
+    i = j = 1;
+}

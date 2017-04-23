@@ -1,4 +1,4 @@
-pgcd { 
+test_pgcd {
   <int,int> c = {30, 40};
   const int test = 0; 
   int a = fst c; 

@@ -1,4 +1,4 @@
-test {
+test_pointer_03 {
    int v = 1;
    int *ptr = &v;
    int j = *ptr; 

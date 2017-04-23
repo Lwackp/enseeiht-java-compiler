@@ -1,5 +1,4 @@
-test_print {
-   // Must not work! Types are not good
+test_print_bad {
    < int, int > c = {1,2};
    print(c);
 }

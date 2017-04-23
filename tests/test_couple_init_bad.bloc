@@ -1,0 +1,5 @@
+test_couple_init_bad {
+    < int, int > c = {2};
+    print(fst c);
+    print(snd c);
+}

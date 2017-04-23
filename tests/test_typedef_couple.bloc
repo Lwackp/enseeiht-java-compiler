@@ -1,4 +1,4 @@
-test {
+test_typedef_couple {
    typedef int Entier; 
    Entier i = 1; 
    typedef < Entier, Entier> PaireEntier; 

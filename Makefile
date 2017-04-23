@@ -29,8 +29,8 @@ exec :
 
 tests : clean legg compile
 	for FICHIER in tests/test*.bloc; do\
-		echo Traitement de $$FICHIER; \
-		$(JAVA) -classpath $(EGGJAR):. Main $$FICHIER > $${FICHIER%%.*}.ast; \
+		echo Working with $$FICHIER; \
+		$(JAVA) -classpath $(EGGJAR):. Main $$FICHIER 2> /dev/null > $${FICHIER%%.*}.ast; \
 	done
 
 clean :

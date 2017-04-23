@@ -1,4 +1,4 @@
-test_complex {
+test_complex_01 {
    typedef int T1;
    typedef int T2;
    T1 v1 = true;

@@ -1,0 +1,3 @@
+test_variable_name_bad {
+    int 2i = 2;
+}

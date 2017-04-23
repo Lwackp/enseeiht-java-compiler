@@ -1,4 +1,4 @@
-test_pointer {
+test_pointer_01 {
    int v = 42;
    int *ptr = &v;
    print(ptr);

@@ -23,10 +23,21 @@ public class Main{
             prq.beginReporting();
             bloc.set_eval(true);
             bloc.compile(cu);
-            for(IProblem problem : prp.getAllProblems())
-                prq.acceptProblem(problem );
+            for(IProblem problem : prp.getAllProblems()) {
+                prq.acceptProblem(problem);
+            }
             prq.endReporting();
+
             System.out.println("AST :"+bloc.get_ast());
+
+            if (prp.getAllProblems().isEmpty()) {
+                System.out.println("Format: OK");
+            } else {
+                for(IProblem problem : prp.getAllProblems()) {
+                    System.out.println(problem);
+                }
+                System.out.println("Format: ERROR");
+            }
             if (bloc.get_ast().checkType()) {
                 System.out.println( "Typing: OK" );
 
