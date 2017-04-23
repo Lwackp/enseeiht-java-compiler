@@ -1,24 +1,25 @@
 #!/bin/bash
+function okOut {
+    if [ $? = 0 ] ; then
+        echo OK
+    else
+        echo FAIL
+    fi
+}
 
-set -e
-
-# Tests typing
-echo Tests typing
-for file in tests/*.ast; do
-    echo $(tail -n 1 $file) for $file; \
-    [ "$(tail -n 1 $file)" == "Typing: OK" ]
-done
-
-# Running all assembly files
-echo Running all assembly files
-for file in tests/*.tamo; do
-    echo Running assembly $file; \
-    java -jar tammachine.jar $file > ${file%.*}.res
-done
-
-# Comparing results
-echo Comparing results
-for file in tests/*.out; do
-    echo Checking result for $file; \
-    diff <(sed -e '$a\' $file) <(sed -e '$a\' ${file%.*}.res)
+for f in tests/*.ast; do
+    file=${f%.*}; \
+    echo "Test $(basename ${file}): "; \
+    if [[ $(basename ${file}) != *_bad ]] ; then
+        printf " - Typing = "; \
+        [ "$(tail -n 1 ${file}.ast)" == "Typing: OK" ]; okOut; \
+        printf " - Running assembly = "; \
+        java -jar tammachine.jar ${file}.tamo > ${file}.res 2> /dev/null; okOut; \
+        printf " - Comparing output = "; \
+        diff <(sed -e '$a\' ${file}.res) <(sed -e '$a\' ${file}.out); okOut
+    else
+        printf " - Bad Typing = "; \
+        [ "$(tail -n 1 ${file}.ast)" == "Typing: ERROR" ]; okOut
+    fi
+    echo ''
 done
