@@ -46,4 +46,4 @@ clean :
 	-rm -rf tests/*.res
 
 debug : clean legg compile
-	$(JAVA) -classpath $(EGGJAR):. Main tests/test_array.bloc;
+	$(JAVA) -classpath $(EGGJAR):. Main tests/test_2d_array.bloc;

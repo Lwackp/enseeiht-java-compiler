@@ -1,10 +1,12 @@
 package fr.n7.stl.block.ast.impl;
 
+import egg.S_Facteur_Bloc;
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
+
 
 /**
  * Implementation of the Abstract Syntax Tree node for a variable declaration instruction.
@@ -97,6 +99,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 		}
 
 		fragment.append(this.value.getCode(_factory));
+
 		if (this.type instanceof ArrayTypeImpl && this.value instanceof SequenceImpl) {
 			fragment.add(_factory.createLoad(this.getRegister(), this.getOffset(), 1));
 			fragment.add(_factory.createStoreI(this.value.getType().length()));

@@ -638,12 +638,12 @@ end
 
 Acces -> #ast ;
 
-#ast { 
-do  
-   Acces^ast := Acces^support;  
-end  
+#ast {
+do
+   Acces^ast := Acces^support;
+end
 }
- 
+
 Acces -> point identificateur #inh Acces #ast;
 
 #inh {
@@ -652,10 +652,10 @@ do
 end
 }
 
-#ast { 
-do  
-   Acces^ast := Acces1^ast;  
-end  
+#ast {
+do
+   Acces^ast := Acces1^ast;
+end
 }
 
 -- Facteur -> inferieur Expression virgule Expression superieur #ast ;
@@ -665,115 +665,115 @@ end
 -- end
 -- }
 
-Comparatif -> different #texte;  
-#texte {  
-do  
-   Comparatif^bin_op := BinaryOperator.Different;   
-end  
-}
-  
-Comparatif -> inferieur #texte;  
-#texte {  
-do  
-   Comparatif^bin_op := BinaryOperator.Lesser;   
-end  
-}
-  
-Comparatif -> inferieur_egal #texte;  
-#texte {  
-do  
-   Comparatif^bin_op := BinaryOperator.LesserOrEqual;   
-end  
-}
-  
-Comparatif -> superieur #texte;  
-#texte {   
-do  
-   Comparatif^bin_op := BinaryOperator.Greater;    
-end  
-}
-   
-Comparatif -> superieur_egal #texte;  
-#texte {   
-do  
-   Comparatif^bin_op := BinaryOperator.GreaterOrEqual;    
-end  
+Comparatif -> different #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Different;
+end
 }
 
-Additif -> soustraction #ast;  
-#ast {  
-do  
-   Additif^bin_op := BinaryOperator.Substract;   
-end  
-}
-   
-Additif -> ou #ast;  
-#ast {  
-do  
-   Additif^bin_op := BinaryOperator.Or;   
-end  
+Comparatif -> inferieur #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Lesser;
+end
 }
 
-Multiplicatif -> division #ast; 
-#ast { 
-do 
-   Multiplicatif^bin_op := BinaryOperator.Divide;  
-end 
-}
- 
-Multiplicatif -> modulo #ast; 
-#ast {  
-do 
-   Multiplicatif^bin_op := BinaryOperator.Modulo;   
-end 
-}
-  
-Multiplicatif -> et #ast; 
-#ast {  
-do 
-   Multiplicatif^bin_op := BinaryOperator.And;   
-end 
+Comparatif -> inferieur_egal #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.LesserOrEqual;
+end
 }
 
-Facteur -> soustraction Facteur #ast ;  
-#ast { 
-do  
-   Facteur^ast := Facteur ^factory.createUnaryExpression(UnaryOperator.Opposite,Facteur1^ast);  
-end  
+Comparatif -> superieur #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Greater;
+end
 }
- 
-Facteur -> negation Facteur #ast ;  
-#ast { 
-do  
-   Facteur^ast := Facteur ^factory. createUnaryExpression(UnaryOperator.Negate,Facteur1^ast);  
-end  
+
+Comparatif -> superieur_egal #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.GreaterOrEqual;
+end
 }
- 
+
+Additif -> soustraction #ast;
+#ast {
+do
+   Additif^bin_op := BinaryOperator.Substract;
+end
+}
+
+Additif -> ou #ast;
+#ast {
+do
+   Additif^bin_op := BinaryOperator.Or;
+end
+}
+
+Multiplicatif -> division #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.Divide;
+end
+}
+
+Multiplicatif -> modulo #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.Modulo;
+end
+}
+
+Multiplicatif -> et #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.And;
+end
+}
+
+Facteur -> soustraction Facteur #ast ;
+#ast {
+do
+   Facteur^ast := Facteur ^factory.createUnaryExpression(UnaryOperator.Opposite,Facteur1^ast);
+end
+}
+
+Facteur -> negation Facteur #ast ;
+#ast {
+do
+   Facteur^ast := Facteur ^factory. createUnaryExpression(UnaryOperator.Negate,Facteur1^ast);
+end
+}
+
 Facteur -> premier Facteur #ast ;
 #ast {
 do
    Facteur^ast := Facteur^factory.createFirst(Facteur1^ast);
 end
 }
- 
+
 Facteur -> second Facteur #ast ;
 #ast {
 do
    Facteur^ast := Facteur^factory.createSecond(Facteur1^ast);
 end
 }
-  
+
 Facteur -> Valeur #ast;
 #ast {
 do
    Facteur^ast := Valeur^ast;
 end
 }
- 
+
 Valeur -> entier #ast;
 #ast {
 do
-    Valeur^ast := Valeur^factory.createIntegerValue(entier^txt); 
+    Valeur^ast := Valeur^factory.createIntegerValue(entier^txt);
 end
 }
 
@@ -808,33 +808,33 @@ end
 do
    -- Création d'un noeud type Enregistrement initialisé avec les champs
    t.addAll(Champs^champs);
-   Type^ast := t; 
-end 
+   Type^ast := t;
+end
 }
 
-Champs -> Champ Champs #champs;  
-#champs { 
-local  
-   champs : LinkedList<FieldDeclaration>;  
-do  
-   champs :=  Champs1^champs;  
-   champs.addFirst(Champ^champ);  
-   Champs^champs := champs;  
-end  
+Champs -> Champ Champs #champs;
+#champs {
+local
+   champs : LinkedList<FieldDeclaration>;
+do
+   champs :=  Champs1^champs;
+   champs.addFirst(Champ^champ);
+   Champs^champs := champs;
+end
 }
- 
-Champs -> #champs;  
-#champs { 
-do  
-   Champs^champs := new LinkedList<FieldDeclaration>();  
-end  
+
+Champs -> #champs;
+#champs {
+do
+   Champs^champs := new LinkedList<FieldDeclaration>();
+end
 }
 
 Champ -> Type identificateur point_virgule #ast;
-#ast { 
-do  
-   Champ^champ := Champ^factory.createFieldDeclaration(identificateur^txt, Type^ast); 
-end  
+#ast {
+do
+   Champ^champ := Champ^factory.createFieldDeclaration(identificateur^txt, Type^ast);
+end
 }
 
 Facteur -> accolade_ouvrante Expressions accolade_fermante #ast ;
@@ -846,18 +846,18 @@ end
 
 Expressions -> Expression SuiteExpressions #ast ;
 #ast {
-do 
-   SuiteExpressions^expressions.addFirst(Expression^ast); 
-   Expressions^expressions := SuiteExpressions^expressions; 
-end 
+do
+   SuiteExpressions^expressions.addFirst(Expression^ast);
+   Expressions^expressions := SuiteExpressions^expressions;
+end
 }
 
 SuiteExpressions -> virgule Expression SuiteExpressions #ast ;
 #ast {
-do 
-   SuiteExpressions1^expressions.addFirst(Expression^ast); 
-   SuiteExpressions^expressions := SuiteExpressions1^expressions; 
-end 
+do
+   SuiteExpressions1^expressions.addFirst(Expression^ast);
+   SuiteExpressions^expressions := SuiteExpressions1^expressions;
+end
 }
 
 SuiteExpressions -> #ast ;

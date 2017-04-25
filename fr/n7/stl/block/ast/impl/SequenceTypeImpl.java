@@ -94,7 +94,7 @@ public class SequenceTypeImpl implements Type {
 				Type _element = ((ArrayTypeImpl)_other).getPointedType();
 				Iterator<Type> _iter = this.types.iterator();
 				while (_iter.hasNext() && _result) {
-					_result = _result && _iter.next().equalsTo(_element);
+					_result = _result && _iter.next().compatibleWith(_element);
 				}
 				return _result;
 			} else {
@@ -149,6 +149,14 @@ public class SequenceTypeImpl implements Type {
 			_result += _type.length();
 		}
 		return _result;
+	}
+
+	public int size() {
+		return this.types.size();
+	}
+
+	public List<Type> getAll() {
+		return this.types;
 	}
 
 }
