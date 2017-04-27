@@ -272,63 +272,173 @@ SuiteAffectable -> crochet_ouvrant Expression crochet_fermant SuiteAffectable ;
 Instruction -> si parenthese_ouvrante Expression parenthese_fermante Bloc SuiteConditionnelle ;
 
 
-SuiteConditionnelle -> ;
+SuiteConditionnelle -> #ast;
+#ast {
+do
+    SuiteConditionnelle^ast := SuiteConditionnelle^factory.createBlock();
+end
 
-SuiteConditionnelle ->sinon Bloc ;
+SuiteConditionnelle ->sinon Bloc #ast;
+#ast {
+do
+    SuiteConditionnelle^ast := Bloc^ast;
+end
+}
 
-Instruction -> tant_que parenthese_ouvrante Expression parenthese_fermante Bloc ;
+--Instructions
+Instruction -> tant_que parenthese_ouvrante Expression parenthese_fermante Bloc #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createRepetition(Expression^ast, Bloc^ast);
+end
+}
 
-Instruction -> afficher Expression point_virgule ;
+Instruction -> afficher Expression point_virgule #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createPrinter(Expression^ast);
+end
 
+--TODO (instrcution)
 Instruction -> retour Expression point_virgule ;
 
-
+--TODO (expression)
 Expression -> Condition SuiteCondition ;
 
-
+--SuiteCondition
 SuiteCondition -> Comparatif Condition ;
 
 SuiteCondition -> ;
 
-
+--Comparatif
+--TODO (comparatif-egalite)
 Comparatif -> egalite ;
 
-Comparatif -> different ;
+Comparatif -> different #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Different;
+end
+}
 
-Comparatif -> inferieur ;
+Comparatif -> inferieur #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Lesser;
+end
+}
 
-Comparatif -> inferieur_egal ;
+Comparatif -> inferieur_egal #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.LesserOrEqual;
+end
+}
 
-Comparatif -> superieur ;
+Comparatif -> superieur #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Greater;
+end
+}
 
-Comparatif -> superieur_egal ;
+Comparatif -> superieur_egal #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.GreaterOrEqual;
+end
+}
+
+--Condition
+Condition -> Terme #ast_inh SuiteTerme #ast_syn ;
+#ast_inh {
+do
+   SuiteTerme^gauche := Terme^ast;
+end
+}
 
 
-Condition -> Terme SuiteTerme ;
+SuiteTerme -> Additif Terme #ast_inh SuiteTerme #ast_syn ;
+#ast_inh {
+do
+   SuiteTerme1^gauche := SuiteTerme^factory.createBinaryExpression(
+      SuiteTerme^gauche,
+      Additif^bin_op,
+      Terme^ast);
+end
+}
+
+#ast_syn {
+do
+   SuiteTerme^ast := SuiteTerme1^ast;
+end
+}
+
+SuiteTerme -> #ast ;
+#ast {
+do
+   SuiteTerme^ast := SuiteTerme^gauche;
+end
+}
 
 
-SuiteTerme -> Additif Terme SuiteTerme ;
-
-SuiteTerme -> ;
-
-
-Additif -> addition ;
+Additif -> addition #ast;
+#ast {
+do
+   Additif^bin_op := BinaryOperator.Add;
+end
+}
 
 Additif -> soustraction ;
 
 Additif -> ou ;
 
 
-Terme -> Facteur SuiteFacteur ;
+Terme -> Facteur #ast_inh SuiteFacteur #ast_syn ;
+#ast_inh {
+do
+   SuiteFacteur^gauche := Facteur^ast;
+end
+}
 
+#ast_syn {
+do
+   Terme^ast := SuiteFacteur^ast;
+end
+}
 
-SuiteFacteur -> Multiplicatif Facteur SuiteFacteur ;
+SuiteFacteur -> Multiplicatif Facteur #ast_inh SuiteFacteur #ast_syn ;
+#ast_inh {
+do
+   SuiteFacteur1^gauche := SuiteFacteur^factory.createBinaryExpression(
+      SuiteFacteur^gauche,
+      Multiplicatif^bin_op,
+      Facteur^ast);
+end
+}
 
-SuiteFacteur -> ;
+#ast_syn {
+do
+   SuiteFacteur^ast := SuiteFacteur1^ast;
+end
+}
 
+SuiteFacteur -> #ast;
+#ast {
+do
+   SuiteFacteur^ast := SuiteFacteur^gauche;
+end
+}
 
-Multiplicatif -> multiplication ;
+--Multiplicatif
+Multiplicatif -> multiplication #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.Multiply;
+end
+}
 
+--TODO (Multiplicatif)
 Multiplicatif -> division ;
 
 Multiplicatif -> modulo ;
@@ -336,8 +446,12 @@ Multiplicatif -> modulo ;
 Multiplicatif -> et ;
 
 
-Facteur -> accolade_ouvrante Expressions accolade_fermante ;
-
+Facteur -> accolade_ouvrante Expressions accolade_fermante #ast;
+#ast {
+do
+   Facteur^ast := Expression^ast;
+end
+}
 
 Expressions -> Expression SuiteExpressions ;
 
