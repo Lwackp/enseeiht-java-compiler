@@ -16,7 +16,7 @@ doc :
 	../fr/n7/stl/util/*.java
 
 legg : 
-	$(JAVA) -jar $(EGGJAR) Bloc.egg
+	$(JAVA) -jar $(EGGJAR) MiniJava.egg
 
 compile :
 	cd egg && \
@@ -46,4 +46,4 @@ clean :
 	-rm -rf tests/*.res
 
 debug : clean legg compile
-	$(JAVA) -classpath $(EGGJAR):. Main tests/test_2d_array.bloc;
+	$(JAVA) -classpath $(EGGJAR):. Main tests/test_integer.bloc;
