@@ -1,9 +1,9 @@
 test_array {
-    int t[] = new int[5];
+    int[] t = new int[5];
     t[3] = 4;
     print(t[3]);
 
-    int ta[] = {1, 2, 3, 4};
+    int[] ta = {1, 2, 3, 4};
     ta[0] = ta[1];
     print(ta[0]);
 }
