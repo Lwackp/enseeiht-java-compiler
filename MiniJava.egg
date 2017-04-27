@@ -11,7 +11,7 @@ option version = 0.0.1 ;
 option k=2;
 
 space  separateur				is    "[\n\r\t ]+";
-space  commentaire			is    "\/\/.*\n";
+space  commentaire			    is    "\/\/.*\n";
 sugar  accolade_ouvrante		is    "\{";  
 sugar  accolade_fermante		is    "\}";  
 sugar  crochet_ouvrant			is    "\[";  
@@ -28,42 +28,42 @@ sugar  virgule					is    ",";
 sugar  affectation				is    "=";
 sugar  egalite					is    "==";  
 sugar  different				is    "\!=";  
-sugar  addition				is    "\+";
+sugar  addition				    is    "\+";
 sugar  soustraction				is    "\-";
 sugar  ou						is    "\|\|";  
 sugar  multiplication			is    "\*";
-sugar  division				is    "/";
+sugar  division				    is    "/";
 sugar  modulo					is    "%";
 sugar  adresse					is    "&";  
-sugar  negation				is    "\!";  
+sugar  negation				    is    "\!";
 sugar  et						is    "&&";  
-sugar  vrai					is    "true";
-sugar  faux					is    "false";
+sugar  vrai					    is    "true";
+sugar  faux					    is    "false";
 sugar  si						is    "if";
 sugar  sinon					is    "else";
 sugar  afficher					is    "print";  
-sugar  nouveau				is    "new";  
-sugar  tant_que				is    "while";  
+sugar  nouveau				    is    "new";
+sugar  tant_que				    is    "while";
 sugar  retour					is    "return";  
-sugar  type_int				is    "int";
+sugar  type_int				    is    "int";
 sugar  type_bool				is    "boolean";  
 sugar  type_float				is    "float";  
 sugar  type_char				is    "char";        
 sugar  type_String				is    "String";        
-sugar vide					is    "void";     
-sugar nul						is    "null";     
+sugar  vide					    is    "void";
+sugar  nul						is    "null";
 sugar  choix					is    "\?";         
 sugar  deux_points				is    ":";          
 sugar  interface				is    "interface";     
 sugar  classe					is    "class";      
 sugar  extension				is    "extends";      
 sugar  implantation				is    "implements";      
-sugar public					is    "public";    
-sugar protege					is    "protected";    
-sugar prive					is    "private";     
-sugar statique					is    "static";       
-sugar final					is    "final";       
-sugar principale				is    "main";  
+sugar  public					is    "public";
+sugar  protege					is    "protected";
+sugar  prive					is    "private";
+sugar  statique					is    "static";
+sugar  final					is    "final";
+sugar  principale				is    "main";
 term   chaine					is    "\"([^\"]|\\\")*\"";  
 term   caractere				is    "\'[^\']\'";  
 term   entier					is    "[0-9]+";
@@ -112,7 +112,7 @@ Classes -> Classe Classes ;
 Classes -> ;
 
 
-Classe -> classe  identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante ;
+Classe -> classe identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante ;
 
 
 HeritageClasse -> extension identificateur_type InstanceGenericite ;
@@ -274,7 +274,7 @@ Instruction -> si parenthese_ouvrante Expression parenthese_fermante Bloc SuiteC
 
 SuiteConditionnelle -> ;
 
-SuiteConditionnelle ->sinon Bloc ;
+SuiteConditionnelle -> sinon Bloc ;
 
 Instruction -> tant_que parenthese_ouvrante Expression parenthese_fermante Bloc ;
 
