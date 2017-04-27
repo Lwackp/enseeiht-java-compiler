@@ -1,17 +1,29 @@
 ----------------------------------------------- -*- text -*-
 -- Langage MiniJava : Sous-ensemble du langage Java pour le projet STL 2016-2017
 -- Sémantique : Construction de l'arbre abstrait
---                      Gestion de la table des symboles
---                      Typage
---                      Calcul des déplacements (Allocation mémoire)
---                      Génération de code TAM
+--              Gestion de la table des symboles
+--              Typage
+--              Calcul des déplacements (Allocation mémoire)
+--              Génération de code TAM
 -----------------------------------------------
 option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
+inh factory	: BlockFactory for Programme, Instruction,
+              Instructions, Affectable, SuiteAffectable;
+inh tds     : SymbolTable for  Bloc, Instruction, Instructions,
+              Affectable;
+inh support : Assignable for SuiteAffectable;
+
+syn ast		: Type for Type;
+syn ast		: Instruction for Instruction;
+syn ast     : List<Instruction> for Instructions;
+syn ast		: Expression for Expression;
+syn ast     : Assignable for Affectable, SuiteAffectable;
+
 space  separateur				is    "[\n\r\t ]+";
-space  commentaire			is    "\/\/.*\n";
+space  commentaire		    	is    "\/\/.*\n";
 sugar  accolade_ouvrante		is    "\{";
 sugar  accolade_fermante		is    "\}";
 sugar  crochet_ouvrant			is    "\[";
@@ -28,29 +40,29 @@ sugar  virgule					is    ",";
 sugar  affectation				is    "=";
 sugar  egalite					is    "==";
 sugar  different				is    "\!=";
-sugar  addition				is    "\+";
+sugar  addition			    	is    "\+";
 sugar  soustraction				is    "\-";
 sugar  ou						is    "\|\|";
 sugar  multiplication			is    "\*";
-sugar  division				is    "/";
-sugar  modulo					is    "%";
+sugar  division			    	is    "/";
+sugar  modulo			   		is    "%";
 sugar  adresse					is    "&";
-sugar  negation				is    "\!";
+sugar  negation			    	is    "\!";
 sugar  et						is    "&&";
-sugar  vrai					is    "true";
-sugar  faux					is    "false";
+sugar  vrai			    		is    "true";
+sugar  faux			    		is    "false";
 sugar  si						is    "if";
 sugar  sinon					is    "else";
 sugar  afficher					is    "print";
-sugar  nouveau				is    "new";
-sugar  tant_que				is    "while";
+sugar  nouveau			    	is    "new";
+sugar  tant_que			    	is    "while";
 sugar  retour					is    "return";
-sugar  type_int				is    "int";
+sugar  type_int			    	is    "int";
 sugar  type_bool				is    "boolean";
 sugar  type_float				is    "float";
 sugar  type_char				is    "char";
 sugar  type_String				is    "String";
-sugar vide					is    "void";
+sugar vide			    		is    "void";
 sugar nul						is    "null";
 sugar  choix					is    "\?";
 sugar  deux_points				is    ":";
@@ -60,9 +72,9 @@ sugar  extension				is    "extends";
 sugar  implantation				is    "implements";
 sugar public					is    "public";
 sugar protege					is    "protected";
-sugar prive					is    "private";
+sugar prive				    	is    "private";
 sugar statique					is    "static";
-sugar final					is    "final";
+sugar final				    	is    "final";
 sugar principale				is    "main";
 term   chaine					is    "\"([^\"]|\\\")*\"";
 term   caractere				is    "\'[^\']\'";
@@ -226,7 +238,6 @@ Bloc -> accolade_ouvrante  Instructions accolade_fermante  ;
 
 Type -> TypeAtomique SuiteTypeAtomique ;
 
-
 TypeAtomique -> type_bool  ;
 
 TypeAtomique -> type_int   ;
@@ -245,27 +256,104 @@ SuiteTypeAtomique -> crochet_ouvrant crochet_fermant SuiteTypeAtomique ;
 SuiteTypeAtomique -> ;
 
 
-Instructions -> ;
+Instructions -> #ast;
+#ast {
+do
+    Instructions^ast := new ArrayList<Instruction>();
+end
+}
 
-Instructions -> Instruction Instructions ;
+Instructions -> Instruction Instructions #ast;
+#ast {
+do
+    Instructions1^ast.add(0, Instruction^ast);
+    Instructions^ast := Instructions1^ast;
+end
+}
 
 
-Instruction -> Type identificateur affectation Expression point_virgule ;
+Instruction -> Type identificateur affectation #inh Expression point_virgule #ast;
+#inh {
+local
+    d: Declaration;
+do
+    d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, null);
+    if (Instruction^tds.contains(d.getName())) then
+        error(Bloc_unexpected_token, identificateur^txt);
+    else
+        Instruction^tds.register(d);
+    end
+end
+}
+#ast {
+do
+    Instruction^ast := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
+end
+}
 
 
-Instruction -> Affectable affectation Expression point_virgule ;
+Instruction -> Affectable affectation Expression point_virgule #ast ;
+#ast {
+do
+      Instruction^ast := Instruction^factory.createAssignment(Affectable^ast, Expression^ast);
+end
+}
 
 
-Affectable -> parenthese_ouvrante Affectable parenthese_fermante ;
+Affectable -> parenthese_ouvrante Affectable parenthese_fermante #ast ;
+#ast {
+do
+   Affectable^ast := Affectable1^ast;
+end
+}
 
-Affectable -> identificateur SuiteAffectable ;
+Affectable -> identificateur #inh SuiteAffectable #ast ;
+#inh {
+local
+   o : Optional<Declaration>;
+   d : Declaration;
+do
+   if (Affectable^tds.knows(identificateur^txt)) then
+      o := Affectable^tds.get(identificateur^txt);
+      d := o.get();
+      match d
+      with VariableDeclaration then SuiteAffectable^support := Affectable^factory.createVariableAssignment( d );
+      with ConstantDeclaration then error(BLOC_not_a_variable, identificateur^txt);
+      end
+   else
+      error(BLOC_undefined_ident, identificateur^txt);
+   end
+end
+}
+
+#ast {
+do
+   Affectable^ast := SuiteAffectable^ast;
+end
+}
 
 
-SuiteAffectable -> ;
+SuiteAffectable -> #ast ;
+#ast {
+do
+   SuiteAffectable^ast := SuiteAffectable^support;
+end
+}
 
 SuiteAffectable -> point identificateur AppelOuAcces ;
 
-SuiteAffectable -> crochet_ouvrant Expression crochet_fermant SuiteAffectable ;
+SuiteAffectable -> crochet_ouvrant Expression crochet_fermant #inh SuiteAffectable #ast ;
+#inh {
+do
+   SuiteAffectable1^support := SuiteAffectable^factory.createArrayAssignment(SuiteAffectable^support,Expression^ast);
+end
+}
+
+#ast {
+do
+   SuiteAffectable^ast := SuiteAffectable1^ast;
+end
+}
 
 
 
