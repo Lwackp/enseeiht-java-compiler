@@ -10,17 +10,23 @@ option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
-inh factory	: BlockFactory for Programme, Instruction,
-              Instructions, Affectable, SuiteAffectable;
-inh tds     : SymbolTable for  Bloc, Instruction, Instructions,
-              Affectable;
+inh factory	: BlockFactory for Programme, Interfaces, Classes, Principale,
+              Instruction, Instructions, Affectable, SuiteAffectable,
+              Facteur, SuiteFacteur, Terme, SuiteTerme, Expression, SuiteExpressions,
+              Condition, SuiteConditionnelle;
+inh tds     : SymbolTable for  Programme, Interfaces, Classes, Principale,
+              Instruction, Instructions, Affectable;
 inh support : Assignable for SuiteAffectable;
+inh gauche	: Expression for SuiteTerme, SuiteFacteur;
 
+syn ast     : Block for Fichier, Programme, Bloc;
 syn ast		: Type for Type;
 syn ast		: Instruction for Instruction;
 syn ast     : List<Instruction> for Instructions;
-syn ast		: Expression for Expression;
+syn ast		: Expression for Expression, Facteur, SuiteFacteur,
+              Terme, SuiteTerme, Condition, SuiteConditionnelle;
 syn ast     : Assignable for Affectable, SuiteAffectable;
+syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 
 space  separateur				is    "[\n\r\t ]+";
 space  commentaire		    	is    "\/\/.*\n";
@@ -83,7 +89,32 @@ term   identificateur			is    "[a-z_][a-zA-Z0-9_]*";
 term   identificateur_type		is    "[A-Z][a-zA-Z0-9_]*";
 
 
-Programme -> Interfaces Classes Principale ;
+Fichier -> #inh Programme #ast;
+#inh {
+do
+   Programme^factory := new BlockFactoryImpl();
+   Programme^tds := new SymbolTable();
+end
+}
+#ast {
+do
+    Fichier^ast := Programme^ast;
+end
+}
+
+Programme -> #inh Interfaces Classes Principale #ast;
+#inh {
+do
+   Interfaces^tds := new SymbolTable(Programme^tds);
+   Classes^tds := new SymbolTable(Programme^tds);
+   Principale^tds := new SymbolTable(Programme^tds);
+end
+}
+#ast {
+do
+   Programme^ast := Bloc^ast;
+end
+}
 
 
 Interfaces -> Interface Interfaces ;
@@ -365,6 +396,7 @@ SuiteConditionnelle -> #ast;
 do
     SuiteConditionnelle^ast := SuiteConditionnelle^factory.createBlock();
 end
+}
 
 SuiteConditionnelle ->sinon Bloc #ast;
 #ast {
@@ -386,8 +418,9 @@ Instruction -> afficher Expression point_virgule #ast;
 do
     Instruction^ast := Instruction^factory.createPrinter(Expression^ast);
 end
+}
 
---TODO (instrcution)
+--TODO (instruction)
 Instruction -> retour Expression point_virgule ;
 
 --TODO (expression)
