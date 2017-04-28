@@ -10,22 +10,38 @@ option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
-inh factory	: BlockFactory for Programme, Interfaces, Classes, Principale,
-              Instruction, Instructions, Affectable, SuiteAffectable,
+inh factory	: BlockFactory for Programme, Interfaces, Interface, Classes, Classe,
+              Principale, Instruction, Instructions, Affectable, SuiteAffectable,
               Facteur, SuiteFacteur, Terme, SuiteTerme, Expression, SuiteExpressions,
-              Condition, SuiteConditionnelle;
+              Condition, SuiteConditionnelle, ElementInterface, ElementsInterface,
+              Signature, Bloc, MethodePrincipale, AttributOuMethode, ElementClasse,
+              ElementsClasse, Acces, Appel, AppelOuAcces, SuiteNouveau, Expressions,
+              Constructeur, SuiteAttributOuMethode, SuiteCondition, Type,
+              TypeAtomique, SuiteTypeAtomique, Parametre, Parametres,
+              SuiteParametres, Valeur;
 inh tds     : SymbolTable for  Programme, Interfaces, Classes, Principale,
-              Instruction, Instructions, Affectable;
+              Instruction, Instructions, Affectable, Bloc, MethodePrincipale,
+              AttributOuMethode, SuiteAttributOuMethode, Constructeur, ElementClasse,
+              ElementsClasse, Classe, SuiteConditionnelle, Facteur, Terme,
+              SuiteTerme, Condition, SuiteFacteur, Expression, SuiteCondition,
+              SuiteExpressions, Expressions, SuiteNouveau, Acces, Appel,
+              AppelOuAcces, SuiteAffectable, ElementInterface, ElementsInterface,
+              Interface;
 inh support : Assignable for SuiteAffectable;
-inh gauche	: Expression for SuiteTerme, SuiteFacteur;
+inh support : Expression for AppelOuAcces, Appel, Acces;
+inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
+inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
 
 syn ast     : Block for Fichier, Programme, Bloc;
-syn ast		: Type for Type;
+syn ast		: Type for Type, TypeAtomique, SuiteTypeAtomique;
 syn ast		: Instruction for Instruction;
 syn ast     : List<Instruction> for Instructions;
-syn ast		: Expression for Expression, Facteur, SuiteFacteur,
-              Terme, SuiteTerme, Condition, SuiteConditionnelle;
-syn ast     : Assignable for Affectable, SuiteAffectable;
+syn ast		: Expression for Expression, Facteur, SuiteFacteur, SuiteNouveau,
+              Terme, SuiteTerme, Condition, SuiteCondition, SuiteConditionnelle,
+              Acces, Appel;
+syn ast     : List<Expression> for Expressions, SuiteExpressions;
+syn ast     : Assignable for Affectable, SuiteAffectable, AppelOuAcces;
+syn ast     : Value for Valeur;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 
 space  separateur				is    "[\n\r\t ]+";
@@ -112,7 +128,8 @@ end
 }
 #ast {
 do
-   Programme^ast := Bloc^ast;
+   Programme^ast := Programme_factory.createProgramAst(
+                    Interfaces^ast, Classes^ast, Principale^ast);
 end
 }
 
@@ -264,27 +281,87 @@ SuiteParametres -> ;
 SuiteParametres -> virgule Parametre SuiteParametres ;
 
 
-Bloc -> accolade_ouvrante  Instructions accolade_fermante  ;
+Bloc -> accolade_ouvrante #inh Instructions accolade_fermante #ast ;
+#inh {
+do
+   Instructions^tds :=  new SymbolTable(Bloc^tds);
+end
+}
+#ast {
+do
+   Bloc^ast := Bloc^factory.createBlock(Instructions^ast);
+end
+}
 
 
-Type -> TypeAtomique SuiteTypeAtomique ;
+Type -> TypeAtomique #inh SuiteTypeAtomique #ast;
+#inh {
+do
+    SuiteTypeAtomique^type := Type^factory.createArrayType(TypeAtomique^ast);
+end
+}
+#ast {
+do
+    Type^ast := SuiteTypeAtomique^ast;
+end
+}
 
-TypeAtomique -> type_bool  ;
+TypeAtomique -> type_bool #ast ;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createBooleanType();
+end
+}
 
-TypeAtomique -> type_int   ;
+TypeAtomique -> type_int #ast;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createIntegerType();
+end
+}
 
-TypeAtomique -> type_char  ;
+TypeAtomique -> type_char #ast;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createCharType();
+end
+}
 
-TypeAtomique -> type_float  ;
+TypeAtomique -> type_float #ast;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createFloatType();
+end
+}
 
-TypeAtomique -> type_String ;
-
+TypeAtomique -> type_String #ast;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createStringType();
+end
+}
+-- TODO(Genericite)
 TypeAtomique -> identificateur_type InstanceGenericite  ;
 
 
-SuiteTypeAtomique -> crochet_ouvrant crochet_fermant SuiteTypeAtomique ;
+SuiteTypeAtomique -> crochet_ouvrant crochet_fermant #inh SuiteTypeAtomique #ast;
+#inh {
+do
+    SuiteTypeAtomique1^type := SuiteTypeAtomique^factory.createArrayType(SuiteTypeAtomique^type);
+end
+}
+#ast {
+do
+    SuiteTypeAtomique^ast := SuiteTypeAtomique^type;
+end
+}
 
-SuiteTypeAtomique -> ;
+SuiteTypeAtomique -> #ast;
+#ast {
+do
+    SuiteTypeAtomique^ast := SuiteTypeAtomique^type;
+end
+}
 
 
 Instructions -> #ast;
@@ -371,7 +448,17 @@ do
 end
 }
 
-SuiteAffectable -> point identificateur AppelOuAcces ;
+SuiteAffectable -> point identificateur #inh AppelOuAcces #ast;
+#inh {
+do
+    AppelOuAcces^support := SuiteAffectable^factory.createFieldAssignment(SuiteAffectable^support,identificateur^txt);
+end
+}
+#ast {
+do
+   SuiteAffectable^ast := AppelOuAcces^ast;
+end
+}
 
 SuiteAffectable -> crochet_ouvrant Expression crochet_fermant #inh SuiteAffectable #ast ;
 #inh {
@@ -388,8 +475,12 @@ end
 
 
 
-Instruction -> si parenthese_ouvrante Expression parenthese_fermante Bloc SuiteConditionnelle ;
-
+Instruction -> si parenthese_ouvrante Expression parenthese_fermante Bloc SuiteConditionnelle #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createConditional(Expression^ast, Bloc^ast, SuiteConditionnelle^ast);
+end
+}
 
 SuiteConditionnelle -> #ast;
 #ast {
@@ -420,20 +511,51 @@ do
 end
 }
 
---TODO (instruction)
-Instruction -> retour Expression point_virgule ;
+Instruction -> retour Expression point_virgule #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createReturn(Expression^ast);
+end
+}
 
---TODO (expression)
-Expression -> Condition SuiteCondition ;
+Expression -> Condition #inh SuiteCondition #ast ;
+#inh {
+do
+   SuiteCondition^gauche := Condition^ast ;
+end
+}
+#ast {
+do
+    Expression^ast := SuiteCondition^ast;
+end
+}
 
 --SuiteCondition
-SuiteCondition -> Comparatif Condition ;
+SuiteCondition -> Comparatif Condition #ast ;
+#ast {
+do
+	SuiteCondition^ast :=
+	SuiteCondition^factory.createBinaryExpression(
+	    SuiteCondition^gauche,
+	    Comparatif^bin_op,
+	    Condition^ast);
+end
+}
 
-SuiteCondition -> ;
+SuiteCondition -> #ast ;
+#ast {
+do
+   SuiteCondition^ast := SuiteCondition^gauche;
+end
+}
 
 --Comparatif
---TODO (comparatif-egalite)
-Comparatif -> egalite ;
+Comparatif -> egalite #texte;
+#texte {
+do
+   Comparatif^bin_op := BinaryOperator.Equals;
+end
+}
 
 Comparatif -> different #texte;
 #texte {
@@ -471,16 +593,21 @@ end
 }
 
 --Condition
-Condition -> Terme #ast_inh SuiteTerme #ast_syn ;
-#ast_inh {
+Condition -> Terme #inh SuiteTerme #ast ;
+#inh {
 do
    SuiteTerme^gauche := Terme^ast;
 end
 }
 
+#ast {
+do
+    Condition^ast := SuiteTerme^ast;
+end
+}
 
-SuiteTerme -> Additif Terme #ast_inh SuiteTerme #ast_syn ;
-#ast_inh {
+SuiteTerme -> Additif Terme #inh SuiteTerme #ast ;
+#inh {
 do
    SuiteTerme1^gauche := SuiteTerme^factory.createBinaryExpression(
       SuiteTerme^gauche,
@@ -489,7 +616,7 @@ do
 end
 }
 
-#ast_syn {
+#ast {
 do
    SuiteTerme^ast := SuiteTerme1^ast;
 end
@@ -510,26 +637,36 @@ do
 end
 }
 
-Additif -> soustraction ;
+Additif -> soustraction #ast;
+#ast {
+do
+   Additif^bin_op := BinaryOperator.Substract;
+end
+}
 
-Additif -> ou ;
+Additif -> ou #ast;
+#ast {
+do
+   Additif^bin_op := BinaryOperator.Or;
+end
+}
 
 
-Terme -> Facteur #ast_inh SuiteFacteur #ast_syn ;
-#ast_inh {
+Terme -> Facteur #inh SuiteFacteur #ast ;
+#inh {
 do
    SuiteFacteur^gauche := Facteur^ast;
 end
 }
 
-#ast_syn {
+#ast {
 do
    Terme^ast := SuiteFacteur^ast;
 end
 }
 
-SuiteFacteur -> Multiplicatif Facteur #ast_inh SuiteFacteur #ast_syn ;
-#ast_inh {
+SuiteFacteur -> Multiplicatif Facteur #inh SuiteFacteur #ast ;
+#inh {
 do
    SuiteFacteur1^gauche := SuiteFacteur^factory.createBinaryExpression(
       SuiteFacteur^gauche,
@@ -538,7 +675,7 @@ do
 end
 }
 
-#ast_syn {
+#ast {
 do
    SuiteFacteur^ast := SuiteFacteur1^ast;
 end
@@ -559,71 +696,240 @@ do
 end
 }
 
---TODO (Multiplicatif)
-Multiplicatif -> division ;
+--Multiplicatif
+Multiplicatif -> division #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.Divide;
+end
+}
 
-Multiplicatif -> modulo ;
+Multiplicatif -> modulo #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.Modulo;
+end
+}
 
-Multiplicatif -> et ;
+Multiplicatif -> et #ast;
+#ast {
+do
+   Multiplicatif^bin_op := BinaryOperator.And;
+end
+}
 
 
 Facteur -> accolade_ouvrante Expressions accolade_fermante #ast;
 #ast {
 do
-   Facteur^ast := Expression^ast;
+   Facteur^ast := Facteur^factory.createExpressions(Expressions^ast);
 end
 }
 
-Expressions -> Expression SuiteExpressions ;
+Expressions -> Expression SuiteExpressions #ast;
+#ast {
+do
+    SuiteExpressions^ast.add(Expression^ast);
+    Expressions^ast := SuiteExpressions^ast;
+end
+}
 
-SuiteExpressions -> virgule Expression SuiteExpressions ;
+SuiteExpressions -> virgule Expression SuiteExpressions #ast;
+#ast {
+do
+    SuiteExpressions1^ast.add(Expression^ast);
+    SuiteExpressions^ast := SuiteExpressions1^ast;
+end
+}
 
-SuiteExpressions -> ;
-
-
-Facteur -> soustraction Facteur ;
-
-Facteur -> negation Facteur ;
-
-Facteur -> nouveau Type SuiteNouveau ;
-
-
-SuiteNouveau -> crochet_ouvrant Expression crochet_fermant ;
-
-SuiteNouveau -> ;
-
-
-Facteur -> Valeur ;
-
-
-Valeur -> entier ;
-
-Valeur -> vrai ;
-
-Valeur -> faux ;
-
-Valeur -> chaine ;
-
-Valeur -> caractere ;
+SuiteExpressions -> #ast;
+#ast {
+do
+    SuiteExpressions^ast := new ArrayList<Expression>();
+end
+}
 
 
-Facteur -> identificateur AppelOuAcces ;
+Facteur -> soustraction Facteur #ast ;
+#ast {
+do
+   Facteur^ast := Facteur ^factory.createUnaryExpression(UnaryOperator.Opposite,Facteur1^ast);
+end
+}
+
+Facteur -> negation Facteur #ast ;
+#ast {
+do
+   Facteur^ast := Facteur ^factory. createUnaryExpression(UnaryOperator.Negate,Facteur1^ast);
+end
+}
+
+Facteur -> nouveau Type #inh SuiteNouveau #ast ;
+#inh {
+do
+   SuiteNouveau^type := Type^ast;
+end
+}
+
+#ast {
+do
+   Facteur^ast := SuiteNouveau^ast;
+end
+}
+
+--TODO(2d array)
+SuiteNouveau -> crochet_ouvrant Expression crochet_fermant #ast;
+#ast {
+do
+   SuiteNouveau^ast := SuiteNouveau^factory.createArrayAllocation(SuiteNouveau^type,Expression^ast);
+end
+}
+
+-- SuiteNouveau -> ;
 
 
-AppelOuAcces -> Acces ;
-
-AppelOuAcces -> Appel ;
-
-
-Acces -> ;
-
-Acces -> crochet_ouvrant Expression crochet_fermant Acces ;
-
-Acces -> point identificateur AppelOuAcces ;
+Facteur -> Valeur #ast;
+#ast {
+do
+   Facteur^ast := Valeur^ast;
+end
+}
 
 
-Appel -> parenthese_ouvrante parenthese_fermante Acces ;
+Valeur -> entier #ast;
+#ast {
+do
+    Valeur^ast := Valeur^factory.createIntegerValue(entier^txt);
+end
+}
 
-Appel -> parenthese_ouvrante Expressions parenthese_fermante Acces ;
+Valeur -> vrai #ast;
+#ast {
+do
+    Valeur^ast := Valeur^factory.createBooleanValue(true);
+end
+}
+
+Valeur -> faux #ast;
+#ast {
+do
+    Valeur^ast := Valeur^factory.createBooleanValue(false);
+end
+}
+
+Valeur -> chaine #ast;
+#ast {
+do
+    Valeur^ast := Valeur^factory.createStringValue(chaine^txt);
+end
+}
+
+Valeur -> caractere #ast;
+#ast {
+do
+    Valeur^ast := Valeur^factory.createCharValue(caractere^txt);
+end
+}
+
+
+Facteur -> identificateur #inh AppelOuAcces #ast;
+#inh {
+local
+   f : Optional<Declaration>;
+   d : Declaration;
+do
+   if (Facteur^tds.knows(identificateur^txt)) then
+      f := Facteur^tds.get(identificateur^txt);
+      d := f.get();
+      match d
+      with ConstantDeclaration then AppelOuAcces^support := d.getValue();
+      with VariableDeclaration then AppelOuAcces^support := Facteur^factory.createVariableUse(d);
+      end
+   else
+      error(BLOC_undefined_ident, identificateur^txt);
+   end
+end
+}
+#ast {
+do
+    Facteur^ast := AppelOuAcces^ast;
+end
+}
+
+
+AppelOuAcces -> Acces #ast;
+#ast {
+do
+    AppelOuAcces^ast := Acces^ast;
+end
+}
+
+AppelOuAcces -> Appel #ast;
+#ast {
+do
+    AppelOuAcces^ast := Appel^ast;
+end
+}
+
+
+Acces -> #ast ;
+#ast {
+do
+   Acces^ast := Acces^support;
+end
+}
+
+Acces -> crochet_ouvrant Expression crochet_fermant #inh AppelOuAcces #ast;
+#inh {
+do
+   AppelOuAcces^support := Acces^factory.createArrayAccess(Acces^support,Expression^ast);
+end
+}
+
+#ast {
+do
+   Acces^ast := AppelOuAcces^ast;
+end
+}
+
+Acces -> point identificateur #inh AppelOuAcces #ast;
+#inh {
+do
+   AppelOuAcces^support := Acces^factory.createFieldAccess(Acces^support,identificateur^txt);
+end
+}
+
+#ast {
+do
+   Acces^ast := AppelOuAcces^ast;
+end
+}
+
+
+Appel -> parenthese_ouvrante parenthese_fermante #inh AppelOuAcces #ast;
+#inh {
+do
+   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support);
+end
+}
+
+#ast {
+do
+   Appel^ast := AppelOuAcces^ast;
+end
+}
+
+Appel -> parenthese_ouvrante Expressions parenthese_fermante #inh AppelOuAcces #ast;
+#inh {
+do
+   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support, Expressions^ast);
+end
+}
+
+#ast {
+do
+   Appel^ast := AppelOuAcces^ast;
+end
+}
 
 end
