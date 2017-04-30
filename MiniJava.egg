@@ -10,23 +10,19 @@ option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
-inh factory	: BlockFactory for Programme, Interfaces, Interface, Classes, Classe,
-              Principale, Instruction, Instructions, Affectable, SuiteAffectable,
-              Facteur, SuiteFacteur, Terme, SuiteTerme, Expression, SuiteExpressions,
-              Condition, SuiteConditionnelle, ElementInterface, ElementsInterface,
-              Signature, Bloc, MethodePrincipale, AttributOuMethode, ElementClasse,
-              ElementsClasse, Acces, Appel, AppelOuAcces, SuiteNouveau, Expressions,
-              Constructeur, SuiteAttributOuMethode, SuiteCondition, Type,
-              TypeAtomique, SuiteTypeAtomique, Parametre, Parametres,
-              SuiteParametres, Valeur;
-inh tds     : SymbolTable for  Programme, Interfaces, Classes, Principale,
-              Instruction, Instructions, Affectable, Bloc, MethodePrincipale,
-              AttributOuMethode, SuiteAttributOuMethode, Constructeur, ElementClasse,
-              ElementsClasse, Classe, SuiteConditionnelle, Facteur, Terme,
-              SuiteTerme, Condition, SuiteFacteur, Expression, SuiteCondition,
-              SuiteExpressions, Expressions, SuiteNouveau, Acces, Appel,
-              AppelOuAcces, SuiteAffectable, ElementInterface, ElementsInterface,
-              Interface;
+inh factory	: BlockFactory for Acces, Affectable, Appel, AppelOuAcces, AttributOuMethode, Bloc, Classe, Classes,
+              Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse, ElementsInterface, Expression,
+              Expressions, Facteur, HeritageClasse, HeritageInterface, ImplantationInterface, Instruction,
+              Instructions, Interface, Interfaces, MethodePrincipale, Parametre, Parametres, Principale,Programme,
+              Signature, SuiteAffectable, SuiteAttributOuMethode, SuiteCondition, SuiteConditionnelle,
+              SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau, SuiteParametres, SuiteTerme,
+              SuiteTypeAtomique, Terme, Type, TypeAtomique, Valeur;
+inh tds     : SymbolTable for   Acces, Affectable, Appel, AppelOuAcces, AttributOuMethode, Bloc, Classe, Classes,
+              Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse, ElementsInterface, Expression,
+              Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface, ImplantationInterface, Instruction,
+              Instructions, Interface, Interfaces, MethodePrincipale, Parametres, Principale, Programme, Signature,
+              SuiteAffectable, SuiteAttributOuMethode, SuiteCondition, SuiteConditionnelle, SuiteExpressions,
+              SuiteFacteur, SuiteHeritageInterface, SuiteNouveau, SuiteParametres, SuiteTerme, Terme;
 inh support : Assignable for SuiteAffectable;
 inh support : Expression for AppelOuAcces, Appel, Acces;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
@@ -42,7 +38,23 @@ syn ast		: Expression for Expression, Facteur, SuiteFacteur, SuiteNouveau,
 syn ast     : List<Expression> for Expressions, SuiteExpressions;
 syn ast     : Assignable for Affectable, SuiteAffectable, AppelOuAcces;
 syn ast     : Value for Valeur;
+syn ast     : Interface for Interface;
+syn ast     : List<Interface> for Interfaces;
+syn ast     : Class for Classe;
+syn ast     : List<Classe> for Classes;
+syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface;
+syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
+syn ast     : Signature for Signature;
+syn ast     : List<InheritanceDeclaration> for HeritageClasse, ImplantationInterface, HeritageInterface,
+              SuiteHeritageInterface;
+syn ast     : AccessModifier for DroitAcces;
+syn ast     : Parameter for Parametre;
+syn ast     : List<Parameter> for Parametres, SuiteParametres;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
+syn type    : ClassElementType for SuiteAttributOuMethode;
+
+-- TODO(AST for the following classes)
+syn ast     : Object for Principale, Genericite, InstanceGenericite, Constructeur, SuiteAttributOuMethode, MethodePrincipale;
 
 space  separateur				is    "[\n\r\t ]+";
 space  commentaire		    	is    "\/\/.*\n";
@@ -118,12 +130,19 @@ do
 end
 }
 
-Programme -> #inh Interfaces Classes Principale #ast;
-#inh {
+Programme -> #inh1 Interfaces #inh2 Classes Principale #ast;
+#inh1 {
 do
    Interfaces^tds := new SymbolTable(Programme^tds);
    Classes^tds := new SymbolTable(Programme^tds);
    Principale^tds := new SymbolTable(Programme^tds);
+end
+}
+#inh2 {
+do
+   -- Classes and Interfaces should not have the same name
+   --Classes^tds := new SymbolTable(Interfaces^tds);
+   --Principale^tds := new SymbolTable(Interfaces^tds);
 end
 }
 #ast {
@@ -134,65 +153,278 @@ end
 }
 
 
-Interfaces -> Interface Interfaces ;
+Interfaces -> Interface #inh Interfaces #ast;
+#inh {
+do
+    if !Interfaces^tds.knows(Interface^ast.getName()) then
+        Interfaces^tds.add(Interface^ast.getName());
+        Interfaces1^tds := Interfaces^tds;
+    else
+          error(MiniJava_Interface_Override, Interface^ast.getName());
+    end
+end
+}
+#ast {
+do
+    Interfaces1^ast.add(Interface^ast);
+    Interfaces^ast := Interfaces1^ast;
+end
+}
 
-Interfaces -> ;
-
-
-Interface -> interface identificateur_type Genericite HeritageInterface accolade_ouvrante ElementsInterface accolade_fermante ;
-
-
-HeritageInterface -> extension identificateur_type InstanceGenericite SuiteHeritageInterface ;
-
-HeritageInterface -> ;
-
-
-SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHeritageInterface ;
-
-SuiteHeritageInterface -> ;
-
-
-ElementsInterface -> ElementInterface ElementsInterface ;
-
-ElementsInterface -> ;
-
-
-ElementInterface -> final statique Type identificateur affectation Expression point_virgule ;
-
-ElementInterface -> Signature point_virgule ;
+Interfaces -> #ast;
+#ast {
+do
+    Interfaces^ast := new LinkedList<Interface>();
+end
+}
 
 
-Signature -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante ;
-
-Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante ;
-
-
-Classes -> Classe Classes ;
-
-Classes -> ;
-
-
-Classe -> classe  identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante ;
-
-
-HeritageClasse -> extension identificateur_type InstanceGenericite ;
-
-HeritageClasse -> ;
-
-ImplantationInterface -> implantation identificateur_type InstanceGenericite SuiteHeritageInterface ;
-
-ImplantationInterface -> ;
+Interface -> interface identificateur_type #inh Genericite HeritageInterface accolade_ouvrante ElementsInterface accolade_fermante #ast;
+#inh {
+do
+    Genericite^tds := Interface^tds;
+    HeritageInterface^tds := Interface^tds;
+    ElementsInterface^tds := new SymbolTable(Interface^tds);
+end
+}
+#ast {
+do
+    Interface^ast := Interface^factory.createInterface(
+                       identificateur_type^txt,
+                       Genericite^ast,
+                       HeritageInterface^ast,
+                       ElementsInterface^ast
+                     );
+end
+}
 
 
-Principale -> public classe identificateur_type accolade_ouvrante MethodePrincipale accolade_fermante ;
+HeritageInterface -> extension identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
+#inh {
+do
+    if !HeritageInterface^tds.knows(identificateur_type^txt) then
+        HeritageInterface^tds.add(identificateur_type^txt);
+        SuiteHeritageInterface^tds := HeritageInterface^tds;
+    else
+          error(MiniJava_Interface_Inheritance, identificateur_type^txt);
+    end
+end
+}
+#ast {
+do
+    SuiteHeritageInterface^ast.add(HeritageInterface^factory.createInheritanceDeclaration(
+                                identificateur_type^txt,
+                                InstanceGenericite^ast));
+    HeritageInterface^ast := SuiteHeritageInterface^ast;
+end
+}
+
+HeritageInterface -> #ast;
+#ast {
+do
+    HeritageInterface^ast := new LinkedList<InheritanceDeclaration>();
+end
+}
 
 
-MethodePrincipale -> public statique vide principale parenthese_ouvrante type_String crochet_ouvrant crochet_fermant identificateur parenthese_fermante Bloc ;
+SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
+#inh {
+do
+    if !SuiteHeritageInterface^tds.knows(identificateur_type^txt) then
+        SuiteHeritageInterface^tds.add(identificateur_type^txt);
+        SuiteHeritageInterface1^tds := SuiteHeritageInterface^tds;
+    else
+          error(MiniJava_Interface_Inheritance, identificateur_type^txt);
+    end
+end
+}
+#ast {
+do
+    SuiteHeritageInterface1^ast.add(SuiteHeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt,
+    InstanceGenericite^ast));
+    SuiteHeritageInterface^ast := SuiteHeritageInterface1^ast;
+end
+}
+
+SuiteHeritageInterface -> #ast;
+#ast {
+do
+    SuiteHeritageInterface^ast := new LinkedList<InheritanceDeclaration>();
+end
+}
+
+ElementsInterface -> ElementInterface #inh ElementsInterface #ast;
+#inh {
+do
+    if !ElementsInterface^tds.knows(ElementInterface^ast.getName()) then
+        ElementsInterface^tds.add(ElementInterface^ast.getName());
+        ElementsInterface1^tds := ElementsInterface^tds;
+    else
+          error(MiniJava_Interface_Inheritance, ElementInterface^ast.getName());
+    end
+end
+}
+#ast {
+do
+    ElementsInterface1^ast.add(ElementInterface^ast);
+    ElementsInterface^ast := ElementsInterface1^ast;
+end
+}
+
+ElementsInterface -> #ast;
+#ast {
+do
+    ElementsInterface^ast := new LinkedList<ClassElement>();
+end
+}
 
 
-Genericite -> inferieur ParametresGenericite superieur ;
+ElementInterface -> final statique Type identificateur affectation Expression point_virgule #ast;
+#ast {
+do
+    ElementInterface^ast := ElementInterface^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
+end
+}
 
-Genericite -> ;
+ElementInterface -> Signature point_virgule #ast;
+#ast {
+do
+    ElementInterface^ast := Signature^ast;
+end
+}
+
+-- TODO(Function Signature)
+Signature -> vide identificateur parenthese_ouvrante #inh Parametres parenthese_fermante #ast;
+#inh {
+do
+    Parametres^tds := new SymbolTable(Signature^tds);
+end
+}
+#ast {
+do
+    Signature^ast := null;
+end
+}
+--
+--Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante ;
+
+
+Classes -> Classe #inh Classes #ast;
+#inh {
+do
+    if !Classes^tds.knows(Classe^ast.getName()) then
+        Classes^tds.add(Classe^ast.getName());
+        Classes1^tds := Classes^tds;
+    else
+          error(MiniJava_Classe_Override, Classe^ast.getName());
+    end
+end
+}
+#ast {
+do
+    Classes1^ast.add(Classe^ast);
+    Classes^ast := Classes1^ast;
+end
+}
+
+Classes -> #ast;
+#ast {
+do
+    Classes^ast := new LinkedList<Classe>();
+end
+}
+
+
+Classe -> classe  identificateur_type #inh Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante #ast;
+#inh {
+do
+    Genericite^tds := Classe^tds;
+    HeritageClasse^tds := Classe^tds;
+    ImplantationInterface^tds := Classe^tds;
+    ElementsClasse^tds := new SymbolTable(Classe^tds);
+end
+}
+#ast {
+do
+    Classe^ast := Classe^factory.createClass(
+                       identificateur_type^txt,
+                       Genericite^ast,
+                       HeritageClasse^ast,
+                       ImplantationInterface^ast,
+                       ElementsClasse^ast
+                     );
+end
+}
+
+HeritageClasse -> extension identificateur_type InstanceGenericite #ast;
+#ast {
+do
+    HeritageClasse^ast := HeritageClasse^factory.createInheritanceDeclaration(
+                                                          identificateur_type^txt,
+                                                          InstanceGenericite^ast);
+end
+}
+
+HeritageClasse -> #ast;
+#ast {
+do
+    HeritageClasse^ast := null;
+end
+}
+
+ImplantationInterface -> implantation identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
+#inh {
+do
+    if !ImplantationInterface^tds.knows(identificateur_type^txt) then
+        ImplantationInterface^tds.add(identificateur_type^txt);
+        SuiteHeritageInterface^tds := ImplantationInterface^tds;
+    else
+          error(MiniJava_Interface_Inheritance, identificateur_type^txt);
+    end
+end
+}
+#ast {
+do
+    SuiteHeritageInterface^ast.add(ImplantationInterface^factory.createInheritanceDeclaration(
+                                identificateur_type^txt,
+                                InstanceGenericite^ast));
+    ImplantationInterface^ast := SuiteHeritageInterface^ast;
+end
+}
+
+ImplantationInterface -> #ast;
+#ast {
+do
+    ImplantationInterface^ast := new LinkedList<InheritanceDeclaration>();
+end
+}
+
+
+-- TODO (Main Class)
+Principale -> public classe identificateur_type accolade_ouvrante MethodePrincipale accolade_fermante #ast;
+#ast {
+do
+    Principale^ast := null;
+end
+}
+--
+--
+MethodePrincipale -> public statique vide principale parenthese_ouvrante type_String crochet_ouvrant crochet_fermant identificateur parenthese_fermante Bloc #ast;
+#ast {
+do
+    MethodePrincipale^ast := null;
+end
+}
+
+--TODO (Generics)
+--Genericite -> inferieur ParametresGenericite superieur ;
+--
+Genericite -> #ast;
+#ast {
+do
+    Genericite^ast := null;
+end
+}
 
 
 ParametresGenericite -> ParametreGenericite SuiteParametresGenericite ;
@@ -217,9 +449,15 @@ SuiteHeritageGenericite -> adresse identificateur_type SuiteHeritageGenericite ;
 SuiteHeritageGenericite -> ;
 
 
-InstanceGenericite -> ;
-
-InstanceGenericite -> inferieur ArgumentsGenericite superieur ;
+--TODO (Generics)
+InstanceGenericite -> #ast;
+#ast {
+do
+    InstanceGenericite^ast := null;
+end
+}
+--
+--InstanceGenericite -> inferieur ArgumentsGenericite superieur ;
 
 
 ArgumentsGenericite -> ArgumentGenericite SuiteArgumentsGenericite ;
@@ -235,50 +473,181 @@ ArgumentGenericite -> identificateur_type InstanceGenericite ;
 ArgumentGenericite -> type_String ;
 
 
-ElementsClasse -> DroitAcces ElementClasse ElementsClasse ;
+ElementsClasse -> DroitAcces ElementClasse #inh ElementsClasse #ast;
+#inh {
+do
+    if !ElementsClasse^tds.knows(ElementClasse^ast.getName()) then
+        ElementsClasse^tds.add(ElementClasse^ast.getName());
+        ElementsClasse1^tds := ElementsClasse^tds;
+    else
+          error(MiniJava_ClassElement_Definition, ElementClasse^ast.getName());
+    end
+end
+}
+#ast {
+do
+    ElementsClasse1^ast.add(
+        ElementsClasse^factory.createClassElement(DroitAcces^ast, ElementClasse^ast)
+        );
+    ElementsClasse^ast := ElementsClasse1^ast;
+end
+}
 
-ElementsClasse -> ;
-
-
-DroitAcces -> public ;
-
-DroitAcces -> protege ;
-
-DroitAcces -> prive ;
-
-
-ElementClasse -> statique AttributOuMethode ;
-
-ElementClasse -> AttributOuMethode ;
-
-ElementClasse -> Constructeur ;
-
-
-AttributOuMethode -> Type identificateur SuiteAttributOuMethode;
-
-AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc ;
-
-
-SuiteAttributOuMethode -> point_virgule ;
-
-SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Bloc ;
-
-
-Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc ;
+ElementsClasse -> #ast;
+#ast {
+do
+    ElementsClasse^ast := new LinkedList<ClassElement>();
+end
+}
 
 
+DroitAcces -> public #ast;
+#ast {
+do
+    DroitAcces^ast := AccessModifier.Public;
+end
+}
 
-Parametres -> ;
+DroitAcces -> protege #ast;
+#ast {
+do
+    DroitAcces^ast := AccessModifier.Protected;
+end
+}
 
-Parametres -> Parametre SuiteParametres ;
+DroitAcces -> prive #ast;
+#ast {
+do
+    DroitAcces^ast := AccessModifier.Private;
+end
+}
 
 
-Parametre -> Type identificateur ;
+ElementClasse -> statique AttributOuMethode #ast;
+#ast {
+do
+    -- This method just set bool static to true;
+    ElementClasse^ast := ElementClasse^factory.createStaticClassElement(AttributOuMethode^ast);
+end
+}
+
+ElementClasse -> AttributOuMethode #ast;
+#ast {
+do
+    -- bool static = true; by default
+    ElementClasse^ast := AttributOuMethode^ast;
+end
+}
+
+ElementClasse -> Constructeur #ast;
+#ast {
+do
+    -- This method just set bool constructor to true;
+    ElementClasse^ast := ElementClasse^factory.createClassConstructor(Constructeur^ast);
+end
+}
 
 
-SuiteParametres -> ;
+--TODO (ClassElement)
+AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
+#ast {
+do
+    AttributOuMethode^ast := null;
+end
+}
+--
+--AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc ;
 
-SuiteParametres -> virgule Parametre SuiteParametres ;
+
+SuiteAttributOuMethode -> point_virgule #ast;
+#ast {
+do
+    SuiteAttributOuMethode^type := ClassElementType.Attribute;
+    SuiteAttributOuMethode^ast := null;
+end
+}
+
+--TODO (Parametres must have a new TDS)
+--TODO (Bloc must inherit SuiteAttributOuMethode^tds with Parametres^tds included)
+SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
+#ast {
+do
+    SuiteAttributOuMethode^type := ClassElementType.Method;
+    SuiteAttributOuMethode^ast :=
+        SuiteAttributOuMethode^factory.createMethodParameters(
+            Parametres^ast, Bloc^ast
+        );
+end
+}
+
+
+--TODO (Constructor definition)
+Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
+#ast {
+do
+    Constructeur^ast := null;
+end
+}
+
+
+Parametres -> #ast;
+#ast {
+do
+    Parametres^ast := new LinkedList<Parameter>();
+end
+}
+
+Parametres -> Parametre #inh SuiteParametres #ast;
+#inh {
+do
+    if !Parametres^tds.knows(Parametre^ast.getName()) then
+        Parametres^tds.add(Parametre^ast.getName());
+        SuiteParametres^tds := Parametres^tds;
+    else
+          error(MiniJava_Parameter_Definition, Parametre^ast.getName());
+    end
+end
+}
+#ast {
+do
+    SuiteParametres^ast.add(Parametre^ast);
+    Parametres^ast := SuiteParametres^ast;
+end
+}
+
+
+Parametre -> Type identificateur #ast;
+#ast {
+do
+    Parametre^ast := Parametre^factory.createParameter(identificateur^txt, Type^ast);
+end
+}
+
+
+SuiteParametres -> #ast;
+#ast {
+do
+    SuiteParametres^ast := new LinkedList<Parameter>();
+end
+}
+
+SuiteParametres -> virgule Parametre #inh SuiteParametres #ast;
+#inh {
+do
+    if !SuiteParametres^tds.knows(Parametre^ast.getName()) then
+        SuiteParametres^tds.add(Parametre^ast.getName());
+        SuiteParametres1^tds := SuiteParametres^tds;
+    else
+          error(MiniJava_Parameter_Definition, Parametre^ast.getName());
+    end
+end
+}
+#ast {
+do
+    SuiteParametres1^ast.add(Parametre^ast);
+    SuiteParametres^ast := SuiteParametres1^ast;
+end
+}
 
 
 Bloc -> accolade_ouvrante #inh Instructions accolade_fermante #ast ;
@@ -341,7 +710,7 @@ do
 end
 }
 -- TODO(Genericite)
-TypeAtomique -> identificateur_type InstanceGenericite  ;
+--TypeAtomique -> identificateur_type InstanceGenericite  ;
 
 
 SuiteTypeAtomique -> crochet_ouvrant crochet_fermant #inh SuiteTypeAtomique #ast;
@@ -367,7 +736,7 @@ end
 Instructions -> #ast;
 #ast {
 do
-    Instructions^ast := new ArrayList<Instruction>();
+    Instructions^ast := new LinkedList<Instruction>();
 end
 }
 
@@ -745,7 +1114,7 @@ end
 SuiteExpressions -> #ast;
 #ast {
 do
-    SuiteExpressions^ast := new ArrayList<Expression>();
+    SuiteExpressions^ast := new LinkedList<Expression>();
 end
 }
 
