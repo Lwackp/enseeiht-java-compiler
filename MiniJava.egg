@@ -28,28 +28,28 @@ inh support : Expression for AppelOuAcces, Appel, Acces;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
 
-syn ast     : Block for Fichier, Programme, Bloc;
+syn ast     : Program for Fichier, Programme;
+syn ast     : Block for Bloc, SuiteConditionnelle;
 syn ast		: Type for Type, TypeAtomique, SuiteTypeAtomique;
 syn ast		: Instruction for Instruction;
 syn ast     : List<Instruction> for Instructions;
-syn ast		: Expression for Expression, Facteur, SuiteFacteur, SuiteNouveau,
-              Terme, SuiteTerme, Condition, SuiteCondition, SuiteConditionnelle,
-              Acces, Appel;
+syn ast		: Expression for Expression, Facteur, SuiteFacteur, SuiteNouveau, Terme, SuiteTerme, Condition,
+              SuiteCondition, Acces, Appel, AppelOuAcces;
 syn ast     : List<Expression> for Expressions, SuiteExpressions;
-syn ast     : Assignable for Affectable, SuiteAffectable, AppelOuAcces;
+syn ast     : Assignable for Affectable, SuiteAffectable;
 syn ast     : Value for Valeur;
-syn ast     : Interface for Interface;
-syn ast     : List<Interface> for Interfaces;
-syn ast     : Class for Classe;
-syn ast     : List<Classe> for Classes;
+syn ast     : InterfaceDeclaration for Interface;
+syn ast     : List<InterfaceDeclaration> for Interfaces;
+syn ast     : ClassDeclaration for Classe;
+syn ast     : List<ClassDeclaration> for Classes;
 syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : Signature for Signature;
-syn ast     : List<InheritanceDeclaration> for HeritageClasse, ImplantationInterface, HeritageInterface,
-              SuiteHeritageInterface;
+syn ast     : InheritanceDeclaration for HeritageClasse;
+syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
-syn ast     : Parameter for Parametre;
-syn ast     : List<Parameter> for Parametres, SuiteParametres;
+syn ast     : ParameterDeclaration for Parametre;
+syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
 
@@ -147,8 +147,9 @@ end
 }
 #ast {
 do
-   Programme^ast := Programme_factory.createProgramAst(
-                    Interfaces^ast, Classes^ast, Principale^ast);
+   Programme^ast := Programme^factory.createProgram(
+                        Interfaces^ast, Classes^ast, Principale^ast
+                    );
 end
 }
 
@@ -157,10 +158,10 @@ Interfaces -> Interface #inh Interfaces #ast;
 #inh {
 do
     if !Interfaces^tds.knows(Interface^ast.getName()) then
-        Interfaces^tds.add(Interface^ast.getName());
+        Interfaces^tds.register(Interface^ast);
         Interfaces1^tds := Interfaces^tds;
     else
-          error(MiniJava_Interface_Override, Interface^ast.getName());
+          error(MiniJava_Interface_Override, Interface^ast);
     end
 end
 }
@@ -174,7 +175,7 @@ end
 Interfaces -> #ast;
 #ast {
 do
-    Interfaces^ast := new LinkedList<Interface>();
+    Interfaces^ast := new LinkedList<InterfaceDeclaration>();
 end
 }
 
@@ -189,7 +190,7 @@ end
 }
 #ast {
 do
-    Interface^ast := Interface^factory.createInterface(
+    Interface^ast := Interface^factory.createInterfaceDeclaration(
                        identificateur_type^txt,
                        Genericite^ast,
                        HeritageInterface^ast,
@@ -201,9 +202,12 @@ end
 
 HeritageInterface -> extension identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
 #inh {
+local
+    d : Declaration;
 do
+    d := HeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
     if !HeritageInterface^tds.knows(identificateur_type^txt) then
-        HeritageInterface^tds.add(identificateur_type^txt);
+        HeritageInterface^tds.register(d);
         SuiteHeritageInterface^tds := HeritageInterface^tds;
     else
           error(MiniJava_Interface_Inheritance, identificateur_type^txt);
@@ -229,9 +233,12 @@ end
 
 SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
 #inh {
+local
+    d : Declaration;
 do
+    d := SuiteHeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
     if !SuiteHeritageInterface^tds.knows(identificateur_type^txt) then
-        SuiteHeritageInterface^tds.add(identificateur_type^txt);
+        SuiteHeritageInterface^tds.register(d);
         SuiteHeritageInterface1^tds := SuiteHeritageInterface^tds;
     else
           error(MiniJava_Interface_Inheritance, identificateur_type^txt);
@@ -257,10 +264,10 @@ ElementsInterface -> ElementInterface #inh ElementsInterface #ast;
 #inh {
 do
     if !ElementsInterface^tds.knows(ElementInterface^ast.getName()) then
-        ElementsInterface^tds.add(ElementInterface^ast.getName());
+        ElementsInterface^tds.register(ElementInterface^ast);
         ElementsInterface1^tds := ElementsInterface^tds;
     else
-          error(MiniJava_Interface_Inheritance, ElementInterface^ast.getName());
+          error(MiniJava_Interface_Inheritance, ElementInterface^ast);
     end
 end
 }
@@ -282,14 +289,21 @@ end
 ElementInterface -> final statique Type identificateur affectation Expression point_virgule #ast;
 #ast {
 do
-    ElementInterface^ast := ElementInterface^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
+    ElementInterface^ast := ElementInterface^factory.createClassElement(
+        ElementInterface^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast),
+        AccessModifier.Public,
+        NonAccessModifier.Final,
+        NonAccessModifier.Static
+    );
 end
 }
 
 ElementInterface -> Signature point_virgule #ast;
 #ast {
 do
-    ElementInterface^ast := Signature^ast;
+    ElementInterface^ast := ElementInterface^factory.createClassElement(
+        Signature^ast, AccessModifier.Public
+    );
 end
 }
 
@@ -313,10 +327,10 @@ Classes -> Classe #inh Classes #ast;
 #inh {
 do
     if !Classes^tds.knows(Classe^ast.getName()) then
-        Classes^tds.add(Classe^ast.getName());
+        Classes^tds.register(Classe^ast);
         Classes1^tds := Classes^tds;
     else
-          error(MiniJava_Classe_Override, Classe^ast.getName());
+          error(MiniJava_Classe_Override, Classe^ast);
     end
 end
 }
@@ -330,7 +344,7 @@ end
 Classes -> #ast;
 #ast {
 do
-    Classes^ast := new LinkedList<Classe>();
+    Classes^ast := new LinkedList<ClassDeclaration>();
 end
 }
 
@@ -346,7 +360,7 @@ end
 }
 #ast {
 do
-    Classe^ast := Classe^factory.createClass(
+    Classe^ast := Classe^factory.createClassDeclaration(
                        identificateur_type^txt,
                        Genericite^ast,
                        HeritageClasse^ast,
@@ -374,9 +388,12 @@ end
 
 ImplantationInterface -> implantation identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
 #inh {
+local
+    d : Declaration;
 do
+    d := ImplantationInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
     if !ImplantationInterface^tds.knows(identificateur_type^txt) then
-        ImplantationInterface^tds.add(identificateur_type^txt);
+        ImplantationInterface^tds.register(d);
         SuiteHeritageInterface^tds := ImplantationInterface^tds;
     else
           error(MiniJava_Interface_Inheritance, identificateur_type^txt);
@@ -426,27 +443,27 @@ do
 end
 }
 
-
-ParametresGenericite -> ParametreGenericite SuiteParametresGenericite ;
-
-
-SuiteParametresGenericite -> virgule ParametreGenericite SuiteParametresGenericite ;
-
-SuiteParametresGenericite -> ;
-
-
-ParametreGenericite -> identificateur_type HeritageGenericite ;
-
-ParametreGenericite -> choix HeritageGenericite ;
-
-
-HeritageGenericite -> extension identificateur_type SuiteHeritageGenericite ;
-
-HeritageGenericite -> ;
-
-SuiteHeritageGenericite -> adresse identificateur_type SuiteHeritageGenericite ;
-
-SuiteHeritageGenericite -> ;
+--TODO (Generics)
+--ParametresGenericite -> ParametreGenericite SuiteParametresGenericite ;
+--
+--
+--SuiteParametresGenericite -> virgule ParametreGenericite SuiteParametresGenericite ;
+--
+--SuiteParametresGenericite -> ;
+--
+--
+--ParametreGenericite -> identificateur_type HeritageGenericite ;
+--
+--ParametreGenericite -> choix HeritageGenericite ;
+--
+--
+--HeritageGenericite -> extension identificateur_type SuiteHeritageGenericite ;
+--
+--HeritageGenericite -> ;
+--
+--SuiteHeritageGenericite -> adresse identificateur_type SuiteHeritageGenericite ;
+--
+--SuiteHeritageGenericite -> ;
 
 
 --TODO (Generics)
@@ -460,34 +477,35 @@ end
 --InstanceGenericite -> inferieur ArgumentsGenericite superieur ;
 
 
-ArgumentsGenericite -> ArgumentGenericite SuiteArgumentsGenericite ;
-
-
-SuiteArgumentsGenericite -> virgule ArgumentGenericite SuiteArgumentsGenericite ;
-
-SuiteArgumentsGenericite -> ;
-
-
-ArgumentGenericite -> identificateur_type InstanceGenericite ;
-
-ArgumentGenericite -> type_String ;
+--TODO (Generics)
+--ArgumentsGenericite -> ArgumentGenericite SuiteArgumentsGenericite ;
+--
+--
+--SuiteArgumentsGenericite -> virgule ArgumentGenericite SuiteArgumentsGenericite ;
+--
+--SuiteArgumentsGenericite -> ;
+--
+--
+--ArgumentGenericite -> identificateur_type InstanceGenericite ;
+--
+--ArgumentGenericite -> type_String ;
 
 
 ElementsClasse -> DroitAcces ElementClasse #inh ElementsClasse #ast;
 #inh {
 do
     if !ElementsClasse^tds.knows(ElementClasse^ast.getName()) then
-        ElementsClasse^tds.add(ElementClasse^ast.getName());
+        ElementsClasse^tds.register(ElementClasse^ast);
         ElementsClasse1^tds := ElementsClasse^tds;
     else
-          error(MiniJava_ClassElement_Definition, ElementClasse^ast.getName());
+          error(MiniJava_ClassElement_Definition, ElementClasse^ast);
     end
 end
 }
 #ast {
 do
     ElementsClasse1^ast.add(
-        ElementsClasse^factory.createClassElement(DroitAcces^ast, ElementClasse^ast)
+        ElementsClasse^factory.createClassElement(ElementClasse^ast, DroitAcces^ast)
         );
     ElementsClasse^ast := ElementsClasse1^ast;
 end
@@ -527,7 +545,7 @@ ElementClasse -> statique AttributOuMethode #ast;
 #ast {
 do
     -- This method just set bool static to true;
-    ElementClasse^ast := ElementClasse^factory.createStaticClassElement(AttributOuMethode^ast);
+    ElementClasse^ast := ElementClasse^factory.createClassElement(AttributOuMethode^ast, NonAccessModifier.Static);
 end
 }
 
@@ -573,10 +591,9 @@ SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Blo
 #ast {
 do
     SuiteAttributOuMethode^type := ClassElementType.Method;
-    SuiteAttributOuMethode^ast :=
-        SuiteAttributOuMethode^factory.createMethodParameters(
-            Parametres^ast, Bloc^ast
-        );
+    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createMethodParameters(
+                                    Parametres^ast, Bloc^ast
+                                  );
 end
 }
 
@@ -593,7 +610,7 @@ end
 Parametres -> #ast;
 #ast {
 do
-    Parametres^ast := new LinkedList<Parameter>();
+    Parametres^ast := new LinkedList<ParameterDeclaration>();
 end
 }
 
@@ -601,10 +618,10 @@ Parametres -> Parametre #inh SuiteParametres #ast;
 #inh {
 do
     if !Parametres^tds.knows(Parametre^ast.getName()) then
-        Parametres^tds.add(Parametre^ast.getName());
+        Parametres^tds.register(Parametre^ast);
         SuiteParametres^tds := Parametres^tds;
     else
-          error(MiniJava_Parameter_Definition, Parametre^ast.getName());
+          error(MiniJava_Parameter_Definition, Parametre^ast);
     end
 end
 }
@@ -619,7 +636,7 @@ end
 Parametre -> Type identificateur #ast;
 #ast {
 do
-    Parametre^ast := Parametre^factory.createParameter(identificateur^txt, Type^ast);
+    Parametre^ast := Parametre^factory.createParameterDeclaration(identificateur^txt, Type^ast);
 end
 }
 
@@ -627,7 +644,7 @@ end
 SuiteParametres -> #ast;
 #ast {
 do
-    SuiteParametres^ast := new LinkedList<Parameter>();
+    SuiteParametres^ast := new LinkedList<ParameterDeclaration>();
 end
 }
 
@@ -635,10 +652,10 @@ SuiteParametres -> virgule Parametre #inh SuiteParametres #ast;
 #inh {
 do
     if !SuiteParametres^tds.knows(Parametre^ast.getName()) then
-        SuiteParametres^tds.add(Parametre^ast.getName());
+        SuiteParametres^tds.register(Parametre^ast);
         SuiteParametres1^tds := SuiteParametres^tds;
     else
-          error(MiniJava_Parameter_Definition, Parametre^ast.getName());
+          error(MiniJava_Parameter_Definition, Parametre^ast);
     end
 end
 }
@@ -699,7 +716,7 @@ end
 TypeAtomique -> type_float #ast;
 #ast {
 do
-   TypeAtomique^ast := TypeAtomique^factory.createFloatType();
+   TypeAtomique^ast := TypeAtomique^factory.createFloatingType();
 end
 }
 
@@ -755,7 +772,7 @@ local
     d: Declaration;
 do
     d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, null);
-    if (Instruction^tds.contains(d.getName())) then
+    if (Instruction^tds.contains(identificateur^txt)) then
         error(Bloc_unexpected_token, identificateur^txt);
     else
         Instruction^tds.register(d);
@@ -794,7 +811,7 @@ do
       o := Affectable^tds.get(identificateur^txt);
       d := o.get();
       match d
-      with VariableDeclaration then SuiteAffectable^support := Affectable^factory.createVariableAssignment( d );
+      with VariableDeclaration then SuiteAffectable^support := Affectable^factory.createVariableAssignment(d);
       with ConstantDeclaration then error(BLOC_not_a_variable, identificateur^txt);
       end
    else
@@ -824,8 +841,15 @@ do
 end
 }
 #ast {
+local
+    sa : Expression;
 do
-   SuiteAffectable^ast := AppelOuAcces^ast;
+    sa := AppelOuAcces^ast;
+    match sa
+    with Assignable then SuiteAffectable^ast := sa;
+    else
+        error(MiniJava_Illegal_Call_Or_Access,identificateur^txt);
+    end
 end
 }
 

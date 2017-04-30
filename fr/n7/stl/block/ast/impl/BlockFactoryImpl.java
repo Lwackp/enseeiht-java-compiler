@@ -1,23 +1,8 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.Assignable;
-import fr.n7.stl.block.ast.AtomicType;
-import fr.n7.stl.block.ast.BinaryOperator;
-import fr.n7.stl.block.ast.Block;
-import fr.n7.stl.block.ast.BlockFactory;
-import fr.n7.stl.block.ast.BooleanValue;
-import fr.n7.stl.block.ast.Sequence;
-import fr.n7.stl.block.ast.ConstantDeclaration;
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.FieldDeclaration;
-import fr.n7.stl.block.ast.FunctionCall;
-import fr.n7.stl.block.ast.Instruction;
-import fr.n7.stl.block.ast.RecordType;
-import fr.n7.stl.block.ast.Type;
-import fr.n7.stl.block.ast.TypeDeclaration;
-import fr.n7.stl.block.ast.UnaryOperator;
-import fr.n7.stl.block.ast.Value;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
+
+import java.util.List;
 
 /**
  * Implementation of the factory for building Abstract Syntax Tree node for the Bloc language.
@@ -32,9 +17,20 @@ public class BlockFactoryImpl implements BlockFactory {
 	public BlockFactoryImpl() {
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.n7.block.ast.ASTFactory#createBinaryExpression(fr.n7.block.ast.Expression, fr.n7.block.ast.Expression)
+	/**
+	 * Create a node for expressions in the Abstract Syntax Tree.
+	 *
+	 * @param _expressions Abstract Syntax Tree for the left parameter of the binary operation.
+	 * @return Abstract Syntax Tree node for expressions.
 	 */
+	@Override
+	public Expression createExpressions(List<Expression> _expressions) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+         * @see fr.n7.block.ast.ASTFactory#createBinaryExpression(fr.n7.block.ast.Expression, fr.n7.block.ast.Expression)
+         */
 	@Override
 	public Expression createBinaryExpression(Expression _left, BinaryOperator _operator, Expression _right) {
 		return new BinaryExpressionImpl(_left,_operator,_right);
@@ -62,6 +58,118 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public VariableDeclaration createVariableDeclaration(String _name, Type _type, Expression _initialValue) {
 		return new VariableDeclarationImpl(_name,_type,_initialValue);
+	}
+
+	/**
+	 * Create a interface declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name        Name of the declared interface.
+	 * @param _generics    Abstract Syntax Tree for the generics of the declared interface.
+	 * @param _inheritance Abstract Syntax Tree for the inherited interfaces of the declared interface.
+	 * @param _elements    Abstract Syntax Tree for the elements of the declared interface.
+	 * @return An InterfaceDeclaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics, List<InheritanceDeclaration> _inheritance, List<ClassElement> _elements) {
+		return null;
+	}
+
+	/**
+	 * Create a class declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name        Name of the declared class.
+	 * @param _generics    Abstract Syntax Tree for the generics of the declared class.
+	 * @param _inheritance Abstract Syntax Tree for the inherited class of the declared class.
+	 * @param _interfaces  Abstract Syntax Tree for the interfaces of the declared class.
+	 * @param _elements    Abstract Syntax Tree for the elements of the declared class.
+	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassDeclaration createClassDeclaration(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
+		return null;
+	}
+
+	/**
+	 * Create a parameter declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name Name of the declared parameter.
+	 * @param _type Abstract Syntax Tree for the type of the declared parameter.
+	 * @return An ParameterDeclaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ParameterDeclaration createParameterDeclaration(String _name, Type _type) {
+		return null;
+	}
+
+	/**
+	 * Create an inherited type declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name Name of the declared inherited type.
+	 * @param _type Abstract Syntax Tree for the generics of the declared inherited type.
+	 * @return An InheritanceDeclaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public InheritanceDeclaration createInheritanceDeclaration(String _name, Object _type) {
+		return null;
+	}
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _element   Element of the declared class element.
+	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassElement createClassElement(ClassElement _element, ElementModifier... _modifiers) {
+		return null;
+	}
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _element   VariableDeclaration of the declared class element.
+	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassElement createClassElement(VariableDeclaration _element, ElementModifier... _modifiers) {
+		return null;
+	}
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _element   Signature of the declared class element.
+	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassElement createClassElement(Object _element, ElementModifier... _modifiers) {
+		return null;
+	}
+
+	/**
+	 * Create a function declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _parameters Abstract Syntax Tree for the parameters of the declared function.
+	 * @param _body       Abstract Syntax Tree for the body of the declared function.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public Object createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body) {
+		return null;
+	}
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _constructor Abstract Syntax Tree of the declared class constructor.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassElement createClassConstructor(Object _constructor) {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -122,20 +230,23 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new RepetitionImpl(_condition,_body);
 	}
 
+	/**
+	 * Create a return node in the Abstract Syntax Tree.
+	 *
+	 * @param _return Expression node in the Abstract Syntax Tree whose value is returned.
+	 * @return A Return node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public Instruction createReturn(Expression _return) {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.TypeFactory#createBooleanType()
 	 */
 	@Override
 	public Type createBooleanType() {
 		return AtomicType.BooleanType;
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.TypeFactory#createCoupleType(fr.n7.stl.block.ast.Type, fr.n7.stl.block.ast.Type)
-	 */
-	@Override
-	public Type createCoupleType(Type _first, Type _second) {
-		return new CoupleTypeImpl( _first, _second);
 	}
 
 	/* (non-Javadoc)
@@ -198,6 +309,39 @@ public class BlockFactoryImpl implements BlockFactory {
 		}
 	}
 
+	/**
+	 * Create a node for a floating value expression in the Abstract Syntax Tree.
+	 *
+	 * @param _value Floating value for the Abstract Syntax Tree FloatingValue node.
+	 * @return Abstract Syntax Tree node for the floating constant.
+	 */
+	@Override
+	public Value createFloatingValue(String _value) {
+		return null;
+	}
+
+	/**
+	 * Create a node for a char value expression in the Abstract Syntax Tree.
+	 *
+	 * @param _value Char value for the Abstract Syntax Tree CharValue node.
+	 * @return Abstract Syntax Tree node for the char constant.
+	 */
+	@Override
+	public Value createCharValue(String _value) {
+		return null;
+	}
+
+	/**
+	 * Create a node for a string value expression in the Abstract Syntax Tree.
+	 *
+	 * @param _value String value for the Abstract Syntax Tree StringValue node.
+	 * @return Abstract Syntax Tree node for the string constant.
+	 */
+	@Override
+	public Value createStringValue(String _value) {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createFunctionCall(fr.n7.stl.block.ast.Expression)
 	 */
@@ -258,10 +402,23 @@ public class BlockFactoryImpl implements BlockFactory {
 	public Assignable createFieldAssignment(Assignable _record, String _name) {
 		return new FieldAssignmentImpl(_record, _name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.InstructionFactory#createBlock()
+
+	/**
+	 * Create a root Program node in the Abstract Syntax Tree.
+	 *
+	 * @param _interfaces Abstract Syntax Tree of the interfaces contained in the program.
+	 * @param _classes    Abstract Syntax Tree of the classes contained in the program.
+	 * @param _main       Abstract Syntax Tree of the main method contained in the program.
+	 * @return A Program node in the Abstract Syntax Tree.
 	 */
+	@Override
+	public Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, Object _main) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+         * @see fr.n7.stl.block.ast.InstructionFactory#createBlock()
+         */
 	@Override
 	public Block createBlock() {
 		return createBlock((Block)null);
@@ -286,16 +443,6 @@ public class BlockFactoryImpl implements BlockFactory {
 		_local.addAll(_content);
 		return _local;
 	}
-
-	// <REMOVE>
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.InstructionFactory#createAssignment(java.lang.String, fr.n7.stl.block.ast.Expression)
-	 */
-//	@Override
-//	public Instruction createAssignment(String _name, Expression _value) {
-//		return new AssignmentImpl(_name,_value);
-//	}
-	// </REMOVE>
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createConditional(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Block)
@@ -362,14 +509,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.TypeFactory#createFieldDeclaration(java.lang.String, fr.n7.stl.block.ast.Type)
-	 */
-	@Override
-	public FieldDeclaration createFieldDeclaration(String _name, Type _type) {
-		return new FieldDeclarationImpl(_name,_type);
-	}
-
-	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createTypeConversion(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Type)
 	 */
 	@Override
@@ -427,6 +566,29 @@ public class BlockFactoryImpl implements BlockFactory {
 
 	public Expression createAddressAccess(Expression _assignable)  {
 		return new AddressAccessImpl(_assignable);
+	}
+
+	/**
+	 * Create a node for an access to the function in an expression in the Abstract Syntax Tree.
+	 *
+	 * @param _variable Abstract Syntax Tree node for the function.
+	 * @return Abstract Syntax Tree node for the access of the content of the function.
+	 */
+	@Override
+	public Expression createFunctionAccess(Expression _variable) {
+		return null;
+	}
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 *
+	 * @param _variable   Abstract Syntax Tree node for the accessed function.
+	 * @param _parameters Abstract Syntax Tree node for the paramters of the accessed function.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	@Override
+	public Expression createFunctionAccess(Expression _variable, List<Expression> _parameters) {
+		return null;
 	}
 
 	/* (non-Javadoc)

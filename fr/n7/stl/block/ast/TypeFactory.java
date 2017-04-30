@@ -37,14 +37,6 @@ public interface TypeFactory {
 	 */
     Type createStringType();
 	
-	/**
-	 * Create an Abstract Syntax Tree node for a couple type.
-	 * @param _first Abstract Syntax Tree for the type of the first element of the couple.
-	 * @param _second Abstract Syntax Tree for the type of the second element of the couple.
-	 * @return Abstract Syntax Tree node for a couple type.
-	 */
-    Type createCoupleType(Type _first, Type _second);
-	
 	/** 
 	 * Create an Abstract Syntax Tree node for an array type.
 	 * @param _element Abstract Syntax Tree for the type of the elements in the array type.
@@ -89,13 +81,5 @@ public interface TypeFactory {
 	 * @return Abstract Syntax Tree node for a record type.
 	 */
     RecordType createRecordType(String _name, Iterable<FieldDeclaration> _fields);
-	
-	/**
-	 * Create an Abstract Syntax Tree node for a field declaration in a record type.
-	 * @param _name Name of the record field.
-	 * @param _type Type of the record field.
-	 * @return  Abstract Syntax Tree node for a field declaration in a record type.
-	 */
-    FieldDeclaration createFieldDeclaration(String _name, Type _type);
 
 }
