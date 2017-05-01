@@ -25,10 +25,10 @@ compile :
 	$(JAVAC) -classpath $(EGGJAR):. Main.java
 
 exec :
-    $(JAVA) -classpath $(EGGJAR):. Main tests/test_integer.bloc;
+    $(JAVA) -classpath $(EGGJAR):. Main tests/Test_integer.java;
 
 tests : clean legg compile
-	for FICHIER in tests/test*.bloc; do\
+	for FICHIER in tests/test*.java; do\
 		echo Working with $$FICHIER; \
 		$(JAVA) -classpath $(EGGJAR):. Main $$FICHIER 2> /dev/null > $${FICHIER%%.*}.ast; \
 	done
@@ -46,4 +46,4 @@ clean :
 	-rm -rf tests/*.res
 
 debug : clean legg compile
-	$(JAVA) -classpath $(EGGJAR):. Main tests/test_2d_array.bloc;
+	$(JAVA) -classpath $(EGGJAR):. Main tests/Test_integer.java;

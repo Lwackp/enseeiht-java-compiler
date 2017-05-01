@@ -1,11 +1,20 @@
 package fr.n7.stl.block.ast;
 
+import java.util.List;
+
 /**
  * Factory to create Abstract Syntax Tree nodes for common expressions in programming languages.
  * @author Marc Pantel
  *
  */
 public interface ExpressionFactory {
+
+	/**
+	 * Create a node for expressions in the Abstract Syntax Tree.
+	 * @param _expressions Abstract Syntax Tree for the left parameter of the binary operation.
+	 * @return Abstract Syntax Tree node for expressions.
+	 */
+	Expression createExpressions(List<Expression> _expressions);
 
 	/**
 	 * Create a node for a binary expression in the Abstract Syntax Tree.
@@ -37,6 +46,29 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the boolean constant.
 	 */
     Value createBooleanValue(boolean _value);
+
+	/**
+	 * Create a node for a floating value expression in the Abstract Syntax Tree.
+	 * @param _value Floating value for the Abstract Syntax Tree FloatingValue node.
+	 * @return Abstract Syntax Tree node for the floating constant.
+	 */
+	Value createFloatingValue(String _value);
+
+
+	/**
+	 * Create a node for a char value expression in the Abstract Syntax Tree.
+	 * @param _value Char value for the Abstract Syntax Tree CharValue node.
+	 * @return Abstract Syntax Tree node for the char constant.
+	 */
+	Value createCharValue(String _value);
+
+
+	/**
+	 * Create a node for a string value expression in the Abstract Syntax Tree.
+	 * @param _value String value for the Abstract Syntax Tree StringValue node.
+	 * @return Abstract Syntax Tree node for the string constant.
+	 */
+	Value createStringValue(String _value);
 	
 	// <REMOVE>
 	// public Expression createVariableUse(String _name);
@@ -173,6 +205,21 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
 	 */
     Expression createAddressAccess(Expression _variable);
+
+	/**
+	 * Create a node for an access to the function in an expression in the Abstract Syntax Tree.
+	 * @param _variable Abstract Syntax Tree node for the function.
+	 * @return Abstract Syntax Tree node for the access of the content of the function.
+	 */
+	Expression createFunctionAccess(Expression _variable);
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 * @param _variable Abstract Syntax Tree node for the accessed function.
+	 * @param _parameters Abstract Syntax Tree node for the paramters of the accessed function.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	Expression createFunctionAccess(Expression _variable, List<Expression> _parameters);
 		
 	/**
 	 * Create a node for a type conversion of an expression in the Abstract Syntax Tree.

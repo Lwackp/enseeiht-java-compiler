@@ -1,6 +1,5 @@
 package fr.n7.stl.block.ast.impl;
 
-import egg.S_Facteur_Bloc;
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Library;
