@@ -194,10 +194,10 @@ public interface ExpressionFactory {
 
 	/**
 	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
-	 * @param _type Abstract Syntax Tree node for the pointer.
-	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
+	 * @param _type Abstract Syntax Tree node for the object.
+	 * @return Abstract Syntax Tree node for the access of the content of the object.
 	 */
-    Expression createPointerAllocation(Type _type);
+    Expression createObjectAllocation(Type _type);
 
 	/**
 	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
@@ -216,10 +216,26 @@ public interface ExpressionFactory {
 	/**
 	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
 	 * @param _variable Abstract Syntax Tree node for the accessed function.
-	 * @param _parameters Abstract Syntax Tree node for the paramters of the accessed function.
+	 * @param _parameters Abstract Syntax Tree node for the parameters of the accessed function.
 	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
 	 */
 	Expression createFunctionAccess(Expression _variable, List<Expression> _parameters);
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 * @param _type Abstract Syntax Tree node for the accessed Type.
+	 * @param _id Abstract Syntax Tree node for the name of the accessed attribute.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	Expression createStaticCallOrAccess(String _type, String _id);
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 * @param _affectation Abstract Syntax Tree node for the accessed function.
+	 * @param _suiteAffectation Abstract Syntax Tree node for the value of the accessed function.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	Expression createAffectation(Expression _affectation, Expression _suiteAffectation);
 		
 	/**
 	 * Create a node for a type conversion of an expression in the Abstract Syntax Tree.
