@@ -134,6 +134,33 @@ public interface InstructionFactory {
 	 */
 	ClassElement createClassElement(Object _element, ElementModifier... _modifiers);
 
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared class element.
+	 * @param _type Abstract Syntax Tree for the generics of the declared class element.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	ClassElement createClassElement(String _name, Type _type);
+
+	/**
+     * Create a class element declaration node in the Abstract Syntax Tree.
+     * @param _name Name of the declared class element.
+     * @param _type Abstract Syntax Tree for the generics of the declared class element.
+     * @param _params
+     * @return An ClassElement node in the Abstract Syntax Tree.
+     */
+    ClassElement createClassElement(String _name, Type _type, Object _params);
+
+    /**
+     * Create a class element declaration node in the Abstract Syntax Tree.
+     * @param _name Name of the declared class element.
+     * @param _type Abstract Syntax Tree for the generics of the declared class element.
+     * @param _parameters Abstract Syntax Tree for the parameters of the declared class.
+     * @param _body Abstract Syntax Tree for the body of the declared class.
+     * @return An ClassElement node in the Abstract Syntax Tree.
+     */
+    ClassElement createClassElement(String _name, Type _type, Object _parameters, Block... _body);
+
 	//TODO:n Create Method Parameter Class
 	/**
 	 * Create a function declaration node in the Abstract Syntax Tree.

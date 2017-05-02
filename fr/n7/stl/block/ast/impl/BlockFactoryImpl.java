@@ -149,6 +149,21 @@ public class BlockFactoryImpl implements BlockFactory {
 		return null;
 	}
 
+	@Override
+	public ClassElement createClassElement(String _name, Type _type) {
+		return null;
+	}
+
+	@Override
+	public ClassElement createClassElement(String _name, Type _type, Object _params) {
+		return null;
+	}
+
+	@Override
+	public ClassElement createClassElement(String _name, Type _type, Object _parameters, Block... _body) {
+		return null;
+	}
+
 	/**
 	 * Create a function declaration node in the Abstract Syntax Tree.
 	 *

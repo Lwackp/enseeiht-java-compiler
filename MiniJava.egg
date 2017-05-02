@@ -564,16 +564,26 @@ end
 }
 
 
---TODO (ClassElement)
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
 do
-    AttributOuMethode^ast := null;
+    if SuiteAttributOuMethode^type = ClassElementType.Attribute then
+        AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
+        Type^ast);
+    else
+        AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
+                Type^ast, SuiteAttributOuMethode^ast);
+    end
 end
 }
---
---AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc ;
 
+AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
+#ast {
+do
+    AttributOuMethode^ast := AttributOuMethode^factory.createClassElement
+    (identificateur^txt, AtomicType.VoidType, Parametres^ast, Bloc^ast);
+end
+}
 
 SuiteAttributOuMethode -> point_virgule #ast;
 #ast {
