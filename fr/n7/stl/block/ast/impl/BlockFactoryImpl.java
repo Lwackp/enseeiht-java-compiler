@@ -1,6 +1,9 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
+import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Register;
+import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.List;
 
@@ -71,7 +74,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics, List<InheritanceDeclaration> _inheritance, List<ClassElement> _elements) {
-		return null;
+		return new InterfaceDeclarationImpl(_name, _generics, _inheritance, _elements);
 	}
 
 	/**
@@ -86,7 +89,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassDeclaration createClassDeclaration(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
-		return null;
+		return new ClassDeclarationImpl(_name, _generics, _inheritance, _interfaces, _elements);
 	}
 
 	/**
@@ -98,7 +101,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ParameterDeclaration createParameterDeclaration(String _name, Type _type) {
-		return null;
+		return new ParameterDeclarationImpl(_name, _type);
 	}
 
 	/**
@@ -439,7 +442,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, Object _main) {
-		return null;
+		return new ProgramImpl(_interfaces, _classes, _main);
 	}
 
 	/* (non-Javadoc)
