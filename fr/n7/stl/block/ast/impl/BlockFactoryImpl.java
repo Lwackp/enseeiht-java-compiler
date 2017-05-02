@@ -113,7 +113,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public InheritanceDeclaration createInheritanceDeclaration(String _name, Object _type) {
-		return null;
+		return new InheritanceDeclarationImpl(_name, _type);
 	}
 
 	/**
@@ -221,16 +221,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	public Assignable createVariableAssignment(VariableDeclaration _declaration) {
 		return new VariableAssignmentImpl(_declaration);
 	}
-
-	// <REMOVE>
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createVariableUse(java.lang.String)
-	 */
-//	@Override
-//	public Expression createVariableUse(String _name) {
-//		return new VariableUseImpl(_name);
-//	}
-	// </REMOVE>
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createConditional(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Block, fr.n7.stl.block.ast.Block)
@@ -357,7 +347,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Value createCharValue(String _value) {
-		return null;
+		return new CharValueImpl(_value);
 	}
 
 	/**
@@ -368,7 +358,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Value createStringValue(String _value) {
-		return null;
+		return new StringValueImpl(_value);
 	}
 
 	/* (non-Javadoc)
@@ -590,7 +580,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createObjectAllocation(Type _type) {
-		return null;
+		return new ObjectAllocationImpl(_type);
 	}
 
 	public Expression createAddressAccess(Expression _assignable)  {
