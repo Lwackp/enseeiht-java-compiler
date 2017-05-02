@@ -1,9 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
-import fr.n7.stl.tam.ast.Fragment;
-import fr.n7.stl.tam.ast.Register;
-import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.List;
 
@@ -125,7 +122,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(ClassElement _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	/**
@@ -164,7 +161,7 @@ public class BlockFactoryImpl implements BlockFactory {
 
 	@Override
 	public ClassElement createClassElement(String _name, Type _type, Object _parameters, Block... _body) {
-		return null;
+		return new ClassElementImpl(_name, _type, _parameters,_body);
 	}
 
 	/**
