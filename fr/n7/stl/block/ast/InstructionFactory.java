@@ -225,4 +225,11 @@ public interface InstructionFactory {
 	 */
     Instruction createPrinter(Expression _value);
 
+	/**
+	 * Create a void instruction node in the Abstract Syntax Tree.
+	 * @param _expression Expression node in the Abstract Syntax Tree whose expression is executed.
+	 * @return A Void Instruction node in the Abstract Syntax Tree.
+	 */
+	Instruction createVoidInstruction(Expression _expression);
+
 }

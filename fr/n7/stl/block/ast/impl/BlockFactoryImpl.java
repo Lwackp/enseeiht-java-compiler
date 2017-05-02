@@ -265,6 +265,17 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new PrinterImpl(_value);
 	}
 
+	/**
+	 * Create a void instruction node in the Abstract Syntax Tree.
+	 *
+	 * @param _expression Expression node in the Abstract Syntax Tree whose expression is executed.
+	 * @return A Void Instruction node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public Instruction createVoidInstruction(Expression _expression) {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createFirst(fr.n7.stl.block.ast.Expression)
 	 */
@@ -367,7 +378,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-         * @see fr.n7.stl.block.ast.ExpressionFactory#createPointerAssignment(fr.n7.stl.block.ast.Assignable)
+         * @see fr.n7.stl.block.ast.ExpressionFactory#createArrayAllocation(fr.n7.stl.block.ast.Assignable)
          */
 	@Override
 	public Expression createArrayAllocation(Type _type, Expression _size) {
@@ -560,8 +571,8 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createPointerAssignment(fr.n7.stl.block.ast.Assignable)
 	 */
 	@Override
-	public Expression createPointerAllocation(Type _type) {
-		return new PointerAllocationImpl(_type);
+	public Expression createObjectAllocation(Type _type) {
+		return null;
 	}
 
 	public Expression createAddressAccess(Expression _assignable)  {
@@ -588,6 +599,30 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createFunctionAccess(Expression _variable, List<Expression> _parameters) {
+		return null;
+	}
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 *
+	 * @param _type Abstract Syntax Tree node for the accessed Type.
+	 * @param _id   Abstract Syntax Tree node for the name of the accessed attribute.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	@Override
+	public Expression createStaticCallOrAccess(String _type, String _id) {
+		return null;
+	}
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 *
+	 * @param _affectation      Abstract Syntax Tree node for the accessed function.
+	 * @param _suiteAffectation Abstract Syntax Tree node for the value of the accessed function.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	@Override
+	public Expression createAffectation(Expression _affectation, Expression _suiteAffectation) {
 		return null;
 	}
 

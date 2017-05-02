@@ -10,21 +10,21 @@ option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
-inh factory	: BlockFactory for Acces, Affectable, Appel, AppelOuAcces, AttributOuMethode, Bloc, Classe, Classes,
-              Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse, ElementsInterface, Expression,
-              Expressions, Facteur, HeritageClasse, HeritageInterface, ImplantationInterface, Instruction,
-              Instructions, Interface, Interfaces, MethodePrincipale, Parametre, Parametres, Principale,Programme,
-              Signature, SuiteAffectable, SuiteAttributOuMethode, SuiteCondition, SuiteConditionnelle,
-              SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau, SuiteParametres, SuiteTerme,
-              SuiteTypeAtomique, Terme, Type, TypeAtomique, Valeur;
-inh tds     : SymbolTable for   Acces, Affectable, Appel, AppelOuAcces, AttributOuMethode, Bloc, Classe, Classes,
-              Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse, ElementsInterface, Expression,
-              Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface, ImplantationInterface, Instruction,
-              Instructions, Interface, Interfaces, MethodePrincipale, Parametres, Principale, Programme, Signature,
-              SuiteAffectable, SuiteAttributOuMethode, SuiteCondition, SuiteConditionnelle, SuiteExpressions,
-              SuiteFacteur, SuiteHeritageInterface, SuiteNouveau, SuiteParametres, SuiteTerme, Terme;
-inh support : Assignable for SuiteAffectable;
-inh support : Expression for AppelOuAcces, Appel, Acces;
+inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode, Bloc,
+              Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
+              ElementsInterface, Expression, Expressions, Facteur, HeritageClasse, HeritageInterface,
+              ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
+              Parametres, Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode, SuiteCondition,
+              SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
+              SuiteParametres, SuiteTerme, SuiteTypeAtomique, Terme, Type, TypeAtomique, Valeur;
+inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode,
+              Bloc, Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
+              ElementsInterface, Expression, Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface,
+              ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametres,
+              Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode,SuiteCondition,
+              SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
+              SuiteParametres, SuiteTerme, Terme;
+inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
 
@@ -34,9 +34,8 @@ syn ast		: Type for Type, TypeAtomique, SuiteTypeAtomique;
 syn ast		: Instruction for Instruction;
 syn ast     : List<Instruction> for Instructions;
 syn ast		: Expression for Expression, Facteur, SuiteFacteur, SuiteNouveau, Terme, SuiteTerme, Condition,
-              SuiteCondition, Acces, Appel, AppelOuAcces;
+              SuiteCondition, Acces, Appel, AppelOuAcces, Affectation, SuiteAffectation, Arguments;
 syn ast     : List<Expression> for Expressions, SuiteExpressions;
-syn ast     : Assignable for Affectable, SuiteAffectable;
 syn ast     : Value for Valeur;
 syn ast     : InterfaceDeclaration for Interface;
 syn ast     : List<InterfaceDeclaration> for Interfaces;
@@ -93,7 +92,6 @@ sugar  tant_que			    	is    "while";
 sugar  retour					is    "return";
 sugar  type_int			    	is    "int";
 sugar  type_bool				is    "boolean";
-sugar  type_float				is    "float";
 sugar  type_char				is    "char";
 sugar  type_String				is    "String";
 sugar vide			    		is    "void";
@@ -713,13 +711,6 @@ do
 end
 }
 
-TypeAtomique -> type_float #ast;
-#ast {
-do
-   TypeAtomique^ast := TypeAtomique^factory.createFloatingType();
-end
-}
-
 TypeAtomique -> type_String #ast;
 #ast {
 do
@@ -786,86 +777,91 @@ end
 }
 
 
-Instruction -> Affectable affectation Expression point_virgule #ast ;
+--Instruction -> Affectable affectation Expression point_virgule #ast ;
+--#ast {
+--do
+--      Instruction^ast := Instruction^factory.createAssignment(Affectable^ast, Expression^ast);
+--end
+--}
+--
+--
+--Affectable -> parenthese_ouvrante Affectable parenthese_fermante #ast ;
+--#ast {
+--do
+--   Affectable^ast := Affectable1^ast;
+--end
+--}
+--
+--Affectable -> identificateur #inh SuiteAffectable #ast ;
+--#inh {
+--local
+--   o : Optional<Declaration>;
+--   d : Declaration;
+--do
+--   if (Affectable^tds.knows(identificateur^txt)) then
+--      o := Affectable^tds.get(identificateur^txt);
+--      d := o.get();
+--      match d
+--      with VariableDeclaration then SuiteAffectable^support := Affectable^factory.createVariableAssignment(d);
+--      with ConstantDeclaration then error(BLOC_not_a_variable, identificateur^txt);
+--      end
+--   else
+--      error(BLOC_undefined_ident, identificateur^txt);
+--   end
+--end
+--}
+--
+--#ast {
+--do
+--   Affectable^ast := SuiteAffectable^ast;
+--end
+--}
+--
+--
+--SuiteAffectable -> #ast ;
+--#ast {
+--do
+--   SuiteAffectable^ast := SuiteAffectable^support;
+--end
+--}
+--
+--SuiteAffectable -> point identificateur #inh AppelOuAcces #ast;
+--#inh {
+--do
+--    AppelOuAcces^support := SuiteAffectable^factory.createFieldAssignment(SuiteAffectable^support,identificateur^txt);
+--end
+--}
+--#ast {
+--local
+--    sa : Expression;
+--do
+--    sa := AppelOuAcces^ast;
+--    match sa
+--    with Assignable then SuiteAffectable^ast := sa;
+--    else
+--        error(MiniJava_Illegal_Call_Or_Access,identificateur^txt);
+--    end
+--end
+--}
+--
+--SuiteAffectable -> crochet_ouvrant Expression crochet_fermant #inh SuiteAffectable #ast ;
+--#inh {
+--do
+--   SuiteAffectable1^support := SuiteAffectable^factory.createArrayAssignment(SuiteAffectable^support,Expression^ast);
+--end
+--}
+--
+--#ast {
+--do
+--   SuiteAffectable^ast := SuiteAffectable1^ast;
+--end
+--}
+Instruction -> Expression point_virgule #ast;
 #ast {
 do
-      Instruction^ast := Instruction^factory.createAssignment(Affectable^ast, Expression^ast);
+    Instruction^ast := Instruction^factory.createVoidInstruction(Expression^ast);
 end
 }
-
-
-Affectable -> parenthese_ouvrante Affectable parenthese_fermante #ast ;
-#ast {
-do
-   Affectable^ast := Affectable1^ast;
-end
-}
-
-Affectable -> identificateur #inh SuiteAffectable #ast ;
-#inh {
-local
-   o : Optional<Declaration>;
-   d : Declaration;
-do
-   if (Affectable^tds.knows(identificateur^txt)) then
-      o := Affectable^tds.get(identificateur^txt);
-      d := o.get();
-      match d
-      with VariableDeclaration then SuiteAffectable^support := Affectable^factory.createVariableAssignment(d);
-      with ConstantDeclaration then error(BLOC_not_a_variable, identificateur^txt);
-      end
-   else
-      error(BLOC_undefined_ident, identificateur^txt);
-   end
-end
-}
-
-#ast {
-do
-   Affectable^ast := SuiteAffectable^ast;
-end
-}
-
-
-SuiteAffectable -> #ast ;
-#ast {
-do
-   SuiteAffectable^ast := SuiteAffectable^support;
-end
-}
-
-SuiteAffectable -> point identificateur #inh AppelOuAcces #ast;
-#inh {
-do
-    AppelOuAcces^support := SuiteAffectable^factory.createFieldAssignment(SuiteAffectable^support,identificateur^txt);
-end
-}
-#ast {
-local
-    sa : Expression;
-do
-    sa := AppelOuAcces^ast;
-    match sa
-    with Assignable then SuiteAffectable^ast := sa;
-    else
-        error(MiniJava_Illegal_Call_Or_Access,identificateur^txt);
-    end
-end
-}
-
-SuiteAffectable -> crochet_ouvrant Expression crochet_fermant #inh SuiteAffectable #ast ;
-#inh {
-do
-   SuiteAffectable1^support := SuiteAffectable^factory.createArrayAssignment(SuiteAffectable^support,Expression^ast);
-end
-}
-
-#ast {
-do
-   SuiteAffectable^ast := SuiteAffectable1^ast;
-end
-}
-
 
 
 Instruction -> si parenthese_ouvrante Expression parenthese_fermante Bloc SuiteConditionnelle #ast;
@@ -911,7 +907,25 @@ do
 end
 }
 
-Expression -> Condition #inh SuiteCondition #ast ;
+--Expression -> Condition #inh SuiteCondition #ast ;
+--#inh {
+--do
+--   SuiteCondition^gauche := Condition^ast ;
+--end
+--}
+--#ast {
+--do
+--    Expression^ast := SuiteCondition^ast;
+--end
+--}
+Expression -> Affectation SuiteAffectation #ast;
+#ast {
+do
+    Expression^ast := Expression^factory.createAffectation(Affectation^ast, SuiteAffectation^ast);
+end
+}
+
+Affectation -> Condition #inh SuiteCondition #ast;
 #inh {
 do
    SuiteCondition^gauche := Condition^ast ;
@@ -919,7 +933,21 @@ end
 }
 #ast {
 do
-    Expression^ast := SuiteCondition^ast;
+    Affectation^ast := SuiteCondition^ast;
+end
+}
+
+SuiteAffectation -> affectation Expression #ast;
+#ast {
+do
+    SuiteAffectation^ast := Expression^ast;
+end
+}
+
+SuiteAffectation -> #ast;
+#ast {
+do
+    SuiteAffectation^ast := null;
 end
 }
 
@@ -1170,6 +1198,26 @@ do
 end
 }
 
+Facteur -> identificateur_type point identificateur #inh AppelOuAcces #ast;
+#inh {
+do
+   AppelOuAcces^support := Facteur^factory.createStaticCallOrAccess(identificateur_type^txt, identificateur^txt);
+end
+}
+#ast {
+do
+    Facteur^ast := AppelOuAcces^ast;
+end
+}
+
+Facteur -> parenthese_ouvrante Expression parenthese_fermante #ast;
+#ast {
+do
+   Facteur^ast := Expression^ast;
+end
+}
+
+
 --TODO(2d array)
 SuiteNouveau -> crochet_ouvrant Expression crochet_fermant #ast;
 #ast {
@@ -1178,7 +1226,32 @@ do
 end
 }
 
--- SuiteNouveau -> ;
+SuiteNouveau -> #inh Arguments #ast;
+#inh {
+do
+    Arguments^support := SuiteNouveau^factory.createObjectAllocation(SuiteNouveau^type);
+end
+}
+#ast {
+do
+    SuiteNouveau^ast := Arguments^ast;
+end
+}
+
+
+Arguments -> parenthese_ouvrante parenthese_fermante #ast;
+#ast {
+do
+   Arguments^ast := Arguments^factory.createFunctionAccess(Arguments^support);
+end
+}
+
+Arguments -> parenthese_ouvrante Expressions parenthese_fermante #ast;
+#ast {
+do
+   Arguments^ast := Arguments^factory.createFunctionAccess(Arguments^support, Expressions^ast);
+end
+}
 
 
 Facteur -> Valeur #ast;
@@ -1299,23 +1372,45 @@ end
 }
 
 
-Appel -> parenthese_ouvrante parenthese_fermante #inh AppelOuAcces #ast;
-#inh {
+--Appel -> parenthese_ouvrante parenthese_fermante #inh AppelOuAcces #ast;
+--#inh {
+--do
+--   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support);
+--end
+--}
+--
+--#ast {
+--do
+--   Appel^ast := AppelOuAcces^ast;
+--end
+--}
+--
+--Appel -> parenthese_ouvrante Expressions parenthese_fermante #inh AppelOuAcces #ast;
+--#inh {
+--do
+--   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support, Expressions^ast);
+--end
+--}
+--
+--#ast {
+--do
+--   Appel^ast := AppelOuAcces^ast;
+--end
+--}
+
+Appel -> #inh1 Arguments #inh2 AppelOuAcces #ast;
+#inh1 {
 do
-   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support);
+   Arguments^support := Appel^support;
 end
 }
-
-#ast {
+#inh2 {
+local
+    a : List<Expression>;
 do
-   Appel^ast := AppelOuAcces^ast;
-end
-}
-
-Appel -> parenthese_ouvrante Expressions parenthese_fermante #inh AppelOuAcces #ast;
-#inh {
-do
-   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support, Expressions^ast);
+   a := new LinkedList<Expression>();
+   a.add(Arguments^ast);
+   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support, a);
 end
 }
 
