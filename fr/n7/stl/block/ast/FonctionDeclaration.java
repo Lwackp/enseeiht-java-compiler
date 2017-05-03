@@ -6,7 +6,7 @@ import java.util.List;
  * @author Matthieu Perrier
  *
  */
-public interface MethodDeclaration extends Declaration, Instruction {
+public interface FonctionDeclaration extends Declaration, Instruction {
 
 	/**
 	 * Synthesized semantics attribute for the type of the returned variable.
