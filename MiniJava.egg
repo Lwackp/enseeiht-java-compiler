@@ -317,11 +317,21 @@ end
 }
 #ast {
 do
-    Signature^ast := null;
+    Signature^ast := Signature^factory.createSignature(identificateur^txt, AtomicType.VoidType, Parametres^ast);
 end
 }
---
---Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante ;
+
+Signature -> Type identificateur parenthese_ouvrante #inh Parametres parenthese_fermante #ast;
+#inh {
+do
+    Parametres^tds := new SymbolTable(Signature^tds);
+end
+}
+#ast {
+do
+
+    Signature^ast := Signature^factory.createSignature(identificateur^txt, Type^ast, Parametres^ast);
+end}
 
 
 Classes -> Classe #inh Classes #ast;
