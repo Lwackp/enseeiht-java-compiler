@@ -1,9 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
-import fr.n7.stl.tam.ast.Fragment;
-import fr.n7.stl.tam.ast.Register;
-import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.List;
 
@@ -101,7 +98,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassDeclaration createClassDeclaration(String _name, ClassElement _element) {
-		return null;
+		return new ClassDeclarationImpl(_name, _element);
 	}
 
 	/**
@@ -149,7 +146,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(VariableDeclaration _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	/**
@@ -161,35 +158,22 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(Object _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	@Override
 	public ClassElement createClassElement(String _name, Type _type) {
-		return null;
+		return new ClassElementImpl(_name, _type);
 	}
 
 	@Override
 	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _params) {
-		return null;
+		return new ClassElementImpl(_name, _type, _params);
 	}
 
 	@Override
 	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body) {
-		return null;
-	}
-
-	//TODO: Split _parameters and _body
-	/**
-	 * Create a function declaration node in the Abstract Syntax Tree.
-	 *
-	 * @param _parameters Abstract Syntax Tree for the parameters of the declared function.
-	 * @param _body       Abstract Syntax Tree for the body of the declared function.
-	 * @return An ClassElement node in the Abstract Syntax Tree.
-	 */
-	@Override
-	public List<ParameterDeclaration> createMethodParameters(List<ParameterDeclaration> _parameters, Block _body) {
-		return null;
+		return new ClassElementImpl(_name, _type, _parameters, _body);
 	}
 
 	/* (non-Javadoc)

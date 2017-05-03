@@ -51,6 +51,7 @@ syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
+syn body    : Block for SuiteAttributOuMethode;
 
 -- TODO(AST for the following classes)
 syn ast     : Object for Genericite, InstanceGenericite;
@@ -612,9 +613,8 @@ SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Blo
 #ast {
 do
     SuiteAttributOuMethode^type := ClassElementType.Method;
-    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createMethodParameters(
-                                    Parametres^ast, Bloc^ast
-                                  );
+    SuiteAttributOuMethode^ast := Parametres^ast;
+    SuiteAttributOuMethode^body := Bloc^ast;
 end
 }
 
