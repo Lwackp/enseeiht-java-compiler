@@ -436,7 +436,7 @@ do
     param := MethodePrincipale^factory.createParameterDeclaration(identificateur^txt, st);
     params := new LinkedList<ParameterDeclaration>();
     params.add(param);
-    main := MethodePrincipale^factory.createClassElement("main", AtomicType.VoidType, params);
+    main := MethodePrincipale^factory.createClassElement("main", AtomicType.VoidType, params, Bloc^ast);
     MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
     NonAccessModifier.Static);
 end
@@ -586,7 +586,7 @@ do
         Type^ast);
     else
         AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
-            Type^ast, SuiteAttributOuMethode^ast);
+            Type^ast, SuiteAttributOuMethode^ast, SuiteAttributOuMethode^body);
     end
 end
 }

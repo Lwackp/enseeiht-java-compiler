@@ -19,6 +19,7 @@ public class ClassElementImpl implements ClassElement {
     AccessModifier access = AccessModifier.Public;
 
     public ClassElementImpl(ClassElement element, ElementModifier[] modifiers) {
+        this(((ClassElementImpl)element).name, ((ClassElementImpl)element).type, ((ClassElementImpl)element).parameters, ((ClassElementImpl)element).body);
         this.setModifiers(modifiers);
     }
 
@@ -36,7 +37,7 @@ public class ClassElementImpl implements ClassElement {
     public String toString() {
         StringBuilder _local = new StringBuilder();
 
-        _local.append(access);
+        _local.append(access).append(" ");
         if (b_static) {
             _local.append(NonAccessModifier.Static).append(" ");
         }

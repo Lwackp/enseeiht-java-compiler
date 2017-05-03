@@ -84,7 +84,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             }
         }
 
-        _local.append(" {");
+        _local.append(" {\n");
         for (ClassElement _element : this.elements) {
             _local.append(_element);
         }

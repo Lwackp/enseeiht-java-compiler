@@ -42,7 +42,7 @@ public class ParameterDeclarationImpl implements ParameterDeclaration {
     @Override
     public String toString(){
         StringBuilder _local = new StringBuilder();
-        _local.append(this.type).append(" ").append(this.name).append(" \n");
+        _local.append(this.type).append(" ").append(this.name);
         return String.valueOf(_local);
     }
 
