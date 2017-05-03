@@ -35,4 +35,16 @@ public class ParameterDeclarationImpl implements ParameterDeclaration {
     public Type getType() {
         return this.type;
     }
+
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    @Override
+    public String toString(){
+        StringBuilder _local = new StringBuilder();
+        _local.append(this.type).append(" ").append(this.name).append(" \n");
+        return String.valueOf(_local);
+    }
+
+
 }
