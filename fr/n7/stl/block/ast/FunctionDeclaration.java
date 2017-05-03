@@ -6,7 +6,7 @@ import java.util.List;
  * @author Matthieu Perrier
  *
  */
-public interface FonctionDeclaration extends Declaration, Instruction {
+public interface FunctionDeclaration extends Declaration, Instruction {
 
 	/**
 	 * Synthesized semantics attribute for the type of the returned variable.
@@ -24,7 +24,7 @@ public interface FonctionDeclaration extends Declaration, Instruction {
      * Synthesized semantics attribute for the signature of the method.
 	 * @return signature of the method.
      */
-    Signature getSignature();
+    SignatureDeclaration getSignature();
     
     /**
      * Synthesized semantics attribute for the body of the method.
