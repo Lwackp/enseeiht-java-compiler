@@ -31,7 +31,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 	 * @param _body Body of the declared method
 	 */
 	public FunctionDeclarationImpl(String _name, Type _returnedType, List<ParameterDeclaration> _parameters, Block _body) {
-		//this.signature = new SignatureDeclarationImpl(_name, _returnedType, _body);
+		this.signature = new SignatureDeclarationImpl(_name, _returnedType, _parameters);
 		this.body = _body;
 	}
 	
@@ -69,59 +69,45 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
 	@Override
 	public Type getReturnedType() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.signature.getReturnedType();
 	}
 
 	@Override
 	public List<ParameterDeclaration> getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.signature.getParameters();
 	}
 
 	@Override
 	public SignatureDeclaration getSignature() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.signature;
 	}
 
 	@Override
 	public Block getBody() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.body;
 	}
 	
-	/*
     @Override
     public String toString() {
         StringBuilder _local = new StringBuilder();
 
-        _local.append(access).append(" ");
-        if (b_static) {
-            _local.append(NonAccessModifier.Static).append(" ");
-        }
-        if (b_final) {
-            _local.append(NonAccessModifier.Final).append(" ");
-        }
+        _local.append(this.getName());
 
-        _local.append(this.name);
-
-        if (this.body != null) {
-            _local.append("(");
-            boolean first = true;
-            for (ParameterDeclaration _parameter : this.parameters) {
-                if (!first) {
-                    _local.append(", ");
-                }
-                _local.append(_parameter);
-                first = false;
-            }
-            _local.append(") ").append(this.body);
-
-            return _local.toString();
-        } else {
-            return _local + ";";
+        _local.append("(");
+        boolean first = true;
+        for (ParameterDeclaration _parameter : this.getParameters()) {
+        	if (!first) {
+        		_local.append(", ");
+        	}
+        	_local.append(_parameter);
+        	first = false;
         }
+        _local.append(")");
+        
+        _local.append(this.body);
+        
+        _local.append("\n");
+        return _local.toString();
+
 	}
-	*/
 }
