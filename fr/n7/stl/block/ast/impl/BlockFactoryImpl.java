@@ -134,7 +134,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(ClassElement _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	/**
