@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class ClassElementImpl implements ClassElement {
     Type type;
     List<ParameterDeclaration> parameters;
     Block body;
-    AccessModifier acces = AccessModifier.Public;
+    AccessModifier access = AccessModifier.Public;
 
     public ClassElementImpl(ClassElement element, ElementModifier[] modifiers) {
         this.setModifiers(modifiers);
@@ -23,11 +24,45 @@ public class ClassElementImpl implements ClassElement {
 
     public ClassElementImpl(String name, Type type, List<ParameterDeclaration> parameters, Block body) {
         this.name = name;
-        this.parameters = parameters;
+        this.parameters = new LinkedList<>(parameters);
         this.type = type;
         this.body = body;
     }
 
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(access);
+        if (b_static) {
+            _local.append(NonAccessModifier.Static).append(" ");
+        }
+        if (b_final) {
+            _local.append(NonAccessModifier.Final).append(" ");
+        }
+
+        _local.append(this.name);
+
+        if (this.body != null) {
+            _local.append("(");
+            boolean first = true;
+            for (ParameterDeclaration _parameter : this.parameters) {
+                if (!first) {
+                    _local.append(", ");
+                }
+                _local.append(_parameter);
+                first = false;
+            }
+            _local.append(") ").append(this.body);
+
+            return _local.toString();
+        } else {
+            return _local + ";";
+        }
+    }
     public ClassElementImpl(VariableDeclaration element, ElementModifier[] modifiers) {
         this.setModifiers(modifiers);
         this.name = element.getName();
@@ -55,7 +90,7 @@ public class ClassElementImpl implements ClassElement {
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
@@ -66,7 +101,7 @@ public class ClassElementImpl implements ClassElement {
     public void setModifiers(ElementModifier[] modifiers) {
         for (ElementModifier modifier: modifiers){
             if (modifier instanceof AccessModifier) {
-                this.acces = (AccessModifier) modifier;
+                this.access = (AccessModifier) modifier;
             }
             else if (modifier == NonAccessModifier.Final) {
                 b_final = true;
