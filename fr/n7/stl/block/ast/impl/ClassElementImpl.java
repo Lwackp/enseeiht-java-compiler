@@ -12,22 +12,16 @@ import java.util.List;
 public class ClassElementImpl implements ClassElement {
     boolean b_static = false;
     boolean b_final = false;
-    String name;
-    Type type;
-    List<ParameterDeclaration> parameters;
-    Block body;
+    Declaration declaration;
     AccessModifier access = AccessModifier.Public;
 
-    public ClassElementImpl(ClassElement element, ElementModifier[] modifiers) {
-        this(((ClassElementImpl)element).name, ((ClassElementImpl)element).type, ((ClassElementImpl)element).parameters, ((ClassElementImpl)element).body);
-        this.setModifiers(modifiers);
+    public ClassElementImpl(Declaration _declaration, ElementModifier[] _modifiers) {
+        this.declaration = _declaration;
+        this.setModifiers(_modifiers);
     }
 
-    public ClassElementImpl(String name, Type type, List<ParameterDeclaration> parameters, Block body) {
-        this.name = name;
-        this.parameters = new LinkedList<>(parameters);
-        this.type = type;
-        this.body = body;
+    public ClassElementImpl(ClassElement element, ElementModifier[] _modifiers) {
+        this(((ClassElementImpl)element).declaration, _modifiers);
     }
 
     /* (non-Javadoc)
@@ -45,53 +39,14 @@ public class ClassElementImpl implements ClassElement {
             _local.append(NonAccessModifier.Final).append(" ");
         }
 
-        _local.append(this.name);
+        _local.append(this.declaration);
 
-        if (this.body != null) {
-            _local.append("(");
-            boolean first = true;
-            for (ParameterDeclaration _parameter : this.parameters) {
-                if (!first) {
-                    _local.append(", ");
-                }
-                _local.append(_parameter);
-                first = false;
-            }
-            _local.append(") ").append(this.body);
-
-            return _local.toString();
-        } else {
-            return _local + ";";
-        }
+        return _local.toString();
     }
-    public ClassElementImpl(VariableDeclaration element, ElementModifier[] modifiers) {
-        this.setModifiers(modifiers);
-        this.name = element.getName();
-        this.type = element.getType();
-
-    }
-
-    //TODO le type "Object" n'est pas encore définis
-    public ClassElementImpl(Object element, ElementModifier[] modifiers) {
-        this.setModifiers(modifiers);
-    }
-
-    public ClassElementImpl(String name, Type type) {
-        this.name = name;
-        this.type = type;
-
-    }
-
-    public ClassElementImpl(String name, Type type, List<ParameterDeclaration> params) {
-        this.parameters = params;
-        this.type = type;
-        this.name = name;
-    }
-
 
     @Override
     public String getName() {
-        return this.name;
+        return this.declaration.getName();
     }
 
     @Override

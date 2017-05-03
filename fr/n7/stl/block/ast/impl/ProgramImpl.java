@@ -95,6 +95,18 @@ public class ProgramImpl implements Program {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        for (InterfaceDeclaration _interface : this.interfaces) {
+            _fragment.append(_interface.getCode(_factory));
+        }
+        for (ClassDeclaration _class : this.classes) {
+            _fragment.append(_class.getCode(_factory));
+        }
+
+        _fragment.append(this.main.getCode(_factory));
+
+        _fragment.add(_factory.createPop(0, this.offset));
+        return _fragment;
     }
 }

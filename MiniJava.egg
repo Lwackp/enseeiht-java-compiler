@@ -41,9 +41,11 @@ syn ast     : InterfaceDeclaration for Interface;
 syn ast     : List<InterfaceDeclaration> for Interfaces;
 syn ast     : ClassDeclaration for Classe, Principale;
 syn ast     : List<ClassDeclaration> for Classes;
-syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface, MethodePrincipale, Constructeur;
+syn ast     : ClassElement for ElementClasse, ElementInterface, MethodePrincipale;
+syn ast     : Declaration for AttributOuMethode;
+syn ast     : FunctionDeclaration for Constructeur;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
-syn ast     : Signature for Signature;
+syn ast     : SignatureDeclaration for Signature;
 syn ast     : InheritanceDeclaration for HeritageClasse;
 syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
@@ -430,13 +432,13 @@ local
     st    : Type;
     param : ParameterDeclaration;
     params: List<ParameterDeclaration>;
-    main  : ClassElement;
+    main  : FunctionDeclaration;
 do
     st := MethodePrincipale^factory.createArrayType(AtomicType.StringType);
     param := MethodePrincipale^factory.createParameterDeclaration(identificateur^txt, st);
     params := new LinkedList<ParameterDeclaration>();
     params.add(param);
-    main := MethodePrincipale^factory.createClassElement("main", AtomicType.VoidType, params, Bloc^ast);
+    main := MethodePrincipale^factory.createFunctionDeclaration("main", AtomicType.VoidType, params, Bloc^ast);
     MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
     NonAccessModifier.Static);
 end
@@ -562,7 +564,7 @@ ElementClasse -> AttributOuMethode #ast;
 #ast {
 do
     -- bool static = true; by default
-    ElementClasse^ast := AttributOuMethode^ast;
+    ElementClasse^ast := ElementClasse^factory.createClassElement(AttributOuMethode^ast);
 end
 }
 
@@ -570,7 +572,7 @@ ElementClasse -> Constructeur #ast;
 #ast {
 do
     -- This method just set bool constructor to true;
-    ElementClasse^ast := Constructeur^ast;
+    ElementClasse^ast := ElementClasse^factory.createClassElement(Constructeur^ast);
 end
 }
 
@@ -582,10 +584,10 @@ local
     sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
-        AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
+        AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
         Type^ast);
     else
-        AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
+        AttributOuMethode^ast := AttributOuMethode^factory.createFunctionDeclaration(identificateur^txt,
             Type^ast, SuiteAttributOuMethode^ast, SuiteAttributOuMethode^body);
     end
 end
@@ -594,7 +596,7 @@ end
 AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-    AttributOuMethode^ast := AttributOuMethode^factory.createClassElement
+    AttributOuMethode^ast := AttributOuMethode^factory.createFunctionDeclaration
     (identificateur^txt, AtomicType.VoidType, Parametres^ast, Bloc^ast);
 end
 }
@@ -625,10 +627,11 @@ end
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-    Constructeur^ast := Constructeur^factory.createClassElement(
+    Constructeur^ast := Constructeur^factory.createFunctionDeclaration(
                                         identificateur_type^txt,
                                         AtomicType.VoidType,
-                                        Parametres^ast
+                                        Parametres^ast,
+                                        Bloc^ast
                                       );
 end
 }

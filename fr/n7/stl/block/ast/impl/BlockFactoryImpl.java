@@ -140,40 +140,52 @@ public class BlockFactoryImpl implements BlockFactory {
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
 	 *
-	 * @param _element   VariableDeclaration of the declared class element.
+	 * @param _element   Declaration of the declared class element.
 	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public ClassElement createClassElement(VariableDeclaration _element, ElementModifier... _modifiers) {
+	public ClassElement createClassElement(Declaration _element, ElementModifier... _modifiers) {
 		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
 	 *
-	 * @param _element   Signature of the declared class element.
-	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @param _name   Name of the declared class element.
+	 * @param _type   Abstract Syntax Tree for the generics of the declared class element.
+	 * @param _params
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public ClassElement createClassElement(Object _element, ElementModifier... _modifiers) {
-		return new ClassElementImpl(_element, _modifiers);
+	public SignatureDeclaration createSignature(String _name, Type _type, List<ParameterDeclaration> _params) {
+		return null;
 	}
 
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name   Name of the declared class element.
+	 * @param _type   Abstract Syntax Tree for the generics of the declared class element.
+	 * @param _params
+	 * @param _body
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
 	@Override
-	public ClassElement createClassElement(String _name, Type _type) {
-		return new ClassElementImpl(_name, _type);
+	public FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params, Block _body) {
+		return null;
 	}
 
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _signature Name of the declared class element.
+	 * @param _body
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
 	@Override
-	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _params) {
-		return new ClassElementImpl(_name, _type, _params);
-	}
-
-	@Override
-	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body) {
-		return new ClassElementImpl(_name, _type, _parameters, _body);
+	public FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, Block _body) {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -456,6 +468,18 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public ConstantDeclaration createConstantDeclaration(String _name, Type _type, Expression _value) {
 		return new ConstantDeclarationImpl(_name,_type,_value);
+	}
+
+	/**
+	 * Create a variable declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name Name of the declared variable.
+	 * @param _type Abstract Syntax Tree for the type of the declared variable.
+	 * @return A Variable Declaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public VariableDeclaration createVariableDeclaration(String _name, Type _type) {
+		return new VariableDeclarationImpl(_name, _type);
 	}
 
 	/* (non-Javadoc)

@@ -43,7 +43,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     /**
