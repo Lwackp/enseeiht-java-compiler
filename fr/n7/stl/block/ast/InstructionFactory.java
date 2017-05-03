@@ -141,7 +141,7 @@ public interface InstructionFactory {
 	 * @param _body Abstract Syntax Tree for the body of the declared function.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
-	Object createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body);
+	Object createMethodParameters(List<ParameterDeclaration> _parameters, Block _body);
 
 	//TODO:n Get Constructor Class
 	/**
@@ -231,5 +231,14 @@ public interface InstructionFactory {
 	 * @return A Void Instruction node in the Abstract Syntax Tree.
 	 */
 	Instruction createVoidInstruction(Expression _expression);
+
+	/**
+	 * Create a node for a signature creation expression in the Abstract Syntax Tree.
+	 * @param _id String for identifier.
+	 * @param _type Abstract Syntax Tree node for the type.
+	 * @param _parametres Abstract Syntax Tree node for the parametres.
+	 * @return Abstract Syntax Tree node for a couple containing the _left and _right parts.
+	 */
+	Expression createSignature(String _id, Type _type, List<ParameterDeclaration> _parametres);
 
 }

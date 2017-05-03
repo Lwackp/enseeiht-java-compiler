@@ -257,4 +257,5 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the creation of a collection of values.
 	 */
     Sequence createSequence(Iterable<Expression> _values);
+
 }

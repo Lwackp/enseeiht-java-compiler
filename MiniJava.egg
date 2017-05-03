@@ -27,6 +27,7 @@ inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Argumen
 inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
+inh id      : String for SuiteAttributOuMethode;
 
 syn ast     : Program for Fichier, Programme;
 syn ast     : Block for Bloc, SuiteConditionnelle;
@@ -48,7 +49,7 @@ syn ast     : InheritanceDeclaration for HeritageClasse;
 syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
-syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres;
+syn l_param     : List<ParameterDeclaration> for Parametres, SuiteParametres;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
 
@@ -94,20 +95,20 @@ sugar  type_int			    	is    "int";
 sugar  type_bool				is    "boolean";
 sugar  type_char				is    "char";
 sugar  type_String				is    "String";
-sugar vide			    		is    "void";
-sugar nul						is    "null";
+sugar  vide			    		is    "void";
+sugar  nul						is    "null";
 sugar  choix					is    "\?";
 sugar  deux_points				is    ":";
 sugar  interface				is    "interface";
 sugar  classe					is    "class";
 sugar  extension				is    "extends";
 sugar  implantation				is    "implements";
-sugar public					is    "public";
-sugar protege					is    "protected";
-sugar prive				    	is    "private";
-sugar statique					is    "static";
-sugar final				    	is    "final";
-sugar principale				is    "main";
+sugar  public					is    "public";
+sugar  protege					is    "protected";
+sugar  prive				    is    "private";
+sugar  statique					is    "static";
+sugar  final				    is    "final";
+sugar  principale				is    "main";
 term   chaine					is    "\"([^\"]|\\\")*\"";
 term   caractere				is    "\'[^\']\'";
 term   entier					is    "[0-9]+";
@@ -305,7 +306,6 @@ do
 end
 }
 
--- TODO(Function Signature)
 Signature -> vide identificateur parenthese_ouvrante #inh Parametres parenthese_fermante #ast;
 #inh {
 do
@@ -314,11 +314,24 @@ end
 }
 #ast {
 do
-    Signature^ast := null;
+    Signature^ast := Signature^factory.createSignature(
+        identificateur^txt, AtomicType.VoidType, Parametres^l_param);
 end
 }
---
---Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante ;
+
+
+Signature -> Type identificateur parenthese_ouvrante #inh Parametres parenthese_fermante #ast;
+#inh {
+do
+    Parametres^tds := new SymbolTable(Signature^tds);
+end
+}
+#ast {
+do
+    Signature^ast := Signature^factory.createSignature(
+        identificateur^txt, Type^ast, Parametres^l_param);
+end
+}
 
 
 Classes -> Classe #inh Classes #ast;
@@ -568,7 +581,25 @@ end
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
 do
-    AttributOuMethode^ast := null;
+    if SuiteAttributOuMethode^type = ClassElementType.Attribute then
+        AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
+        Type^ast);
+    else
+        AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
+                Type^ast, SuiteAttributOuMethode^ast);
+        if (SuiteAttributOuMethode^tds.knows(identificateur^txt)) then
+            if !SuiteAttributOuMethode^tds.contains(identificateur^txt) then
+                if SuiteAttributOuMethode^tds.get(identificateur^txt).equals(AttributOuMethode^ast) then
+                --TODO
+
+                end
+            else
+                error()
+            end
+         else
+             SuiteAttributOuMethode^tds := --TODO
+        end
+    end
 end
 }
 --
@@ -590,7 +621,7 @@ SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Blo
 do
     SuiteAttributOuMethode^type := ClassElementType.Method;
     SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createMethodParameters(
-                                    Parametres^ast, Bloc^ast
+                                    Parametres^l_param, Bloc^ast
                                   );
 end
 }
@@ -608,7 +639,7 @@ end
 Parametres -> #ast;
 #ast {
 do
-    Parametres^ast := new LinkedList<ParameterDeclaration>();
+    Parametres^l_param := new LinkedList<ParameterDeclaration>();
 end
 }
 
@@ -625,8 +656,8 @@ end
 }
 #ast {
 do
-    SuiteParametres^ast.add(Parametre^ast);
-    Parametres^ast := SuiteParametres^ast;
+    SuiteParametres^l_param.add(Parametre^ast);
+    Parametres^l_param := SuiteParametres^l_param;
 end
 }
 
@@ -642,7 +673,7 @@ end
 SuiteParametres -> #ast;
 #ast {
 do
-    SuiteParametres^ast := new LinkedList<ParameterDeclaration>();
+    SuiteParametres^l_param := new LinkedList<ParameterDeclaration>();
 end
 }
 
@@ -659,8 +690,8 @@ end
 }
 #ast {
 do
-    SuiteParametres1^ast.add(Parametre^ast);
-    SuiteParametres^ast := SuiteParametres1^ast;
+    SuiteParametres1^l_param.add(Parametre^ast);
+    SuiteParametres^l_param := SuiteParametres1^l_param;
 end
 }
 
