@@ -604,6 +604,7 @@ SuiteAttributOuMethode -> point_virgule #ast;
 do
     SuiteAttributOuMethode^type := ClassElementType.Attribute;
     SuiteAttributOuMethode^ast := null;
+    SuiteAttributOuMethode^body := null;
 end
 }
 
