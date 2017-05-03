@@ -589,15 +589,15 @@ do
                 Type^ast, SuiteAttributOuMethode^ast);
         if (SuiteAttributOuMethode^tds.knows(identificateur^txt)) then
             if !SuiteAttributOuMethode^tds.contains(identificateur^txt) then
-                if SuiteAttributOuMethode^tds.get(identificateur^txt).equals(AttributOuMethode^ast) then
-                --TODO
+                if !SuiteAttributOuMethode^tds.get(identificateur^txt).equals(AttributOuMethode^ast) then
+                    error();
 
                 end
             else
-                error()
+                error();
             end
          else
-             SuiteAttributOuMethode^tds := --TODO
+             SuiteAttributOuMethode^tds.add(AttributOuMethode^ast);
         end
     end
 end
