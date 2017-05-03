@@ -17,14 +17,33 @@ public class ProgramImpl implements Program {
 
     private List<InterfaceDeclaration> interfaces;
     private List<ClassDeclaration> classes;
-    private Object main;
+    private ClassDeclaration main;
 
     private int offset;
 
-    public ProgramImpl(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, Object _main) {
+    public ProgramImpl(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, ClassDeclaration _main) {
         this.interfaces = new LinkedList<>(_interfaces);
         this.classes = new LinkedList<>(_classes);
         this.main = _main;
+    }
+
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        for (InterfaceDeclaration _interface : this.interfaces) {
+            _local.append(_interface);
+        }
+        for (ClassDeclaration _class : this.classes) {
+            _local.append(_class);
+        }
+
+        _local.append(this.main);
+
+        return "{\n" + _local + "}\n" ;
     }
 
     /**
@@ -42,11 +61,7 @@ public class ProgramImpl implements Program {
         for (ClassDeclaration _class : this.classes) {
             _result = _result && _class.checkType();
         }
-        //TODO: Main Class
-        //return _result && this.main.checkType();
-        _result = false;
-
-        return _result;
+        return _result && this.main.checkType();
     }
 
     /**
@@ -61,11 +76,12 @@ public class ProgramImpl implements Program {
     public int allocateMemory(Register _register, int _offset) {
         int _length = _offset;
         for (InterfaceDeclaration _interface : this.interfaces) {
-            _length += _interface.allocateMemory(_register, _length);;
+            _length += _interface.allocateMemory(_register, _length);
         }
         for (ClassDeclaration _class : this.classes) {
-            _length += _class.allocateMemory(_register, _length);;
+            _length += _class.allocateMemory(_register, _length);
         }
+        _length += main.allocateMemory(_register, _length);
         this.offset = _length - _offset;
         return 0;
     }

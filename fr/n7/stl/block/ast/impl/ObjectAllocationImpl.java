@@ -19,6 +19,18 @@ public class ObjectAllocationImpl implements ObjectAllocation {
         this.type = _type;
     }
 
+    /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(this.type);
+
+        return "new " + _local ;
+    }
+
     /**
      * Synthesized Semantics attribute to compute the type of an expression.
      *

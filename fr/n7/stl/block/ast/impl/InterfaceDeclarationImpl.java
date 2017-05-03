@@ -29,6 +29,40 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         this.elements = new LinkedList<>(_elements);
     }
 
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(this.name);
+
+        if (this.generics != null) {
+            _local.append(this.generics);
+        }
+
+        if (this.inheritance != null) {
+            _local.append(" extends ");
+            boolean first = true;
+            for (InheritanceDeclaration _interface : this.inheritance) {
+                if (!first) {
+                    _local.append(", ");
+                }
+                _local.append(_interface);
+                first = false;
+            }
+        }
+
+        _local.append(" {");
+        for (ClassElement _element : this.elements) {
+            _local.append(_element);
+        }
+        _local.append("}");
+
+        return "interface " + _local + "\n" ;
+    }
+
     /**
      * Provide the identifier (i.e. name) given to the declaration.
      *

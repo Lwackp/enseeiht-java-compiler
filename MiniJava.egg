@@ -39,21 +39,21 @@ syn ast     : List<Expression> for Expressions, SuiteExpressions;
 syn ast     : Value for Valeur;
 syn ast     : InterfaceDeclaration for Interface;
 syn ast     : List<InterfaceDeclaration> for Interfaces;
-syn ast     : ClassDeclaration for Classe;
+syn ast     : ClassDeclaration for Classe, Principale;
 syn ast     : List<ClassDeclaration> for Classes;
-syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface;
+syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface, MethodePrincipale, Constructeur;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : Signature for Signature;
 syn ast     : InheritanceDeclaration for HeritageClasse;
 syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
-syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres;
+syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
 
 -- TODO(AST for the following classes)
-syn ast     : Object for Principale, Genericite, InstanceGenericite, Constructeur, SuiteAttributOuMethode, MethodePrincipale;
+syn ast     : Object for Genericite, InstanceGenericite;
 
 space  separateur				is    "[\n\r\t ]+";
 space  commentaire		    	is    "\/\/.*\n";
@@ -415,19 +415,29 @@ end
 }
 
 
--- TODO (Main Class)
 Principale -> public classe identificateur_type accolade_ouvrante MethodePrincipale accolade_fermante #ast;
 #ast {
 do
-    Principale^ast := null;
+    Principale^ast := Principale^factory.createClassDeclaration(identificateur_type^txt, MethodePrincipale^ast);
 end
 }
 --
 --
 MethodePrincipale -> public statique vide principale parenthese_ouvrante type_String crochet_ouvrant crochet_fermant identificateur parenthese_fermante Bloc #ast;
 #ast {
+local
+    st    : Type;
+    param : ParameterDeclaration;
+    params: List<ParameterDeclaration>;
+    main  : ClassElement;
 do
-    MethodePrincipale^ast := null;
+    st := MethodePrincipale^factory.createArrayType(AtomicType.StringType);
+    param := MethodePrincipale^factory.createParameterDeclaration(identificateur^txt, st);
+    params := new LinkedList<ParameterDeclaration>();
+    params.add(param);
+    main := MethodePrincipale^factory.createClassElement("main", AtomicType.VoidType, params);
+    MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
+    NonAccessModifier.Static);
 end
 }
 
@@ -559,20 +569,23 @@ ElementClasse -> Constructeur #ast;
 #ast {
 do
     -- This method just set bool constructor to true;
-    ElementClasse^ast := ElementClasse^factory.createClassConstructor(Constructeur^ast);
+    ElementClasse^ast := Constructeur^ast;
 end
 }
 
 
+--want to check if ast instanceof List<ParamDeclaration> but not possible
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
+local
+    sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
         AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
         Type^ast);
     else
         AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
-                Type^ast, SuiteAttributOuMethode^ast);
+            Type^ast, SuiteAttributOuMethode^ast);
     end
 end
 }
@@ -607,10 +620,15 @@ end
 
 
 --TODO (Constructor definition)
+--TODO AtomicType.VoidType --> ConstructorType
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-    Constructeur^ast := null;
+    Constructeur^ast := Constructeur^factory.createClassElement(
+                                        identificateur_type^txt,
+                                        AtomicType.VoidType,
+                                        Parametres^ast
+                                      );
 end
 }
 

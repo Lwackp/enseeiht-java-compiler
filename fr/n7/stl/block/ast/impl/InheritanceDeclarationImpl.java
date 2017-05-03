@@ -17,6 +17,21 @@ public class InheritanceDeclarationImpl implements InheritanceDeclaration {
         this.type = _type;
     }
 
+    /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(this.name);
+        if (this.type != null) {
+            _local.append(" " + this.type);
+        }
+
+        return _local.toString() ;
+    }
+
     /**
      * Provide the identifier (i.e. name) given to the declaration.
      *

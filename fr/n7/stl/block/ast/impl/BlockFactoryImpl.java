@@ -1,6 +1,9 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
+import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Register;
+import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.List;
 
@@ -90,6 +93,18 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/**
+	 * Create a class declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name    Name of the declared class.
+	 * @param _element Abstract Syntax Tree for the element of the declared class.
+	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassDeclaration createClassDeclaration(String _name, ClassElement _element) {
+		return null;
+	}
+
+	/**
 	 * Create a parameter declaration node in the Abstract Syntax Tree.
 	 *
 	 * @param _name Name of the declared parameter.
@@ -122,7 +137,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(ClassElement _element, ElementModifier... _modifiers) {
-		return new ClassElementImpl(_element, _modifiers);
+		return null;
 	}
 
 	/**
@@ -155,15 +170,16 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	@Override
-	public ClassElement createClassElement(String _name, Type _type, Object _params) {
+	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _params) {
 		return null;
 	}
 
 	@Override
-	public ClassElement createClassElement(String _name, Type _type, Object _parameters, Block... _body) {
-		return new ClassElementImpl(_name, _type, _parameters,_body);
+	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block... _body) {
+		return null;
 	}
 
+	//TODO: Split _parameters and _body
 	/**
 	 * Create a function declaration node in the Abstract Syntax Tree.
 	 *
@@ -172,18 +188,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public Object createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body) {
-		return null;
-	}
-
-	/**
-	 * Create a class element declaration node in the Abstract Syntax Tree.
-	 *
-	 * @param _constructor Abstract Syntax Tree of the declared class constructor.
-	 * @return An ClassElement node in the Abstract Syntax Tree.
-	 */
-	@Override
-	public ClassElement createClassConstructor(Object _constructor) {
+	public List<ParameterDeclaration> createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body) {
 		return null;
 	}
 
@@ -255,14 +260,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createCouple(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createCouple(Expression _first, Expression _second) {
-		return new CoupleImpl(_first, _second);
-	}
-
-	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createPrinter(fr.n7.stl.block.ast.Expression)
 	 */
 	@Override
@@ -279,22 +276,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Instruction createVoidInstruction(Expression _expression) {
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createFirst(fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createFirst(Expression _parameter) {
-		return new UnaryExpressionImpl(UnaryOperator.First,_parameter);
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createSecond(fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createSecond(Expression _parameter) {
-		return new UnaryExpressionImpl(UnaryOperator.Second,_parameter);
 	}
 
 	/* (non-Javadoc)
@@ -428,7 +409,8 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return A Program node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, Object _main) {
+	public Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes,
+								 ClassDeclaration _main) {
 		return new ProgramImpl(_interfaces, _classes, _main);
 	}
 

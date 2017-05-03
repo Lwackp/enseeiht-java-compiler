@@ -18,7 +18,7 @@ public enum ClassElementType {
 		switch (this) {
 		case Attribute: return "attribute";
 		case Method: return "method";
-		default: throw new IllegalArgumentException( "The default case should never be triggered.");		
+		default: throw new IllegalArgumentException( "The default case should never be triggered.");
 		}
 	}
 }

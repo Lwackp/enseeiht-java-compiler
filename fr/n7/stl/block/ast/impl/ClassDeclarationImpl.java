@@ -22,6 +22,12 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     private List<InheritanceDeclaration> interfaces;
     private List<ClassElement> elements;
 
+    public ClassDeclarationImpl(String _name, ClassElement _element) {
+        this.name = _name;
+        this.elements = new LinkedList<>();
+        this.elements.add(_element);
+    }
+
     public ClassDeclarationImpl(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;
@@ -50,6 +56,43 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return null;
     }
 
+    /* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(this.name);
+
+        if (this.generics != null) {
+            _local.append(this.generics);
+        }
+        if (this.inheritance != null) {
+            _local.append(" extends ").append(this.inheritance);
+        }
+
+        if (this.interfaces != null) {
+            _local.append(" implements ");
+            boolean first = true;
+            for (InheritanceDeclaration _interface : this.interfaces) {
+                if (!first) {
+                    _local.append(", ");
+                }
+                _local.append(_interface);
+                first = false;
+            }
+        }
+
+        _local.append(" {");
+        for (ClassElement _element : this.elements) {
+            _local.append(_element);
+        }
+        _local.append("}");
+
+        return "public static class " + _local + "\n" ;
+    }
+
     /**
      * Synthesized Semantics attribute to check that an instruction if well typed.
      *
@@ -57,7 +100,12 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public boolean checkType() {
-        return false;
+        boolean _result = true;
+
+        for (ClassElement _element : this.elements) {
+            //_result = _result && _element.checkType();
+        }
+        return _result;
     }
 
     /**

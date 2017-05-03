@@ -20,6 +20,21 @@ public class ArrayAllocationImpl implements ArrayAllocation {
         this.size = _size;
     }
 
+    /* (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(this.type);
+        _local.append("[");
+        _local.append(this.size);
+        _local.append("]");
+
+        return "new " + _local ;
+    }
+
     /**
      * Synthesized Semantics attribute to compute the type of an expression.
      *
