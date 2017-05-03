@@ -175,7 +175,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	@Override
-	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block... _body) {
+	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body) {
 		return null;
 	}
 
@@ -188,7 +188,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public List<ParameterDeclaration> createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body) {
+	public List<ParameterDeclaration> createMethodParameters(List<ParameterDeclaration> _parameters, Block _body) {
 		return null;
 	}
 

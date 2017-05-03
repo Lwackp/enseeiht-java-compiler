@@ -12,14 +12,14 @@ public class ClassElementImpl implements ClassElement {
     String name;
     Type type;
     Object parameters;
-    Block[] body;
+    Block body;
     AccessModifier acces = AccessModifier.Public;
 
     public ClassElementImpl(ClassElement element, ElementModifier[] modifiers) {
         this.setModifiers(modifiers);
     }
 
-    public ClassElementImpl(String name, Type type, Object parameters, Block[] body) {
+    public ClassElementImpl(String name, Type type, Object parameters, Block body) {
         this.name = name;
         this.parameters = parameters;
         this.type = type;
@@ -27,9 +27,10 @@ public class ClassElementImpl implements ClassElement {
     }
 
 
+
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override

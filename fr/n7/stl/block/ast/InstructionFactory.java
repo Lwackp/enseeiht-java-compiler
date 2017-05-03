@@ -168,7 +168,7 @@ public interface InstructionFactory {
      * @param _body Abstract Syntax Tree for the body of the declared class.
      * @return An ClassElement node in the Abstract Syntax Tree.
      */
-    ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block... _body);
+    ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body);
 
 	/**
 	 * Create a function declaration node in the Abstract Syntax Tree.
@@ -176,7 +176,7 @@ public interface InstructionFactory {
 	 * @param _body Abstract Syntax Tree for the body of the declared function.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
-	List<ParameterDeclaration> createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body);
+	List<ParameterDeclaration> createMethodParameters(List<ParameterDeclaration> _parameters, Block _body);
 
 	/**
 	 * Create a type declaration node in the Abstract Syntax Tree.
