@@ -21,12 +21,6 @@ public interface FunctionDeclaration extends Declaration, Instruction {
 	List<ParameterDeclaration> getParameters();
 
 	/**
-	 * Synthesized semantics attribute for the signature of the method.
-	 * @return signature of the method.
-	 */
-	SignatureDeclaration getSignature();
-
-	/**
 	 * Synthesized semantics attribute for the body of the method.
 	 * @return body of the method.
 	 */

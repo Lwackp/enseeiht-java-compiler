@@ -1,5 +1,3 @@
-package tests;
-
 public class Integer {
     public int i;
 }

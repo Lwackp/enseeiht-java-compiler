@@ -159,7 +159,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public SignatureDeclaration createSignature(String _name, Type _type, List<ParameterDeclaration> _params) {
-		return null;
+		return new SignatureDeclarationImpl(_name, _type, _params);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params, Block _body) {
-		return null;
+		return new FunctionDeclarationImpl(_name, _type, _params, _body);
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, Block _body) {
-		return null;
+		return new FunctionDeclarationImpl(_signature, _body);
 	}
 
 	/* (non-Javadoc)
