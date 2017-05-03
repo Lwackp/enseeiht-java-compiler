@@ -40,21 +40,22 @@ syn ast     : List<Expression> for Expressions, SuiteExpressions;
 syn ast     : Value for Valeur;
 syn ast     : InterfaceDeclaration for Interface;
 syn ast     : List<InterfaceDeclaration> for Interfaces;
-syn ast     : ClassDeclaration for Classe;
+syn ast     : ClassDeclaration for Classe, Principale;
 syn ast     : List<ClassDeclaration> for Classes;
-syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface;
+syn ast     : ClassElement for AttributOuMethode, ElementClasse, ElementInterface, MethodePrincipale, Constructeur;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : Signature for Signature;
 syn ast     : InheritanceDeclaration for HeritageClasse;
 syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
-syn l_param     : List<ParameterDeclaration> for Parametres, SuiteParametres;
+syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
+syn body    : Block for SuiteAttributOuMethode;
 
 -- TODO(AST for the following classes)
-syn ast     : Object for Principale, Genericite, InstanceGenericite, Constructeur, SuiteAttributOuMethode, MethodePrincipale;
+syn ast     : Object for Genericite, InstanceGenericite;
 
 space  separateur				is    "[\n\r\t ]+";
 space  commentaire		    	is    "\/\/.*\n";
@@ -315,7 +316,7 @@ end
 #ast {
 do
     Signature^ast := Signature^factory.createSignature(
-        identificateur^txt, AtomicType.VoidType, Parametres^l_param);
+        identificateur^txt, AtomicType.VoidType, Parametres^ast);
 end
 }
 
@@ -329,7 +330,7 @@ end
 #ast {
 do
     Signature^ast := Signature^factory.createSignature(
-        identificateur^txt, Type^ast, Parametres^l_param);
+        identificateur^txt, Type^ast, Parametres^ast);
 end
 }
 
@@ -428,19 +429,29 @@ end
 }
 
 
--- TODO (Main Class)
 Principale -> public classe identificateur_type accolade_ouvrante MethodePrincipale accolade_fermante #ast;
 #ast {
 do
-    Principale^ast := null;
+    Principale^ast := Principale^factory.createClassDeclaration(identificateur_type^txt, MethodePrincipale^ast);
 end
 }
 --
 --
 MethodePrincipale -> public statique vide principale parenthese_ouvrante type_String crochet_ouvrant crochet_fermant identificateur parenthese_fermante Bloc #ast;
 #ast {
+local
+    st    : Type;
+    param : ParameterDeclaration;
+    params: List<ParameterDeclaration>;
+    main  : ClassElement;
 do
-    MethodePrincipale^ast := null;
+    st := MethodePrincipale^factory.createArrayType(AtomicType.StringType);
+    param := MethodePrincipale^factory.createParameterDeclaration(identificateur^txt, st);
+    params := new LinkedList<ParameterDeclaration>();
+    params.add(param);
+    main := MethodePrincipale^factory.createClassElement("main", AtomicType.VoidType, params);
+    MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
+    NonAccessModifier.Static);
 end
 }
 
@@ -572,14 +583,16 @@ ElementClasse -> Constructeur #ast;
 #ast {
 do
     -- This method just set bool constructor to true;
-    ElementClasse^ast := ElementClasse^factory.createClassConstructor(Constructeur^ast);
+    ElementClasse^ast := Constructeur^ast;
 end
 }
 
 
---TODO (ClassElement)
+--want to check if ast instanceof List<ParamDeclaration> but not possible
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
+local
+    sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
         AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
@@ -602,15 +615,21 @@ do
     end
 end
 }
---
---AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc ;
 
+AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
+#ast {
+do
+    AttributOuMethode^ast := AttributOuMethode^factory.createClassElement
+    (identificateur^txt, AtomicType.VoidType, Parametres^ast, Bloc^ast);
+end
+}
 
 SuiteAttributOuMethode -> point_virgule #ast;
 #ast {
 do
     SuiteAttributOuMethode^type := ClassElementType.Attribute;
     SuiteAttributOuMethode^ast := null;
+    SuiteAttributOuMethode^body := null;
 end
 }
 
@@ -620,18 +639,22 @@ SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Blo
 #ast {
 do
     SuiteAttributOuMethode^type := ClassElementType.Method;
-    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createMethodParameters(
-                                    Parametres^l_param, Bloc^ast
-                                  );
+    SuiteAttributOuMethode^ast := Parametres^ast;
+    SuiteAttributOuMethode^body := Bloc^ast;
 end
 }
 
 
 --TODO (Constructor definition)
+--TODO AtomicType.VoidType --> ConstructorType
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-    Constructeur^ast := null;
+    Constructeur^ast := Constructeur^factory.createClassElement(
+                                        identificateur_type^txt,
+                                        AtomicType.VoidType,
+                                        Parametres^ast
+                                      );
 end
 }
 
@@ -639,7 +662,7 @@ end
 Parametres -> #ast;
 #ast {
 do
-    Parametres^l_param := new LinkedList<ParameterDeclaration>();
+    Parametres^ast := new LinkedList<ParameterDeclaration>();
 end
 }
 
@@ -656,8 +679,8 @@ end
 }
 #ast {
 do
-    SuiteParametres^l_param.add(Parametre^ast);
-    Parametres^l_param := SuiteParametres^l_param;
+    SuiteParametres^ast.add(Parametre^ast);
+    Parametres^ast := SuiteParametres^ast;
 end
 }
 
@@ -673,7 +696,7 @@ end
 SuiteParametres -> #ast;
 #ast {
 do
-    SuiteParametres^l_param := new LinkedList<ParameterDeclaration>();
+    SuiteParametres^ast := new LinkedList<ParameterDeclaration>();
 end
 }
 
@@ -690,8 +713,8 @@ end
 }
 #ast {
 do
-    SuiteParametres1^l_param.add(Parametre^ast);
-    SuiteParametres^l_param := SuiteParametres1^l_param;
+    SuiteParametres1^ast.add(Parametre^ast);
+    SuiteParametres^ast := SuiteParametres1^ast;
 end
 }
 

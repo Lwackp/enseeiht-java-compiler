@@ -17,7 +17,7 @@ public interface InstructionFactory {
 	 * @param _main Abstract Syntax Tree of the main method contained in the program.
 	 * @return A Program node in the Abstract Syntax Tree.
 	 */
-	Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, Object _main);
+	Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, ClassDeclaration _main);
 
 	/**
 	 * Create a root Block node in the Abstract Syntax Tree.
@@ -93,6 +93,15 @@ public interface InstructionFactory {
 	ClassDeclaration createClassDeclaration(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements);
 
 	/**
+	 * Create a class declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name        Name of the declared class.
+	 * @param _element    Abstract Syntax Tree for the element of the declared class.
+	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
+	 */
+	public ClassDeclaration createClassDeclaration(String _name, ClassElement _element);
+
+	/**
 	 * Create a parameter declaration node in the Abstract Syntax Tree.
 	 * @param _name Name of the declared parameter.
 	 * @param _type Abstract Syntax Tree for the type of the declared parameter.
@@ -134,22 +143,33 @@ public interface InstructionFactory {
 	 */
 	ClassElement createClassElement(Object _element, ElementModifier... _modifiers);
 
-	//TODO:n Create Method Parameter Class
-	/**
-	 * Create a function declaration node in the Abstract Syntax Tree.
-	 * @param _parameters Abstract Syntax Tree for the parameters of the declared function.
-	 * @param _body Abstract Syntax Tree for the body of the declared function.
-	 * @return An ClassElement node in the Abstract Syntax Tree.
-	 */
-	Object createMethodParameters(List<ParameterDeclaration> _parameters, Block _body);
-
-	//TODO:n Get Constructor Class
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
-	 * @param _constructor Abstract Syntax Tree of the declared class constructor.
+	 * @param _name Name of the declared class element.
+	 * @param _type Abstract Syntax Tree for the generics of the declared class element.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
-	ClassElement createClassConstructor(Object _constructor);
+	ClassElement createClassElement(String _name, Type _type);
+
+	/**
+     * Create a class element declaration node in the Abstract Syntax Tree.
+     * @param _name Name of the declared class element.
+     * @param _type Abstract Syntax Tree for the generics of the declared class element.
+     * @param _params
+     * @return An ClassElement node in the Abstract Syntax Tree.
+     */
+    ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _params);
+
+    /**
+     * Create a class element declaration node in the Abstract Syntax Tree.
+     * @param _name Name of the declared class element.
+     * @param _type Abstract Syntax Tree for the generics of the declared class element.
+     * @param _parameters Abstract Syntax Tree for the parameters of the declared class.
+     * @param _body Abstract Syntax Tree for the body of the declared class.
+     * @return An ClassElement node in the Abstract Syntax Tree.
+     */
+    ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body);
+
 
 	/**
 	 * Create a type declaration node in the Abstract Syntax Tree.

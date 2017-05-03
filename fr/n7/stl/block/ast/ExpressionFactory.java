@@ -91,28 +91,6 @@ public interface ExpressionFactory {
     Assignable createVariableAssignment(VariableDeclaration _declaration);
 	
 	/**
-	 * Create a node for a couple creation expression in the Abstract Syntax Tree.
-	 * @param _left Abstract Syntax Tree node for the left part of the couple.
-	 * @param _right Abstract Syntax Tree node for the right part of the couple.
-	 * @return Abstract Syntax Tree node for a couple containing the _left and _right parts.
-	 */
-    Expression createCouple(Expression _left, Expression _right);
-	
-	/**
-	 * Create a node for an access to the first value of a couple expression in the Abstract Syntax Tree.
-	 * @param _couple Abstract Syntax Tree node for the couple.
-	 * @return Abstract Syntax Tree node for the left part of the _couple.
-	 */
-    Expression createFirst(Expression _couple);
-	
-	/**
-	 * Create a node for an access to the first value of a couple expression in the Abstract Syntax Tree.
-	 * @param _couple Abstract Syntax Tree node for the couple.
-	 * @return Abstract Syntax Tree node for the right part of the _couple.
-	 */
-    Expression createSecond(Expression _couple);
-	
-	/**
 	 * Create a node for a function call expression in the Abstract Syntax Tree.
 	 * @param _called Abstract Syntax Tree node for the called function.
 	 * @return Abstract Syntax Tree node for the call of the _called function.

@@ -1,7 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.AtomicType;
-import fr.n7.stl.block.ast.CoupleType;
 import fr.n7.stl.block.ast.Expression;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.block.ast.UnaryOperator;
@@ -58,20 +57,6 @@ public class UnaryExpressionImpl implements Expression {
 					return AtomicType.ErrorType;
 				}
 			}
-			case First: {
-				if (resultType instanceof CoupleType) {
-					return ((CoupleType)resultType).getFirst();
-				} else {
-					return AtomicType.ErrorType;
-				}
-			}
-			case Second: {
-				if (resultType instanceof CoupleType) {
-					return ((CoupleType)resultType).getFirst();
-				} else {
-					return AtomicType.ErrorType;
-				}
-			}
 			default : return AtomicType.ErrorType;
 		}
 	}
@@ -86,16 +71,6 @@ public class UnaryExpressionImpl implements Expression {
 		switch (this.operator) {
 			case Negate: case Opposite:
 				_code.add(TAMFactory.createUnaryOperator(this.operator));
-				break;
-			case First:
-				firstLen = ((CoupleType)this.parameter.getType()).getFirst().length();
-				secondLen = ((CoupleType)this.parameter.getType()).getSecond().length();
-				_code.add(_factory.createPop(0, secondLen));
-				break;
-			case Second:
-				firstLen = ((CoupleType)this.parameter.getType()).getFirst().length();
-				secondLen = ((CoupleType)this.parameter.getType()).getSecond().length();
-				_code.add(_factory.createPop(secondLen, firstLen));
 				break;
 			default:
 				throw new SemanticsUndefinedException("Operator " + this.operator + " is not defined");

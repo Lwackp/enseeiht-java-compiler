@@ -6,13 +6,12 @@ import fr.n7.stl.block.ast.Expression;
 import fr.n7.stl.block.ast.Type;
 
 /**
- * @author Marc Pantel
+ * @author Thibault Meunier
  *
  */
 public class ArrayTypeImpl implements Type, ArrayType {
 
 	private Type element;
-	private Expression size;
 
 	public ArrayTypeImpl(Type _element) {
 		this.element = _element;

@@ -17,7 +17,7 @@ import fr.n7.stl.tam.ast.impl.FragmentImpl;
 
 /**
  * Implementation of the Abstract Syntax Tree node for an instruction block.
- * @author Marc Pantel
+ * @author Thibault Meunier
  *
  */
 public class BlockImpl implements Block {
@@ -56,7 +56,6 @@ public class BlockImpl implements Block {
 	 * @param _context Englobing block.
 	 */
 	public BlockImpl(Block _context) {
-		assert( _context != null);
 		this.instructions = new LinkedList<>();
 		this.variables = new LinkedList<>();
 		this.constants = new LinkedList<>();
@@ -106,77 +105,6 @@ public class BlockImpl implements Block {
 			}
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.HierarchicalScope#knows(java.lang.String)
-	 */
-//	@Override
-//	public boolean knows(String _name) {
-//		if (this.contains(_name)) {
-//			return true;
-//		} else {
-//			if (context.isPresent()) {
-//				return context.get().knows(_name);
-//			} else {
-//				return false;
-//			}
-//		}
-//	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Scope#get(java.lang.String)
-	 */
-//	@Override
-//	public Optional<Declaration> get(String _name) {
-//		for (Declaration _declaration : this.variables) {
-//			if (_declaration.getName().equals(_name)) {
-//				return Optional.of(_declaration);
-//			}
-//		}
-//		for (Declaration _declaration : this.constants) {
-//			if (_declaration.getName().equals(_name)) {
-//				return Optional.of(_declaration);
-//			}
-//		}
-//		for (Declaration _declaration : this.types) {
-//			if (_declaration.getName().equals(_name)) {
-//				return Optional.of(_declaration);
-//			}
-//		}
-//		return Optional.empty();
-//	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Scope#contains(java.lang.String)
-	 */
-//	@Override
-//	public boolean contains(String _name) {
-//		for (Declaration _declaration : this.variables) {
-//			if (_declaration.getName().contentEquals(_name)) {
-//				return true;
-//			}
-//		}
-//		for (Declaration _declaration : this.constants) {
-//			if (_declaration.getName().contentEquals(_name)) {
-//				return true;
-//			}
-//		}
-//		for (Declaration _declaration : this.types) {
-//			if (_declaration.getName().contentEquals(_name)) {
-//				return true;
-//			}
-//		}
-//		return false;		
-//	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Scope#accepts(fr.n7.stl.block.ast.Declaration)
-	 */
-//	@Override
-//	public boolean accepts(Declaration _declaration) {
-//		return (! this.contains(_declaration.getName()));
-//	}
-	// </REMOVE>
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.Block#addAll(java.lang.Iterable)

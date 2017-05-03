@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.ArrayAllocation;
 import fr.n7.stl.block.ast.Expression;
+import fr.n7.stl.block.ast.ObjectAllocation;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Library;
@@ -10,14 +11,12 @@ import fr.n7.stl.tam.ast.TAMFactory;
 /**
  * Created by thibault on 28/03/17.
  */
-public class ArrayAllocationImpl implements ArrayAllocation {
+public class ObjectAllocationImpl implements ObjectAllocation {
 
     private Type type;
-    private Expression size;
 
-    public ArrayAllocationImpl(Type _type, Expression _size) {
+    public ObjectAllocationImpl(Type _type) {
         this.type = _type;
-        this.size = _size;
     }
 
     /* (non-Javadoc)
@@ -28,9 +27,6 @@ public class ArrayAllocationImpl implements ArrayAllocation {
         StringBuilder _local = new StringBuilder();
 
         _local.append(this.type);
-        _local.append("[");
-        _local.append(this.size);
-        _local.append("]");
 
         return "new " + _local ;
     }
@@ -54,13 +50,6 @@ public class ArrayAllocationImpl implements ArrayAllocation {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        Fragment fragment = _factory.createFragment();
-
-        fragment.append(size.getCode(_factory));
-        fragment.add(_factory.createLoadL(this.type.length()));
-        fragment.add(Library.IMul);
-        fragment.add(Library.MAlloc);
-
-        return fragment;
+        return null;
     }
 }

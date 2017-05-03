@@ -71,7 +71,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics, List<InheritanceDeclaration> _inheritance, List<ClassElement> _elements) {
-		return null;
+		return new InterfaceDeclarationImpl(_name, _generics, _inheritance, _elements);
 	}
 
 	/**
@@ -86,7 +86,19 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassDeclaration createClassDeclaration(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
-		return null;
+		return new ClassDeclarationImpl(_name, _generics, _inheritance, _interfaces, _elements);
+	}
+
+	/**
+	 * Create a class declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name    Name of the declared class.
+	 * @param _element Abstract Syntax Tree for the element of the declared class.
+	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public ClassDeclaration createClassDeclaration(String _name, ClassElement _element) {
+		return new ClassDeclarationImpl(_name, _element);
 	}
 
 	/**
@@ -98,7 +110,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ParameterDeclaration createParameterDeclaration(String _name, Type _type) {
-		return null;
+		return new ParameterDeclarationImpl(_name, _type);
 	}
 
 	/**
@@ -110,7 +122,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public InheritanceDeclaration createInheritanceDeclaration(String _name, Object _type) {
-		return null;
+		return new InheritanceDeclarationImpl(_name, _type);
 	}
 
 	/**
@@ -122,7 +134,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(ClassElement _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	/**
@@ -134,7 +146,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(VariableDeclaration _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
 	/**
@@ -146,30 +158,22 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassElement createClassElement(Object _element, ElementModifier... _modifiers) {
-		return null;
+		return new ClassElementImpl(_element, _modifiers);
 	}
 
-	/**
-	 * Create a function declaration node in the Abstract Syntax Tree.
-	 *
-	 * @param _parameters Abstract Syntax Tree for the parameters of the declared function.
-	 * @param _body       Abstract Syntax Tree for the body of the declared function.
-	 * @return An ClassElement node in the Abstract Syntax Tree.
-	 */
 	@Override
-	public Object createMethodParameters(List<ParameterDeclaration> _parameters, Block... _body) {
-		return null;
+	public ClassElement createClassElement(String _name, Type _type) {
+		return new ClassElementImpl(_name, _type);
 	}
 
-	/**
-	 * Create a class element declaration node in the Abstract Syntax Tree.
-	 *
-	 * @param _constructor Abstract Syntax Tree of the declared class constructor.
-	 * @return An ClassElement node in the Abstract Syntax Tree.
-	 */
 	@Override
-	public ClassElement createClassConstructor(Object _constructor) {
-		return null;
+	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _params) {
+		return new ClassElementImpl(_name, _type, _params);
+	}
+
+	@Override
+	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body) {
+		return new ClassElementImpl(_name, _type, _parameters, _body);
 	}
 
 	/* (non-Javadoc)
@@ -203,16 +207,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	public Assignable createVariableAssignment(VariableDeclaration _declaration) {
 		return new VariableAssignmentImpl(_declaration);
 	}
-
-	// <REMOVE>
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createVariableUse(java.lang.String)
-	 */
-//	@Override
-//	public Expression createVariableUse(String _name) {
-//		return new VariableUseImpl(_name);
-//	}
-	// </REMOVE>
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createConditional(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Block, fr.n7.stl.block.ast.Block)
@@ -250,14 +244,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createCouple(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createCouple(Expression _first, Expression _second) {
-		return new CoupleImpl(_first, _second);
-	}
-
-	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createPrinter(fr.n7.stl.block.ast.Expression)
 	 */
 	@Override
@@ -274,22 +260,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Instruction createVoidInstruction(Expression _expression) {
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createFirst(fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createFirst(Expression _parameter) {
-		return new UnaryExpressionImpl(UnaryOperator.First,_parameter);
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createSecond(fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createSecond(Expression _parameter) {
-		return new UnaryExpressionImpl(UnaryOperator.Second,_parameter);
 	}
 
 	/* (non-Javadoc)
@@ -339,7 +309,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Value createCharValue(String _value) {
-		return null;
+		return new CharValueImpl(_value);
 	}
 
 	/**
@@ -350,7 +320,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Value createStringValue(String _value) {
-		return null;
+		return new StringValueImpl(_value);
 	}
 
 	/* (non-Javadoc)
@@ -423,8 +393,9 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return A Program node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, Object _main) {
-		return null;
+	public Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes,
+								 ClassDeclaration _main) {
+		return new ProgramImpl(_interfaces, _classes, _main);
 	}
 
 	/* (non-Javadoc)
@@ -572,7 +543,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createObjectAllocation(Type _type) {
-		return null;
+		return new ObjectAllocationImpl(_type);
 	}
 
 	public Expression createAddressAccess(Expression _assignable)  {
