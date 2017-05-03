@@ -1,5 +1,7 @@
 package fr.n7.stl.block.ast;
 
+import java.util.List;
+
 /**
  * @author Marc Pantel
  *
@@ -7,9 +9,16 @@ package fr.n7.stl.block.ast;
 public interface Signature extends Declaration {
 
 	/**
-	 * Synthesized semantics attribute for the type of the declared function.
-	 * @return Type of the declared variable.
+	 * Synthesized semantics attribute for the type of the returned variable.
+	 * @return Type of the returned variable.
 	 */
-    Type getType();
-
+    Type getReturnedType();
+    
+    
+    
+    /**
+     * Synthesized semantics attribute for the type of the parameters declarations.
+	 * @return List of parameters declarations.
+     */
+    List<ParameterDeclaration> getParameters();
 }
