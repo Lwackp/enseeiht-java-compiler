@@ -710,7 +710,7 @@ end
 Type -> TypeAtomique #inh SuiteTypeAtomique #ast;
 #inh {
 do
-    SuiteTypeAtomique^type := Type^factory.createArrayType(TypeAtomique^ast);
+    SuiteTypeAtomique^type := TypeAtomique^ast;
 end
 }
 #ast {

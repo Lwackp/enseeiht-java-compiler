@@ -585,6 +585,7 @@ public class BlockFactoryImpl implements BlockFactory {
 		return null;
 	}
 
+	//TODO: affectation = suiteAffectation
 	/**
 	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
 	 *
@@ -594,7 +595,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createAffectation(Expression _affectation, Expression _suiteAffectation) {
-		return null;
+		return _affectation;
 	}
 
 	/* (non-Javadoc)
