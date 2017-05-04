@@ -45,6 +45,20 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
         return this.name;
     }
 
+    /**
+     * Synthesized semantics attribute for the type of the declared variable.
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getType() {
+        List<Type> _params = new LinkedList<>();
+        for (ParameterDeclaration _p : this.parameters) {
+            _params.add(_p.getType());
+        }
+        return new FunctionTypeImpl(this.type, _params);
+    }
+
     @Override
     public Type getReturnedType() {
         return this.type;

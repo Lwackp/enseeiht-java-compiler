@@ -20,10 +20,10 @@ inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Argument
 inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode,
               Bloc, Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
               ElementsInterface, Expression, Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface,
-              ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametres,
-              Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode,SuiteCondition,
+              ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
+              Parametres, Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode,SuiteCondition,
               SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
-              SuiteParametres, SuiteTerme, Terme;
+              SuiteParametres, SuiteTerme, Terme, Type, TypeAtomique;
 inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
@@ -58,64 +58,64 @@ syn body    : Block for SuiteAttributOuMethode;
 -- TODO(AST for the following classes)
 syn ast     : Object for Genericite, InstanceGenericite;
 
-space  separateur				is    "[\n\r\t ]+";
-space  commentaire		    	is    "\/\/.*\n";
-sugar  accolade_ouvrante		is    "\{";
-sugar  accolade_fermante		is    "\}";
-sugar  crochet_ouvrant			is    "\[";
-sugar  crochet_fermant			is    "\]";
-sugar  parenthese_ouvrante		is    "\(";
-sugar  parenthese_fermante		is    "\)";
-sugar  inferieur				is    "\<";
-sugar  superieur				is    "\>";
-sugar  inferieur_egal			is    "\<=";
-sugar  superieur_egal			is    "\>=";
-sugar  point					is    "\.";
-sugar  point_virgule			is    ";";
-sugar  virgule					is    ",";
-sugar  affectation				is    "=";
-sugar  egalite					is    "==";
-sugar  different				is    "\!=";
-sugar  addition			    	is    "\+";
-sugar  soustraction				is    "\-";
-sugar  ou						is    "\|\|";
-sugar  multiplication			is    "\*";
-sugar  division			    	is    "/";
-sugar  modulo			   		is    "%";
-sugar  adresse					is    "&";
-sugar  negation			    	is    "\!";
-sugar  et						is    "&&";
-sugar  vrai			    		is    "true";
-sugar  faux			    		is    "false";
-sugar  si						is    "if";
-sugar  sinon					is    "else";
-sugar  afficher					is    "print";
-sugar  nouveau			    	is    "new";
-sugar  tant_que			    	is    "while";
-sugar  retour					is    "return";
-sugar  type_int			    	is    "int";
-sugar  type_bool				is    "boolean";
-sugar  type_char				is    "char";
-sugar  type_String				is    "String";
+space separateur				is    "[\n\r\t ]+";
+space commentaire		    	is    "\/\/.*\n";
+sugar accolade_ouvrante		    is    "\{";
+sugar accolade_fermante	    	is    "\}";
+sugar crochet_ouvrant			is    "\[";
+sugar crochet_fermant			is    "\]";
+sugar parenthese_ouvrante		is    "\(";
+sugar parenthese_fermante		is    "\)";
+sugar inferieur		    		is    "\<";
+sugar superieur			    	is    "\>";
+sugar inferieur_egal			is    "\<=";
+sugar superieur_egal			is    "\>=";
+sugar point					    is    "\.";
+sugar point_virgule	    		is    ";";
+sugar virgule					is    ",";
+sugar affectation				is    "=";
+sugar egalite					is    "==";
+sugar different			    	is    "\!=";
+sugar addition			    	is    "\+";
+sugar soustraction				is    "\-";
+sugar ou						is    "\|\|";
+sugar multiplication			is    "\*";
+sugar division			    	is    "/";
+sugar modulo			   		is    "%";
+sugar adresse					is    "&";
+sugar negation			    	is    "\!";
+sugar et						is    "&&";
+sugar vrai			    		is    "true";
+sugar faux			    		is    "false";
+sugar si						is    "if";
+sugar sinon					    is    "else";
+sugar afficher					is    "print";
+sugar nouveau			    	is    "new";
+sugar tant_que			    	is    "while";
+sugar retour					is    "return";
+sugar type_int			    	is    "int";
+sugar type_bool 				is    "boolean";
+sugar type_char	    			is    "char";
+sugar type_String				is    "String";
 sugar vide			    		is    "void";
 sugar nul						is    "null";
-sugar  choix					is    "\?";
-sugar  deux_points				is    ":";
-sugar  interface				is    "interface";
-sugar  classe					is    "class";
-sugar  extension				is    "extends";
-sugar  implantation				is    "implements";
+sugar choix		    			is    "\?";
+sugar deux_points				is    ":";
+sugar interface		    		is    "interface";
+sugar classe					is    "class";
+sugar extension	    			is    "extends";
+sugar implantation				is    "implements";
 sugar public					is    "public";
 sugar protege					is    "protected";
 sugar prive				    	is    "private";
 sugar statique					is    "static";
 sugar final				    	is    "final";
 sugar principale				is    "main";
-term   chaine					is    "\"([^\"]|\\\")*\"";
-term   caractere				is    "\'[^\']\'";
-term   entier					is    "[0-9]+";
-term   identificateur			is    "[a-z_][a-zA-Z0-9_]*";
-term   identificateur_type		is    "[A-Z][a-zA-Z0-9_]*";
+term  chaine					is    "\"([^\"]|\\\")*\"";
+term  caractere			    	is    "\'[^\']\'";
+term  entier					is    "[0-9]+";
+term  identificateur			is    "[a-z_][a-zA-Z0-9_]*";
+term  identificateur_type		is    "[A-Z][a-zA-Z0-9_]*";
 
 
 Fichier -> #inh Programme #ast;
@@ -131,19 +131,13 @@ do
 end
 }
 
-Programme -> #inh1 Interfaces #inh2 Classes Principale #ast;
+Programme -> #inh1 Interfaces Classes Principale #ast;
+--TODO: Classes^tds := new ST(Interfaces^tds);
 #inh1 {
 do
-   Interfaces^tds := new SymbolTable(Programme^tds);
-   Classes^tds := new SymbolTable(Programme^tds);
-   Principale^tds := new SymbolTable(Programme^tds);
-end
-}
-#inh2 {
-do
-   -- Classes and Interfaces should not have the same name
-   --Classes^tds := new SymbolTable(Interfaces^tds);
-   --Principale^tds := new SymbolTable(Interfaces^tds);
+   Interfaces^tds := Programme^tds;
+   Classes^tds := Programme^tds;
+   Principale^tds := Programme^tds;
 end
 }
 #ast {
@@ -207,11 +201,10 @@ local
     d : Declaration;
 do
     d := HeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
-    if !HeritageInterface^tds.knows(identificateur_type^txt) then
-        HeritageInterface^tds.register(d);
+    if HeritageInterface^tds.knows(identificateur_type^txt) then
         SuiteHeritageInterface^tds := HeritageInterface^tds;
     else
-          error(MiniJava_Interface_Inheritance, identificateur_type^txt);
+        error(MiniJava_Interface_Inheritance, identificateur_type^txt);
     end
 end
 }
@@ -238,8 +231,7 @@ local
     d : Declaration;
 do
     d := SuiteHeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
-    if !SuiteHeritageInterface^tds.knows(identificateur_type^txt) then
-        SuiteHeritageInterface^tds.register(d);
+    if SuiteHeritageInterface^tds.knows(identificateur_type^txt) then
         SuiteHeritageInterface1^tds := SuiteHeritageInterface^tds;
     else
           error(MiniJava_Interface_Inheritance, identificateur_type^txt);
@@ -403,8 +395,7 @@ local
     d : Declaration;
 do
     d := ImplantationInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
-    if !ImplantationInterface^tds.knows(identificateur_type^txt) then
-        ImplantationInterface^tds.register(d);
+    if ImplantationInterface^tds.knows(identificateur_type^txt) then
         SuiteHeritageInterface^tds := ImplantationInterface^tds;
     else
           error(MiniJava_Interface_Inheritance, identificateur_type^txt);
@@ -759,8 +750,27 @@ do
    TypeAtomique^ast := TypeAtomique^factory.createStringType();
 end
 }
--- TODO(Genericite)
---TypeAtomique -> identificateur_type InstanceGenericite  ;
+
+--TODO (Generics)
+TypeAtomique -> identificateur_type #ast;--InstanceGenericite  ;
+#ast {
+local
+    od : Optional<Declaration>;
+    d  : Declaration;
+do
+    if TypeAtomique^tds.knows(identificateur_type^txt) then
+        od := TypeAtomique^tds.get(identificateur_type^txt);
+        if od.isPresent() then
+            d := od.get();
+            TypeAtomique^ast := d.getType();
+        else
+            error(MiniJava_Type_Error, identificateur_type^txt);
+        end
+    else
+        error(MiniJava_Type_Error, identificateur_type^txt);
+    end
+end
+}
 
 
 SuiteTypeAtomique -> crochet_ouvrant crochet_fermant #inh SuiteTypeAtomique #ast;

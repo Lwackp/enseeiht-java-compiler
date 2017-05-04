@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by thibault on 02/05/17.
+ * Created by Thibault Meunier on 02/05/17.
  */
 public class ClassDeclarationImpl implements ClassDeclaration {
 

@@ -70,7 +70,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     /**

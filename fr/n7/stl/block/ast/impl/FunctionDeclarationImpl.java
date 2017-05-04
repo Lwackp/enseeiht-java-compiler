@@ -49,6 +49,16 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
         return this.signature.getName();
     }
 
+    /**
+     * Synthesized semantics attribute for the type of the declared variable.
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getType() {
+        return this.signature.getType();
+    }
+
     @Override
     public boolean checkType() {
         return (this.signature.checkType());
