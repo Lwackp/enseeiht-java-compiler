@@ -162,7 +162,7 @@ end
 }
 #ast {
 do
-    Interfaces1^ast.add(Interface^ast);
+    Interfaces1^ast.add(0, Interface^ast);
     Interfaces^ast := Interfaces1^ast;
 end
 }
@@ -210,7 +210,7 @@ end
 }
 #ast {
 do
-    SuiteHeritageInterface^ast.add(HeritageInterface^factory.createInheritanceDeclaration(
+    SuiteHeritageInterface^ast.add(0, HeritageInterface^factory.createInheritanceDeclaration(
                                 identificateur_type^txt,
                                 InstanceGenericite^ast));
     HeritageInterface^ast := SuiteHeritageInterface^ast;
@@ -240,7 +240,8 @@ end
 }
 #ast {
 do
-    SuiteHeritageInterface1^ast.add(SuiteHeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt,
+    SuiteHeritageInterface1^ast.add(0, SuiteHeritageInterface^factory.createInheritanceDeclaration
+    (identificateur_type^txt,
     InstanceGenericite^ast));
     SuiteHeritageInterface^ast := SuiteHeritageInterface1^ast;
 end
@@ -266,7 +267,7 @@ end
 }
 #ast {
 do
-    ElementsInterface1^ast.add(ElementInterface^ast);
+    ElementsInterface1^ast.add(0, ElementInterface^ast);
     ElementsInterface^ast := ElementsInterface1^ast;
 end
 }
@@ -339,7 +340,7 @@ end
 }
 #ast {
 do
-    Classes1^ast.add(Classe^ast);
+    Classes1^ast.add(0, Classe^ast);
     Classes^ast := Classes1^ast;
 end
 }
@@ -404,7 +405,7 @@ end
 }
 #ast {
 do
-    SuiteHeritageInterface^ast.add(ImplantationInterface^factory.createInheritanceDeclaration(
+    SuiteHeritageInterface^ast.add(0, ImplantationInterface^factory.createInheritanceDeclaration(
                                 identificateur_type^txt,
                                 InstanceGenericite^ast));
     ImplantationInterface^ast := SuiteHeritageInterface^ast;
@@ -438,7 +439,7 @@ do
     st := MethodePrincipale^factory.createArrayType(AtomicType.StringType);
     param := MethodePrincipale^factory.createParameterDeclaration(identificateur^txt, st);
     params := new LinkedList<ParameterDeclaration>();
-    params.add(param);
+    params.add(0, param);
     main := MethodePrincipale^factory.createFunctionDeclaration("main", AtomicType.VoidType, params, Bloc^ast);
     MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
     NonAccessModifier.Static);
@@ -516,7 +517,7 @@ end
 }
 #ast {
 do
-    ElementsClasse1^ast.add(
+    ElementsClasse1^ast.add(0,
         ElementsClasse^factory.createClassElement(ElementClasse^ast, DroitAcces^ast)
         );
     ElementsClasse^ast := ElementsClasse1^ast;
@@ -658,7 +659,7 @@ end
 }
 #ast {
 do
-    SuiteParametres^ast.add(Parametre^ast);
+    SuiteParametres^ast.add(0,Parametre^ast);
     Parametres^ast := SuiteParametres^ast;
 end
 }
@@ -692,7 +693,7 @@ end
 }
 #ast {
 do
-    SuiteParametres1^ast.add(Parametre^ast);
+    SuiteParametres1^ast.add(0,Parametre^ast);
     SuiteParametres^ast := SuiteParametres1^ast;
 end
 }
@@ -972,8 +973,20 @@ end
 --}
 Expression -> Affectation SuiteAffectation #ast;
 #ast {
+local
+    e : Expression;
+    d : Declaration;
 do
-    Expression^ast := Expression^factory.createAffectation(Affectation^ast, SuiteAffectation^ast);
+    if SuiteAffectation^ast != null then
+        e := Affectation^ast;
+        match e
+        with Usage then d := e.getDeclaration();
+        else d := null; error(Debug, e.getClass());
+        end
+        Expression^ast := Expression^factory.createAssignment(d, SuiteAffectation^ast);
+    else
+        Expression^ast := Affectation^ast;
+    end
 end
 }
 
@@ -1202,7 +1215,7 @@ end
 Expressions -> Expression SuiteExpressions #ast;
 #ast {
 do
-    SuiteExpressions^ast.add(Expression^ast);
+    SuiteExpressions^ast.add(0, Expression^ast);
     Expressions^ast := SuiteExpressions^ast;
 end
 }
@@ -1210,7 +1223,7 @@ end
 SuiteExpressions -> virgule Expression SuiteExpressions #ast;
 #ast {
 do
-    SuiteExpressions1^ast.add(Expression^ast);
+    SuiteExpressions1^ast.add(0, Expression^ast);
     SuiteExpressions^ast := SuiteExpressions1^ast;
 end
 }
@@ -1362,6 +1375,8 @@ do
       match d
       with ConstantDeclaration then AppelOuAcces^support := d.getValue();
       with VariableDeclaration then AppelOuAcces^support := Facteur^factory.createVariableUse(d);
+      with ClassElementImpl then AppelOuAcces^support := Facteur^factory.createClassElementUse(d);
+      with ParameterDeclarationImpl then AppelOuAcces^support := Facteur^factory.createParameterUse(d);
       end
    else
       error(BLOC_undefined_ident, identificateur^txt);
@@ -1461,7 +1476,7 @@ local
     a : List<Expression>;
 do
    a := new LinkedList<Expression>();
-   a.add(Arguments^ast);
+   a.add(0, Arguments^ast);
    AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support, a);
 end
 }

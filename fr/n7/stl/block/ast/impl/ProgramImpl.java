@@ -35,10 +35,10 @@ public class ProgramImpl implements Program {
         StringBuilder _local = new StringBuilder();
 
         for (InterfaceDeclaration _interface : this.interfaces) {
-            _local.append(_interface);
+            _local.append(_interface).append("\n");
         }
         for (ClassDeclaration _class : this.classes) {
-            _local.append(_class);
+            _local.append(_class).append("\n");
         }
 
         _local.append(this.main);

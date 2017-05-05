@@ -176,22 +176,6 @@ public interface InstructionFactory {
 	 * @return A Type Declaration node in the Abstract Syntax Tree.
 	 */
     TypeDeclaration createTypeDeclaration(String _name, Type _type);
-
-	/**
-	 * Create an assignment node in the Abstract Syntax Tree.
-	 * @param _declaration Variable Declaration node in the Abstract Syntax Tree corresponding to the assigned variable.
-	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the variable.
-	 * @return An Assignment node in the Abstract Syntax Tree.
-	 */
-    Instruction createAssignment(VariableDeclaration _declaration, Expression _value);
-	
-	/**
-	 * Create an assignment node in the Abstract Syntax Tree.
-	 * @param _assignable Expression node in the Abstract Syntax Tree corresponding to the assignable part.
-	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the assignable part.
-	 * @return An Assignment node in the Abstract Syntax Tree.
-	 */
-    Instruction createAssignment(Expression _assignable, Expression _value);
 	
 	/**
 	 * Create a conditional node in the Abstract Syntax Tree.

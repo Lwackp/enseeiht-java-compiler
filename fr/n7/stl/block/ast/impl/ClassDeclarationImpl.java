@@ -53,7 +53,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public Type getType() {
-        return null;
+        return new ClassTypeImpl(this.name);
     }
 
     /* (non-Javadoc)
@@ -86,7 +86,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 
         _local.append(" {\n");
         for (ClassElement _element : this.elements) {
-            _local.append(_element);
+            _local.append(_element).append("\n");
         }
         _local.append("}");
 

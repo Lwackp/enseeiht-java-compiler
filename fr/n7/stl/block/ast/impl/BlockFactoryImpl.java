@@ -205,6 +205,22 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createParameterUse(fr.n7.stl.block.ast.ParameterDeclaration)
+	 */
+	@Override
+	public Expression createParameterUse(ParameterDeclaration _declaration) {
+		return new ParameterUseImpl(_declaration);
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createClassElementUse(fr.n7.stl.block.ast.ClassElement)
+	 */
+	@Override
+	public Expression createClassElementUse(ClassElement _declaration) {
+		return new ClassElementUseImpl(_declaration);
+	}
+
+	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createVariableUse(fr.n7.stl.block.ast.VariableDeclaration)
 	 */
 	@Override
@@ -218,6 +234,30 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Assignable createVariableAssignment(VariableDeclaration _declaration) {
 		return new VariableAssignmentImpl(_declaration);
+	}
+
+	/**
+	 * Create a node for a class element assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 *
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the class element.
+	 * @return Abstract Syntax Tree node for the access to a class element.
+	 */
+	@Override
+	public Assignable createClassElementAssignment(ClassElement _declaration) {
+		return new ClassElementAssignmentImpl(_declaration);
+	}
+
+	/**
+	 * Create a node for a parameter assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 *
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the parameter.
+	 * @return Abstract Syntax Tree node for the access to a parameter.
+	 */
+	@Override
+	public Assignable createParameterAssignment(ParameterDeclaration _declaration) {
+		return new ParameterAssignmentImpl(_declaration);
 	}
 
 	/* (non-Javadoc)
@@ -244,7 +284,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Instruction createReturn(Expression _return) {
-		return null;
+		return new ReturnImpl(_return);
 	}
 
 	/* (non-Javadoc)
@@ -271,22 +311,26 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Instruction createVoidInstruction(Expression _expression) {
+		if (_expression instanceof Instruction) {
+			return (Instruction) _expression;
+		}
 		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.InstructionFactory#createAssignment(fr.n7.stl.block.ast.VariableDeclaration, fr.n7.stl.block.ast.Expression)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createAssignment(fr.n7.stl.block.ast.Declaration, fr.n7.stl
+	 * .block.ast.Expression)
 	 */
 	@Override
-	public Instruction createAssignment(VariableDeclaration _declaration, Expression _value) {
+	public Expression createAssignment(Declaration _declaration, Expression _value) {
 		return new AssignmentImpl(_declaration,_value);
 	}
 	
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.InstructionFactory#createAssignment(fr.n7.stl.block.ast.VariableDeclaration, fr.n7.stl.block.ast.Expression)
+	 * @see fr.n7.stl.block.ast.InstructionFactory#ExpressionFactory(fr.n7.stl.block.ast.VariableDeclaration, fr.n7.stl.block.ast.Expression)
 	 */
 	@Override
-	public Instruction createAssignment(Expression _assignable, Expression _value) {
+	public Expression createAssignment(Expression _assignable, Expression _value) {
 		return new AssignmentImpl(_assignable,_value);
 	}
 
