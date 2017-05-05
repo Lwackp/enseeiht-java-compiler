@@ -623,15 +623,12 @@ do
 end
 }
 
-
---TODO (Constructor definition)
---TODO AtomicType.VoidType --> ConstructorType
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
     Constructeur^ast := Constructeur^factory.createFunctionDeclaration(
                                         identificateur_type^txt,
-                                        AtomicType.VoidType,
+                                        FunctionDeclaration.ConstructorType,
                                         Parametres^ast,
                                         Bloc^ast
                                       );

@@ -626,7 +626,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createFunctionAccess(Expression _variable) {
-		return null;
+		return new FunctionCallImpl(_variable);
 	}
 
 	/**
@@ -638,7 +638,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createFunctionAccess(Expression _variable, List<Expression> _parameters) {
-		return null;
+		return new FunctionCallImpl(_variable, _parameters);
 	}
 
 	/**

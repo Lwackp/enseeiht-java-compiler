@@ -90,7 +90,8 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public boolean checkType() {
-        return false;
+        //TODO: Inheritance checkType
+        return true;
     }
 
     /**

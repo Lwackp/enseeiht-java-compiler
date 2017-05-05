@@ -15,10 +15,13 @@ import fr.n7.stl.tam.ast.TAMFactory;
  * @author Marc Pantel
  *
  */
-public interface Block { 
-	// <REMOVE>
-	// extends HierarchicalScope<Declaration> {
-	// </REMOVE>
+public interface Block {
+
+	/**
+	 * Synthesized semantics attribute for the type of the declared variable.
+	 * @return Type of the declared variable.
+	 */
+	Type getType();
 	
 	/**
 	 * Add an instruction at then end of a block.

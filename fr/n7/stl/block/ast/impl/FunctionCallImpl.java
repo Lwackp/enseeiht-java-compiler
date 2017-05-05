@@ -23,6 +23,11 @@ public class FunctionCallImpl implements FunctionCall {
 		this.function = _function;
 	}
 
+	public FunctionCallImpl(Expression _function, List<Expression> _parameters) {
+		this(_function);
+		this.parameters = _parameters;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder _result = new StringBuilder(function + "( ");

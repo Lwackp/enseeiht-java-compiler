@@ -11,7 +11,7 @@ import fr.n7.stl.tam.ast.TAMFactory;
 public interface ClassDeclaration extends TypeDeclaration {
 
 	/**
-	 * Synthesized semantics attribute for the type of the declared variable.
+	 * Synthesized semantics attribute for the type of the declared class.
 	 * @return Type of the declared variable.
 	 */
     Type getType();

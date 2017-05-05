@@ -13,6 +13,8 @@ import fr.n7.stl.block.ast.Type;
  */
 public class FunctionTypeImpl implements Type {
 
+
+
 	private Type result;
 	private List<Type> parameters;
 

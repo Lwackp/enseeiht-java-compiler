@@ -10,6 +10,8 @@ import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import static fr.n7.stl.block.ast.AtomicType.ErrorType;
+
 /**
  * Implementation of the Abstract Syntax Tree node for a method declaration instruction.
  * @author Matthieu Perrier

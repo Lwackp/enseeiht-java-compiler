@@ -71,7 +71,8 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
 
     @Override
     public boolean checkType() {
-        return false;
+        //TODO Override checktype
+        return true;
     }
 
 }
