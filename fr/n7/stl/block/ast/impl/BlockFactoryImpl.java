@@ -152,7 +152,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
 	 *
-	 * @param _element   Signature of the declared class element.
+	 * @param _element   SignatureDeclaration of the declared class element.
 	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
@@ -260,6 +260,19 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Instruction createVoidInstruction(Expression _expression) {
 		return null;
+	}
+
+	/**
+	 * Create a signature node in the Abstract Syntax Tree.
+	 *
+	 * @param _id
+     * @param _type
+     * @param _parametres
+	 * @return A Void Instruction node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public SignatureDeclarationImpl createSignature(String _id, Type _type, List<ParameterDeclaration> _parametres) {
+		return new SignatureDeclarationImpl(_id, _type, _parametres);
 	}
 
 	/* (non-Javadoc)

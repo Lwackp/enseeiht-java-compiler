@@ -592,7 +592,8 @@ end
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
 local
-    sam: Object;
+    decl : Declaration;
+    sign : SignatureDeclaration;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
         AttributOuMethode^ast := AttributOuMethode^factory.createClassElement(identificateur^txt,
@@ -602,12 +603,11 @@ do
                 Type^ast, SuiteAttributOuMethode^ast);
         if (SuiteAttributOuMethode^tds.knows(identificateur^txt)) then
             if !SuiteAttributOuMethode^tds.contains(identificateur^txt) then
-                if !SuiteAttributOuMethode^tds.get(identificateur^txt).equals(AttributOuMethode^ast) then
-                    error();
-
-                end
+--                if !SuiteAttributOuMethode^tds.get(identificateur^txt).equals(AttributOuMethode^ast) then
+                decl := SuiteAttributOuMethode^tds.get(identificateur^txt);
+                if decl
             else
-                error();
+                error(MiniJava_ClassElement_Definition, identificateur^txt);
             end
          else
              SuiteAttributOuMethode^tds.add(AttributOuMethode^ast);

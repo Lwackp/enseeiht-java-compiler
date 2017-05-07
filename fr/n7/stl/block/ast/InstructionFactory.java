@@ -1,5 +1,7 @@
 package fr.n7.stl.block.ast;
 
+import fr.n7.stl.block.ast.impl.SignatureDeclarationImpl;
+
 import java.lang.Iterable;
 import java.util.List;
 
@@ -134,10 +136,10 @@ public interface InstructionFactory {
 	 */
 	ClassElement createClassElement(VariableDeclaration _element, ElementModifier... _modifiers);
 
-	//TODO:n Create Signature Class
+	//TODO:n Create SignatureDeclaration Class
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
-	 * @param _element Signature of the declared class element.
+	 * @param _element SignatureDeclaration of the declared class element.
 	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
@@ -259,6 +261,6 @@ public interface InstructionFactory {
 	 * @param _parametres Abstract Syntax Tree node for the parametres.
 	 * @return Abstract Syntax Tree node for a couple containing the _left and _right parts.
 	 */
-	Expression createSignature(String _id, Type _type, List<ParameterDeclaration> _parametres);
+	SignatureDeclarationImpl createSignature(String _id, Type _type, List<ParameterDeclaration> _parametres);
 
 }
