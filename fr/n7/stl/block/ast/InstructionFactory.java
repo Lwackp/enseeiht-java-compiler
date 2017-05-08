@@ -220,6 +220,12 @@ public interface InstructionFactory {
 	Instruction createReturn(Expression _return);
 
 	/**
+	 * Create a return node in the Abstract Syntax Tree.
+	 * @return A Return node in the Abstract Syntax Tree.
+	 */
+	Instruction createReturnThis();
+
+	/**
 	 * Create a printer node in the Abstract Syntax Tree.
 	 * @param _value Expression node in the Abstract Syntax Tree whose value is printed when the Printer node is executed.
 	 *               This node is assigned to the Value branch of the Printer node.

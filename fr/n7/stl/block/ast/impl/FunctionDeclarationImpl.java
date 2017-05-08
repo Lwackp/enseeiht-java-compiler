@@ -1,11 +1,8 @@
 package fr.n7.stl.block.ast.impl;
 
 import java.util.List;
-import fr.n7.stl.block.ast.Block;
-import fr.n7.stl.block.ast.FunctionDeclaration;
-import fr.n7.stl.block.ast.ParameterDeclaration;
-import fr.n7.stl.block.ast.SignatureDeclaration;
-import fr.n7.stl.block.ast.Type;
+
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -21,6 +18,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
     private SignatureDeclaration signature;
     private Block body;
+    private String label;
 
     //private Register register;
 
@@ -68,14 +66,31 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
     @Override
     public int allocateMemory(Register _register, int _offset) {
-        // TODO Auto-generated method stub
+        this.body.allocateMemory(_register, _offset+3);
         return 0;
     }
 
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        // TODO Auto-generated method stub
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        for (ParameterDeclaration _parameter : this.signature.getParameters()) {
+            int _paramsize = _parameter.getType().length();
+            _fragment.add(_factory.createLoad(Register.LB, -1*_paramsize, _paramsize));
+        }
+
+        _fragment.append(this.body.getCode(_factory));
+
+        //TODO: Return instructions must know parameters's size
+        if (this.signature.getReturnedType() == AtomicType.VoidType
+         || this.signature.getReturnedType() == ConstructorType) {
+            _fragment.add(_factory.createReturn(0, 0));
+        }
+
+        this.label = "function_" + this.signature.getName() + _factory.createLabelNumber();
+        _fragment.addPrefix(this.label);
+
+        return _fragment;
     }
 
     @Override
@@ -91,6 +106,16 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
     @Override
     public Block getBody() {
         return this.body;
+    }
+
+    /**
+     * Synthesized semantics attribute for the label of the method.
+     *
+     * @return label of the method.
+     */
+    @Override
+    public String getLabel() {
+        return this.label;
     }
 
     @Override

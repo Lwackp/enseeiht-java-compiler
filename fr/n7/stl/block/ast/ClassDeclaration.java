@@ -4,6 +4,8 @@ import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import java.util.List;
+
 /**
  * @author Marc Pantel
  *
@@ -12,7 +14,7 @@ public interface ClassDeclaration extends TypeDeclaration {
 
 	/**
 	 * Synthesized semantics attribute for the type of the declared class.
-	 * @return Type of the declared variable.
+	 * @return Type of the declared class.
 	 */
     Type getType();
 
@@ -21,6 +23,12 @@ public interface ClassDeclaration extends TypeDeclaration {
 	 * @return Synthesized True if the instruction is well typed, False if not.
 	 */
 	boolean checkType();
+
+	/**
+	 * Synthesized semantics attribute for the elements of the declared class.
+	 * @return Elements of the declared class.
+	 */
+	List<ClassElement> getElements();
 
 	/**
 	 * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.

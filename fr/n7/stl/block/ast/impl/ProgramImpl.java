@@ -1,8 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ClassDeclaration;
-import fr.n7.stl.block.ast.InterfaceDeclaration;
-import fr.n7.stl.block.ast.Program;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -18,7 +16,6 @@ public class ProgramImpl implements Program {
     private List<InterfaceDeclaration> interfaces;
     private List<ClassDeclaration> classes;
     private ClassDeclaration main;
-
     private int offset;
 
     public ProgramImpl(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, ClassDeclaration _main) {
@@ -106,7 +103,23 @@ public class ProgramImpl implements Program {
 
         _fragment.append(this.main.getCode(_factory));
 
-        _fragment.add(_factory.createPop(0, this.offset));
-        return _fragment;
+        Fragment _program = _factory.createFragment();
+
+        if (this.main.getElements().size() == 1 ) {
+            Declaration mainMethod = this.main.getElements().get(0).getDeclaration();
+            if (mainMethod instanceof FunctionDeclaration) {
+                _program.add(_factory.createCall(((FunctionDeclaration)mainMethod).getLabel(), Register.LB));
+            }
+            else {
+                throw new RuntimeException("Main method is not declared properly");
+            }
+        } else {
+            throw new RuntimeException("Main class should contain only one method");
+        }
+
+        _program.add(_factory.createHalt());
+
+        _program.append(_fragment);
+        return _program;
     }
 }

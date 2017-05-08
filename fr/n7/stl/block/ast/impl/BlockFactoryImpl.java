@@ -220,6 +220,17 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new ClassElementUseImpl(_declaration);
 	}
 
+	/**
+	 * Create a node for a this use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 *
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	@Override
+	public Expression createClassThisUse() {
+		return new ClassThisUseImpl();
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createVariableUse(fr.n7.stl.block.ast.VariableDeclaration)
 	 */
@@ -285,6 +296,16 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Instruction createReturn(Expression _return) {
 		return new ReturnImpl(_return);
+	}
+
+	/**
+	 * Create a return node in the Abstract Syntax Tree.
+	 *
+	 * @return A Return node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public Instruction createReturnThis() {
+		return null;
 	}
 
 	/* (non-Javadoc)

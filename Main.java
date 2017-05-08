@@ -49,7 +49,6 @@ public class Main{
                     bloc.get_ast().allocateMemory(Register.SB, 0);
                     TAMFactory factory = new TAMFactoryImpl();
                     Fragment code = bloc.get_ast().getCode(factory);
-                    code.add(factory.createHalt());
                     writer.println(code);
                     writer.close();
                 } catch (IOException e) {

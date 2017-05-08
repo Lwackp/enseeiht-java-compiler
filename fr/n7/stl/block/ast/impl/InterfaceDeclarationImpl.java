@@ -116,6 +116,15 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        //TODO: Inheritance
+
+        //TODO: Sort element regarding final, static, public, ...
+        for (ClassElement _element : this.elements) {
+            _fragment.append(_element.getCode(_factory));
+        }
+
+        return _fragment;
     }
 }

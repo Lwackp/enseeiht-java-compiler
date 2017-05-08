@@ -1,9 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ClassDeclaration;
-import fr.n7.stl.block.ast.ClassElement;
-import fr.n7.stl.block.ast.InheritanceDeclaration;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -21,6 +18,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     private InheritanceDeclaration inheritance;
     private List<InheritanceDeclaration> interfaces;
     private List<ClassElement> elements;
+    private ClassThisUse thisElement = new ClassThisUseImpl();
 
     public ClassDeclarationImpl(String _name, ClassElement _element) {
         this.name = _name;
@@ -109,6 +107,16 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     }
 
     /**
+     * Synthesized semantics attribute for the elements of the declared class.
+     *
+     * @return Elements of the declared class.
+     */
+    @Override
+    public List<ClassElement> getElements() {
+        return new LinkedList<>(elements);
+    }
+
+    /**
      * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.
      * Synthesized Semantics attribute that compute the size of the allocated memory.
      *
@@ -118,6 +126,10 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        for (ClassElement _element : this.elements) {
+            _element.allocateMemory(_register, _offset);
+        }
+
         return 0;
     }
 
@@ -130,6 +142,15 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        //TODO: Inheritance
+
+        //TODO: Sort element regarding final, static, public, ...
+        for (ClassElement _element : this.elements) {
+            _fragment.append(_element.getCode(_factory));
+        }
+
+        return _fragment;
     }
 }

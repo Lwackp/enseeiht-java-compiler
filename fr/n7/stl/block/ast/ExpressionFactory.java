@@ -93,6 +93,13 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access to a variable.
 	 */
 	Expression createClassElementUse(ClassElement _declaration);
+
+	/**
+	 * Create a node for a this use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	Expression createClassThisUse();
 	
 	/**
 	 * Create a node for a variable assignment in the Abstract Syntax Tree.

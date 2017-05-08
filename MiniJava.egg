@@ -111,6 +111,7 @@ sugar prive				    	is    "private";
 sugar statique					is    "static";
 sugar final				    	is    "final";
 sugar principale				is    "main";
+sugar ceci      				is    "this";
 term  chaine					is    "\"([^\"]|\\\")*\"";
 term  caractere			    	is    "\'[^\']\'";
 term  entier					is    "[0-9]+";
@@ -301,7 +302,6 @@ do
 end
 }
 
--- TODO(Function Signature)
 Signature -> vide identificateur parenthese_ouvrante #inh Parametres parenthese_fermante #ast;
 #inh {
 do
@@ -439,7 +439,8 @@ do
     st := MethodePrincipale^factory.createArrayType(AtomicType.StringType);
     param := MethodePrincipale^factory.createParameterDeclaration(identificateur^txt, st);
     params := new LinkedList<ParameterDeclaration>();
-    params.add(0, param);
+    --TODO: because there is no entry no parameter is needed for main method
+    --params.add(0, param);
     main := MethodePrincipale^factory.createFunctionDeclaration("main", AtomicType.VoidType, params, Bloc^ast);
     MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
     NonAccessModifier.Static);
@@ -809,20 +810,19 @@ end
 
 Instruction -> Type identificateur affectation #inh Expression point_virgule #ast;
 #inh {
-local
-    d: Declaration;
 do
-    d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, null);
     if (Instruction^tds.contains(identificateur^txt)) then
         error(Bloc_unexpected_token, identificateur^txt);
-    else
-        Instruction^tds.register(d);
     end
 end
 }
 #ast {
+local
+    d: Declaration;
 do
-    Instruction^ast := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
+    d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
+    Instruction^tds.register(d);
+    Instruction^ast := d;
 end
 }
 
@@ -957,6 +957,14 @@ do
 end
 }
 
+--TODO return this
+--Instruction -> retour ceci point_virgule #ast;
+--#ast {
+--do
+--    Instruction^ast := Instruction^factory.createReturnThis();
+--end
+--}
+
 --Expression -> Condition #inh SuiteCondition #ast ;
 --#inh {
 --do
@@ -978,7 +986,7 @@ do
         e := Affectation^ast;
         match e
         with Usage then d := e.getDeclaration();
-        else d := null; error(Debug, e.getClass());
+        else d := null;
         end
         Expression^ast := Expression^factory.createAssignment(d, SuiteAffectation^ast);
     else
@@ -1260,6 +1268,32 @@ do
 end
 }
 
+
+Facteur -> ceci #inh AppelOuAcces #ast;
+#inh {
+do
+   AppelOuAcces^support := Facteur^factory.createClassThisUse();
+end
+}
+#ast {
+do
+    Facteur^ast := AppelOuAcces^ast;
+end
+}
+
+--TODO chained constructor
+--Facteur -> ceci #inh Appel #ast;
+--#inh {
+--do
+--    Appel^support := Facteur^factory.createClassThisUse();
+--end
+--}
+--#ast {
+--do
+--    Facteur^ast := Appel^ast;
+--end
+--}
+
 Facteur -> identificateur_type point identificateur #inh AppelOuAcces #ast;
 #inh {
 do
@@ -1424,8 +1458,25 @@ end
 
 Acces -> point identificateur #inh AppelOuAcces #ast;
 #inh {
+local
+    op : Optional<Declaration>;
+    ce : Declaration;
+    e : Expression;
 do
-   AppelOuAcces^support := Acces^factory.createFieldAccess(Acces^support,identificateur^txt);
+    e := Acces^support;
+    match e
+    with ClassThisUse then
+        if Acces^tds.knows(identificateur^txt) then
+            op := Acces^tds.get(identificateur^txt);
+            ce := op.get();
+            match ce
+            with ClassElement then
+                AppelOuAcces^support := Acces^factory.createClassElementUse(ce);
+            end
+        end
+    else
+        AppelOuAcces^support := Acces^factory.createFieldAccess(Acces^support,identificateur^txt);
+    end
 end
 }
 

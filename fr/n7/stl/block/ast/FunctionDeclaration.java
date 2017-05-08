@@ -92,10 +92,10 @@ public interface FunctionDeclaration extends Declaration, Instruction {
 	 */
 	Block getBody();
 
-	/**
-	 * Synthesized semantics attribute for the offset used to compute the address of the variable.
-	 * @return Offset used to compute the address where the declared variable will be stored.
-	 */
-	//int getOffset();
+    /**
+     * Synthesized semantics attribute for the label of the method.
+     * @return label of the method.
+     */
+    String getLabel();
 
 }

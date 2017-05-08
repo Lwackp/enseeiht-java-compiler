@@ -15,20 +15,20 @@ class Hydravion implements Avion, Bateau {
     private int id;
 
     public Hydravion(int _altitude, int _id) {
-        altitude = _altitude;
-        id = _id;
+        this.altitude = _altitude;
+        this.id = _id;
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public int getAltitude() {
-        return altitude;
+        return this.altitude;
     }
 
     public boolean isTitanic(int id_titanic) {
-        if (id == id_titanic) {
+        if (this.id == id_titanic) {
             return true;
         }
         return false;
