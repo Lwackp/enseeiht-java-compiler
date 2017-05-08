@@ -20,7 +20,7 @@ public class BlockImpl implements Block {
 	/**
 	 * Sequence of instructions contained in a block.
 	 */
-	private List<Instruction> instructions;
+	List<Instruction> instructions;
 
 	/**
 	 * Hierarchical structure of blocks.
@@ -44,7 +44,7 @@ public class BlockImpl implements Block {
 	 */
 	private List<TypeDeclaration> types;
 
-	private int offset;
+	int offset;
 
 	/**
 	 * Constructor for a block contained in a _context block.

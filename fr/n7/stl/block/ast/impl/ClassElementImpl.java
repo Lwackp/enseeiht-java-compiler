@@ -54,7 +54,7 @@ public class ClassElementImpl implements ClassElement {
 
     @Override
     public Type getType() {
-        return null;
+        return this.declaration.getType();
     }
 
     public void setModifiers(ElementModifier[] modifiers) {

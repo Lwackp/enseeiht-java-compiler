@@ -1,7 +1,12 @@
 package fr.n7.stl.block.ast.impl;
 
+import fr.n7.stl.block.ast.ClassElement;
 import fr.n7.stl.block.ast.ClassType;
 import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.VariableDeclaration;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by thibault on 05/05/17.
@@ -9,9 +14,11 @@ import fr.n7.stl.block.ast.Type;
 public class ClassTypeImpl implements ClassType {
 
     private String name;
+    private List<ClassElement> elements;
 
-    public ClassTypeImpl(String name) {
+    public ClassTypeImpl(String name, List<ClassElement> _elements) {
         this.name = name;
+        this.elements = new LinkedList<>(_elements);
     }
 
     /* (non-Javadoc)
@@ -69,6 +76,28 @@ public class ClassTypeImpl implements ClassType {
      */
     @Override
     public int length() {
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public ClassElement getElement(String _name) {
+        for (ClassElement _element : this.elements) {
+            if (_element.getName().equals(_name)) {
+                return _element;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<VariableDeclaration> getAttributes() {
+        List<VariableDeclaration> _attributes = new LinkedList<>();
+
+        for (ClassElement _element : this.elements) {
+            if (_element.getDeclaration() instanceof VariableDeclaration) {
+                _attributes.add((VariableDeclaration) _element.getDeclaration());
+            }
+        }
+        return _attributes;
     }
 }

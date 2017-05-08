@@ -172,7 +172,8 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params, Block _body) {
+	public FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration>
+			_params, FunctionBody _body) {
 		return new FunctionDeclarationImpl(_name, _type, _params, _body);
 	}
 
@@ -184,7 +185,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, Block _body) {
+	public FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, FunctionBody _body) {
 		return new FunctionDeclarationImpl(_signature, _body);
 	}
 
@@ -501,6 +502,17 @@ public class BlockFactoryImpl implements BlockFactory {
 		Block _local = createBlock(_context);
 		_local.addAll(_content);
 		return _local;
+	}
+
+	/**
+	 * Create an Function Body node in the Abstract Syntax Tree.
+	 *
+	 * @param _body Abstract Syntax Tree of the function body.
+	 * @return A Function body node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public FunctionBody createFunctionBody(Block _body) {
+		return new FunctionBodyImpl(_body);
 	}
 
 	/* (non-Javadoc)

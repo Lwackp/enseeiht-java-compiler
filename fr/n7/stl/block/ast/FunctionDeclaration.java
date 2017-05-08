@@ -74,6 +74,12 @@ public interface FunctionDeclaration extends Declaration, Instruction {
         }
     };
 
+    /**
+     * Synthesized semantics attribute for the type of the returned variable.
+     * @return Type of the returned variable.
+     */
+    SignatureDeclaration getSignature();
+
 	/**
 	 * Synthesized semantics attribute for the type of the returned variable.
 	 * @return Type of the returned variable.

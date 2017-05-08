@@ -3,9 +3,7 @@ package fr.n7.stl.block.ast.impl;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.FunctionCall;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -30,13 +28,16 @@ public class FunctionCallImpl implements FunctionCall {
 
 	@Override
 	public String toString() {
-		StringBuilder _result = new StringBuilder(function + "( ");
-		Iterator<Expression> _iter = this.parameters.iterator();
-		if (_iter.hasNext()) {
-			_result.append(_iter.next());
-		}
-		while (_iter.hasNext()) {
-			_result.append(" ,").append(_iter.next());
+		StringBuilder _result = new StringBuilder(function + "(");
+
+		if (this.parameters != null) {
+			Iterator<Expression> _iter = this.parameters.iterator();
+			if (_iter.hasNext()) {
+				_result.append(_iter.next());
+			}
+			while (_iter.hasNext()) {
+				_result.append(" ,").append(_iter.next());
+			}
 		}
 		return  _result + ")";
 	}
@@ -54,7 +55,7 @@ public class FunctionCallImpl implements FunctionCall {
 	 */
 	@Override
 	public Type getType() {
-		throw new SemanticsUndefinedException( "getType is undefined in FunctionCallImpl.");
+		return this.function.getType();
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +63,17 @@ public class FunctionCallImpl implements FunctionCall {
 	 */
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
-		throw new SemanticsUndefinedException( "getCode is undefined in FunctionCallImpl.");
+		Fragment _fragment = _factory.createFragment();
+
+		if (this.parameters != null) {
+			for (Expression _parameter : this.parameters) {
+				_fragment.append(_parameter.getCode(_factory));
+			}
+		}
+
+		_fragment.append(this.function.getCode(_factory));
+
+		return _fragment;
 	}
 
 }

@@ -54,13 +54,13 @@ public class ArrayAllocationImpl implements ArrayAllocation {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        Fragment fragment = _factory.createFragment();
+        Fragment _fragment = _factory.createFragment();
 
-        fragment.append(size.getCode(_factory));
-        fragment.add(_factory.createLoadL(this.type.length()));
-        fragment.add(Library.IMul);
-        fragment.add(Library.MAlloc);
+        _fragment.append(size.getCode(_factory));
+        _fragment.add(_factory.createLoadL(this.type.length()));
+        _fragment.add(Library.IMul);
+        _fragment.add(Library.MAlloc);
 
-        return fragment;
+        return _fragment;
     }
 }

@@ -53,11 +53,13 @@ public class PrinterImpl implements Instruction {
 
 		_fragment.append(this.parameter.getCode(_factory));
 
-		if (this.parameter.getType().compatibleWith(AtomicType.IntegerType)) {
+		Type _parameterType = this.parameter.getType();
+
+		if (_parameterType.compatibleWith(AtomicType.IntegerType)) {
 			_fragment.add(Library.IOut);
-		} else if (this.parameter.getType().compatibleWith(AtomicType.StringType)) {
+		} else if (_parameterType.compatibleWith(AtomicType.StringType)) {
 			_fragment.add(Library.SOut);
-		} else if (this.parameter.getType().compatibleWith(AtomicType.StringType)) {
+		} else if (_parameterType.compatibleWith(AtomicType.StringType)) {
 			_fragment.add(Library.COut);
 		}
 

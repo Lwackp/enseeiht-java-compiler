@@ -17,7 +17,7 @@ import static fr.n7.stl.block.ast.AtomicType.ErrorType;
 public class FunctionDeclarationImpl implements FunctionDeclaration {
 
     private SignatureDeclaration signature;
-    private Block body;
+    private FunctionBody body;
     private String label;
 
     //private Register register;
@@ -29,7 +29,8 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
      * @param _parameters List of parameters declarations of the declared method.
      * @param _body Body of the declared method
      */
-    public FunctionDeclarationImpl(String _name, Type _returnedType, List<ParameterDeclaration> _parameters, Block _body) {
+    public FunctionDeclarationImpl(String _name, Type _returnedType, List<ParameterDeclaration> _parameters,
+                                   FunctionBody _body) {
         this.signature = new SignatureDeclarationImpl(_name, _returnedType, _parameters);
         this.body = _body;
     }
@@ -39,7 +40,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
      * @param _signature Signature of the declared method
      * @param _body Body of the declared method
      */
-    public FunctionDeclarationImpl(SignatureDeclaration _signature, Block _body) {
+    public FunctionDeclarationImpl(SignatureDeclaration _signature, FunctionBody _body) {
         this.signature = _signature;
         this.body = _body;
     }
@@ -66,6 +67,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        // +3 because of CALL instruction inner behaviour
         this.body.allocateMemory(_register, _offset+3);
         return 0;
     }
@@ -74,10 +76,14 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
 
+        int _paramssize = 0;
         for (ParameterDeclaration _parameter : this.signature.getParameters()) {
             int _paramsize = _parameter.getType().length();
             _fragment.add(_factory.createLoad(Register.LB, -1*_paramsize, _paramsize));
+            _paramssize += _paramsize;
         }
+
+        this.body.setParametersSize(_paramssize);
 
         _fragment.append(this.body.getCode(_factory));
 
@@ -91,6 +97,16 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
         _fragment.addPrefix(this.label);
 
         return _fragment;
+    }
+
+    /**
+     * Synthesized semantics attribute for the type of the returned variable.
+     *
+     * @return Type of the returned variable.
+     */
+    @Override
+    public SignatureDeclaration getSignature() {
+        return this.getSignature();
     }
 
     @Override

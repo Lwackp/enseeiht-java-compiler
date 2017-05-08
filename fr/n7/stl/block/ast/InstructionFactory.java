@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast;
 
 import java.lang.Iterable;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Factory to create Abstract Syntax Tree nodes for common instructions in programming languages.
@@ -50,6 +51,13 @@ public interface InstructionFactory {
 	 * @return A Block node in the Abstract Syntax Tree.
 	 */
     Block createBlock(Block _context, Iterable<Instruction> _content);
+
+	/**
+	 * Create an Function Body node in the Abstract Syntax Tree.
+	 * @param _body Abstract Syntax Tree of the function body.
+	 * @return A Function body node in the Abstract Syntax Tree.
+	 */
+	FunctionBody createFunctionBody(Block _body);
 	
 	/**
 	 * Create a constant declaration node in the Abstract Syntax Tree.
@@ -159,7 +167,8 @@ public interface InstructionFactory {
 	 * @param _body
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
-	FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params, Block _body);
+	FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params,
+												  FunctionBody _body);
 
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
@@ -167,7 +176,7 @@ public interface InstructionFactory {
 	 * @param _body
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
-	FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, Block _body);
+	FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, FunctionBody _body);
 
 	/**
 	 * Create a type declaration node in the Abstract Syntax Tree.

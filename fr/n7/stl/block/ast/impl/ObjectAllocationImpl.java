@@ -1,9 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ArrayAllocation;
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.ObjectAllocation;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -50,6 +47,16 @@ public class ObjectAllocationImpl implements ObjectAllocation {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        int _attributesSize = 0;
+        for (VariableDeclaration _v : ((ClassType)this.type).getAttributes()) {
+            _attributesSize += _v.getType().length();
+        }
+
+        _fragment.add(_factory.createLoadL(_attributesSize));
+        _fragment.add(Library.MAlloc);
+
+        return _fragment;
     }
 }

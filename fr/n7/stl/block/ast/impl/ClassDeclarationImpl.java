@@ -51,7 +51,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public Type getType() {
-        return new ClassTypeImpl(this.name);
+        return new ClassTypeImpl(this.name, this.getElements());
     }
 
     /* (non-Javadoc)

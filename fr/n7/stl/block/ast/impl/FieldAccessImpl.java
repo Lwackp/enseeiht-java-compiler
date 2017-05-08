@@ -1,10 +1,8 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.FieldDeclaration;
-import fr.n7.stl.block.ast.RecordType;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.Collections;
@@ -46,7 +44,11 @@ public class FieldAccessImpl implements Expression {
 	 */
 	@Override
 	public Type getType() {
-		return this.getField().getType();
+		Declaration _declaration = this.getField();
+		if (_declaration instanceof FunctionDeclaration) {
+			return ((FunctionDeclaration) _declaration).getReturnedType();
+		}
+		return _declaration.getType();
 	}
 
 	/* (non-Javadoc)
@@ -54,21 +56,27 @@ public class FieldAccessImpl implements Expression {
 	 */
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
-		Fragment fragment = _factory.createFragment();
+		Fragment _fragment = _factory.createFragment();
 
-		int length = this.getField().getType().length();
-		fragment.append(this.record.getCode(_factory));
-		fragment.add(_factory.createPop(0, this.inOffset()));
-		fragment.add(_factory.createPop(length, this.record.getType().length() - length - this.inOffset()));
+		Declaration _field = this.getField();
 
-		return fragment;
+		if (_field instanceof FunctionDeclaration) {
+			_fragment.add(_factory.createCall(((FunctionDeclaration) _field).getLabel(), Register.LB));
+		} else {
+			int length = this.getField().getType().length();
+			_fragment.append(this.record.getCode(_factory));
+			_fragment.add(_factory.createPop(0, this.inOffset()));
+			_fragment.add(_factory.createPop(length, this.record.getType().length() - length - this.inOffset()));
+		}
+
+		return _fragment;
 	}
 
-	protected FieldDeclaration getField() {
-		if (field == null) {
-			Optional<FieldDeclaration> field = ((RecordTypeImpl)this.record.getType()).get(name);
-			if (field.isPresent()) {
-				return field.get();
+	protected Declaration getField() {
+		if (this.field == null) {
+			Type _recordType = this.record.getType();
+			if (_recordType instanceof ClassType) {
+				return ((ClassType) _recordType).getElement(this.name).getDeclaration();
 			}
 		}
 		return field;
@@ -77,13 +85,25 @@ public class FieldAccessImpl implements Expression {
 	protected int inOffset() {
 		int precLength = 0;
 		boolean dejaVu = false;
-		List<FieldDeclaration> fields = ((RecordType)this.record.getType()).getFields();
-		Collections.reverse(fields);
-		for (FieldDeclaration f : fields) {
-			dejaVu |= this.getField().getName().equals(f.getName());
+		if (this.record.getType() instanceof RecordType) {
+			List<FieldDeclaration> fields = ((RecordType)this.record.getType()).getFields();
+			Collections.reverse(fields);
+			for (FieldDeclaration f : fields) {
+				dejaVu |= this.getField().getName().equals(f.getName());
 
-			if (!dejaVu) {
-				precLength += f.getType().length();
+				if (!dejaVu) {
+					precLength += f.getType().length();
+				}
+			}
+		} else if (this.record.getType() instanceof ClassType) {
+			List<VariableDeclaration> _attributes = ((ClassType)this.record.getType()).getAttributes();
+			Collections.reverse(_attributes);
+			for (VariableDeclaration f : _attributes) {
+				dejaVu |= this.getField().getName().equals(f.getName());
+
+				if (!dejaVu) {
+					precLength += f.getType().length();
+				}
 			}
 		}
 		return precLength;

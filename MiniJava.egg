@@ -53,7 +53,7 @@ syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
-syn body    : Block for SuiteAttributOuMethode;
+syn body    : FunctionBody for SuiteAttributOuMethode;
 
 -- TODO(AST for the following classes)
 syn ast     : Object for Genericite, InstanceGenericite;
@@ -434,6 +434,7 @@ local
     st    : Type;
     param : ParameterDeclaration;
     params: List<ParameterDeclaration>;
+    body  : FunctionBody;
     main  : FunctionDeclaration;
 do
     st := MethodePrincipale^factory.createArrayType(AtomicType.StringType);
@@ -441,7 +442,8 @@ do
     params := new LinkedList<ParameterDeclaration>();
     --TODO: because there is no entry no parameter is needed for main method
     --params.add(0, param);
-    main := MethodePrincipale^factory.createFunctionDeclaration("main", AtomicType.VoidType, params, Bloc^ast);
+    body := MethodePrincipale^factory.createFunctionBody(Bloc^ast);
+    main := MethodePrincipale^factory.createFunctionDeclaration("main", AtomicType.VoidType, params, body);
     MethodePrincipale^ast := MethodePrincipale^factory.createClassElement(main, AccessModifier.Public,
     NonAccessModifier.Static);
 end
@@ -598,9 +600,12 @@ end
 
 AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
+local
+    body : FunctionBody;
 do
+    body := AttributOuMethode^factory.createFunctionBody(Bloc^ast);
     AttributOuMethode^ast := AttributOuMethode^factory.createFunctionDeclaration
-    (identificateur^txt, AtomicType.VoidType, Parametres^ast, Bloc^ast);
+    (identificateur^txt, AtomicType.VoidType, Parametres^ast, body);
 end
 }
 
@@ -620,18 +625,21 @@ SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Blo
 do
     SuiteAttributOuMethode^type := ClassElementType.Method;
     SuiteAttributOuMethode^ast := Parametres^ast;
-    SuiteAttributOuMethode^body := Bloc^ast;
+    SuiteAttributOuMethode^body := SuiteAttributOuMethode^factory.createFunctionBody(Bloc^ast);
 end
 }
 
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
+local
+    body : FunctionBody;
 do
+    body := Constructeur^factory.createFunctionBody(Bloc^ast);
     Constructeur^ast := Constructeur^factory.createFunctionDeclaration(
                                         identificateur_type^txt,
                                         FunctionDeclaration.ConstructorType,
                                         Parametres^ast,
-                                        Bloc^ast
+                                        body
                                       );
 end
 }
@@ -1513,25 +1521,20 @@ end
 --end
 --}
 
-Appel -> #inh1 Arguments #inh2 AppelOuAcces #ast;
+Appel -> #inh1 Arguments #inh2 Acces #ast;
 #inh1 {
 do
    Arguments^support := Appel^support;
 end
 }
 #inh2 {
-local
-    a : List<Expression>;
 do
-   a := new LinkedList<Expression>();
-   a.add(0, Arguments^ast);
-   AppelOuAcces^support := Appel^factory.createFunctionAccess(Appel^support, a);
+   Acces^support := Arguments^ast;
 end
 }
-
 #ast {
 do
-   Appel^ast := AppelOuAcces^ast;
+   Appel^ast := Acces^ast;
 end
 }
 

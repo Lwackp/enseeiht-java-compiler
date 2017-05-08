@@ -13,6 +13,7 @@ import fr.n7.stl.tam.ast.TAMFactory;
 public class ReturnImpl implements Return {
 
     private Expression value;
+    private int parametersSize;
 
     public ReturnImpl(Expression _return) {
         this.value = _return;
@@ -62,7 +63,12 @@ public class ReturnImpl implements Return {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        _fragment.append(this.value.getCode(_factory));
+        _fragment.add(_factory.createReturn(this.value.getType().length(), this.parametersSize));
+
+        return _fragment;
     }
 
     /**
@@ -73,5 +79,15 @@ public class ReturnImpl implements Return {
     @Override
     public Type getType() {
         return value.getType();
+    }
+
+    /**
+     * Set Parameters's size of the Function body node
+     *
+     * @param _paramssize Parameters's Size node in the AST added to the Function Body node.
+     */
+    @Override
+    public void setParametersSize(int _paramssize) {
+        this.parametersSize = _paramssize;
     }
 }
