@@ -4,12 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import fr.n7.stl.block.ast.Block;
-import fr.n7.stl.block.ast.ConstantDeclaration;
-import fr.n7.stl.block.ast.Declaration;
-import fr.n7.stl.block.ast.Instruction;
-import fr.n7.stl.block.ast.TypeDeclaration;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -78,9 +73,33 @@ public class BlockImpl implements Block {
 		this.context = Optional.empty();
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.n7.block.ast.Block#add(fr.n7.block.ast.Instruction)
+	/**
+	 * Synthesized semantics attribute for the type of the declared variable.
+	 *
+	 * @return Type of the declared variable.
 	 */
+	@Override
+	public Type getType() {
+		Type _type = AtomicType.VoidType;
+		boolean first = true;
+
+		for (Instruction _instruction : this.instructions) {
+			if (_instruction instanceof ReturnImpl) {
+				Type _typeInstruction = ((ReturnImpl) _instruction).getType();
+				if (!first) {
+					Type _merge = _typeInstruction.merge(_type);
+				}
+				_type = _typeInstruction;
+				first = false;
+			}
+		}
+
+		return _type;
+	}
+
+	/* (non-Javadoc)
+         * @see fr.n7.block.ast.Block#add(fr.n7.block.ast.Instruction)
+         */
 	@Override
 	public void add(Instruction _instruction) {
 		this.instructions.add(_instruction);

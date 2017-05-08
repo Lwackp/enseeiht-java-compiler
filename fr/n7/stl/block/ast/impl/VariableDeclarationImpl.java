@@ -9,17 +9,52 @@ import fr.n7.stl.tam.ast.TAMFactory;
 
 /**
  * Implementation of the Abstract Syntax Tree node for a variable declaration instruction.
- * @author Marc Pantel
+ * @author Thibault Meunier
  *
  */
 public class VariableDeclarationImpl implements VariableDeclaration {
+
+	public enum SpecialValue implements Expression {
+		NoValue;
+
+		/**
+		 * Synthesized Semantics attribute to compute the type of an expression.
+		 *
+		 * @return Synthesized Type of the expression.
+		 */
+		@Override
+		public Type getType() {
+			return AtomicType.VoidType;
+		}
+
+		/**
+		 * Inherited Semantics attribute to build the nodes of the abstract syntax tree for the generated TAM code.
+		 * Synthesized Semantics attribute that provide the generated TAM code.
+		 *
+		 * @param _factory Inherited Factory to build AST nodes for TAM code.
+		 * @return Synthesized AST for the generated TAM code.
+		 */
+		@Override
+		public Fragment getCode(TAMFactory _factory) {
+			return null;
+		}
+	}
 
 	private String name;
 	private Type type;
 	private Expression value;
 	private Register register;
 	private int offset;
-	
+
+	/**
+	 * Creates a variable declaration instruction node for the Abstract Syntax Tree.
+	 * @param _name Name of the declared variable.
+	 * @param _type Type of the declared variable.
+	 */
+	public VariableDeclarationImpl(String _name, Type _type) {
+		this(_name, _type, SpecialValue.NoValue);
+	}
+
 	/**
 	 * Creates a variable declaration instruction node for the Abstract Syntax Tree.
 	 * @param _name Name of the declared variable.
@@ -37,7 +72,13 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 	 */
 	@Override
 	public String toString() {
-		return this.type + " " + this.name + " = " + this.value + ";\n";
+		String _result = this.type + " " + this.name;
+
+		if (value != SpecialValue.NoValue) {
+			_result += " = " + this.value;
+		}
+
+		return _result + ";\n";
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +118,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 	 */
 	@Override
 	public boolean checkType() {
-		return this.value.getType().compatibleWith(this.type);
+		return this.value == SpecialValue.NoValue || this.value.getType().compatibleWith(this.type);
 	}
 
 	@Override

@@ -140,40 +140,52 @@ public class BlockFactoryImpl implements BlockFactory {
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
 	 *
-	 * @param _element   VariableDeclaration of the declared class element.
+	 * @param _element   Declaration of the declared class element.
 	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public ClassElement createClassElement(VariableDeclaration _element, ElementModifier... _modifiers) {
+	public ClassElement createClassElement(Declaration _element, ElementModifier... _modifiers) {
 		return new ClassElementImpl(_element, _modifiers);
+	}
+
+	/**
+	 * Create a signature declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name   Name of the declared class element.
+	 * @param _type   Abstract Syntax Tree for the generics of the declared class element.
+	 * @param _params
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public SignatureDeclaration createSignature(String _name, Type _type, List<ParameterDeclaration> _params) {
+		return new SignatureDeclarationImpl(_name, _type, _params);
 	}
 
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
 	 *
-	 * @param _element   SignatureDeclaration of the declared class element.
-	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @param _name   Name of the declared class element.
+	 * @param _type   Abstract Syntax Tree for the generics of the declared class element.
+	 * @param _params
+	 * @param _body
 	 * @return An ClassElement node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public ClassElement createClassElement(Object _element, ElementModifier... _modifiers) {
-		return new ClassElementImpl(_element, _modifiers);
+	public FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params, Block _body) {
+		return new FunctionDeclarationImpl(_name, _type, _params, _body);
 	}
 
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _signature Name of the declared class element.
+	 * @param _body
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
 	@Override
-	public ClassElement createClassElement(String _name, Type _type) {
-		return new ClassElementImpl(_name, _type);
-	}
-
-	@Override
-	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _params) {
-		return new ClassElementImpl(_name, _type, _params);
-	}
-
-	@Override
-	public ClassElement createClassElement(String _name, Type _type, List<ParameterDeclaration> _parameters, Block _body) {
-		return new ClassElementImpl(_name, _type, _parameters, _body);
+	public FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, Block _body) {
+		return new FunctionDeclarationImpl(_signature, _body);
 	}
 
 	/* (non-Javadoc)
@@ -193,6 +205,22 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createParameterUse(fr.n7.stl.block.ast.ParameterDeclaration)
+	 */
+	@Override
+	public Expression createParameterUse(ParameterDeclaration _declaration) {
+		return new ParameterUseImpl(_declaration);
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createClassElementUse(fr.n7.stl.block.ast.ClassElement)
+	 */
+	@Override
+	public Expression createClassElementUse(ClassElement _declaration) {
+		return new ClassElementUseImpl(_declaration);
+	}
+
+	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createVariableUse(fr.n7.stl.block.ast.VariableDeclaration)
 	 */
 	@Override
@@ -206,6 +234,30 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Assignable createVariableAssignment(VariableDeclaration _declaration) {
 		return new VariableAssignmentImpl(_declaration);
+	}
+
+	/**
+	 * Create a node for a class element assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 *
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the class element.
+	 * @return Abstract Syntax Tree node for the access to a class element.
+	 */
+	@Override
+	public Assignable createClassElementAssignment(ClassElement _declaration) {
+		return new ClassElementAssignmentImpl(_declaration);
+	}
+
+	/**
+	 * Create a node for a parameter assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 *
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the parameter.
+	 * @return Abstract Syntax Tree node for the access to a parameter.
+	 */
+	@Override
+	public Assignable createParameterAssignment(ParameterDeclaration _declaration) {
+		return new ParameterAssignmentImpl(_declaration);
 	}
 
 	/* (non-Javadoc)
@@ -232,7 +284,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Instruction createReturn(Expression _return) {
-		return null;
+		return new ReturnImpl(_return);
 	}
 
 	/* (non-Javadoc)
@@ -259,35 +311,26 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Instruction createVoidInstruction(Expression _expression) {
+		if (_expression instanceof Instruction) {
+			return (Instruction) _expression;
+		}
 		return null;
 	}
 
-	/**
-	 * Create a signature node in the Abstract Syntax Tree.
-	 *
-	 * @param _id
-     * @param _type
-     * @param _parametres
-	 * @return A Void Instruction node in the Abstract Syntax Tree.
-	 */
-	@Override
-	public SignatureDeclarationImpl createSignature(String _id, Type _type, List<ParameterDeclaration> _parametres) {
-		return new SignatureDeclarationImpl(_id, _type, _parametres);
-	}
-
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.InstructionFactory#createAssignment(fr.n7.stl.block.ast.VariableDeclaration, fr.n7.stl.block.ast.Expression)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createAssignment(fr.n7.stl.block.ast.Declaration, fr.n7.stl
+	 * .block.ast.Expression)
 	 */
 	@Override
-	public Instruction createAssignment(VariableDeclaration _declaration, Expression _value) {
+	public Expression createAssignment(Declaration _declaration, Expression _value) {
 		return new AssignmentImpl(_declaration,_value);
 	}
 	
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.InstructionFactory#createAssignment(fr.n7.stl.block.ast.VariableDeclaration, fr.n7.stl.block.ast.Expression)
+	 * @see fr.n7.stl.block.ast.InstructionFactory#ExpressionFactory(fr.n7.stl.block.ast.VariableDeclaration, fr.n7.stl.block.ast.Expression)
 	 */
 	@Override
-	public Instruction createAssignment(Expression _assignable, Expression _value) {
+	public Expression createAssignment(Expression _assignable, Expression _value) {
 		return new AssignmentImpl(_assignable,_value);
 	}
 
@@ -471,6 +514,18 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new ConstantDeclarationImpl(_name,_type,_value);
 	}
 
+	/**
+	 * Create a variable declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name Name of the declared variable.
+	 * @param _type Abstract Syntax Tree for the type of the declared variable.
+	 * @return A Variable Declaration node in the Abstract Syntax Tree.
+	 */
+	@Override
+	public VariableDeclaration createVariableDeclaration(String _name, Type _type) {
+		return new VariableDeclarationImpl(_name, _type);
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createTypeDeclaration(java.lang.String, fr.n7.stl.block.ast.Type)
 	 */
@@ -571,7 +626,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createFunctionAccess(Expression _variable) {
-		return null;
+		return new FunctionCallImpl(_variable);
 	}
 
 	/**
@@ -583,7 +638,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createFunctionAccess(Expression _variable, List<Expression> _parameters) {
-		return null;
+		return new FunctionCallImpl(_variable, _parameters);
 	}
 
 	/**
@@ -598,6 +653,7 @@ public class BlockFactoryImpl implements BlockFactory {
 		return null;
 	}
 
+	//TODO: affectation = suiteAffectation
 	/**
 	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
 	 *
@@ -607,7 +663,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createAffectation(Expression _affectation, Expression _suiteAffectation) {
-		return null;
+		return _affectation;
 	}
 
 	/* (non-Javadoc)

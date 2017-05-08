@@ -1,8 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.Type;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -11,12 +9,9 @@ import fr.n7.stl.tam.ast.TAMFactory;
  * @author Marc Pantel
  *
  */
-public class VariableUseImpl implements Expression {
+public class VariableUseImpl implements Usage {
 
 	protected VariableDeclaration declaration;
-	// <REMOVE>
-//	private String name;
-	// </REMOVE>
 	
 	/**
 	 * Creates a variable use expression Abstract Syntax Tree node.
@@ -24,24 +19,14 @@ public class VariableUseImpl implements Expression {
 	 */
 	public VariableUseImpl(VariableDeclaration _declaration) {
 		this.declaration = _declaration;
-		// <REMOVE>
-//		this.name = _declaration.getName();
-		// </REMOVE>
 	}
-	
-	// <REMOVE>
-//	public VariableUseImpl(String _name) {
-//		this.name = _name;
-//	}
-	// </REMOVE>
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return /* <REMOVE> (this.declaration == null)?(this.name): </REMOVE>*/ 
-				("@{" + this.declaration.getName() + "}");
+		return ("@{" + this.declaration.getName() + "}");
 	}
 
 	/* (non-Javadoc)
@@ -66,4 +51,8 @@ public class VariableUseImpl implements Expression {
 		return _code;
 	}
 
+	@Override
+	public Declaration getDeclaration() {
+		return declaration;
+	}
 }

@@ -12,4 +12,10 @@ public interface Declaration {
 	 */
     String getName();
 
+	/**
+	 * Synthesized semantics attribute for the type of the declared variable.
+	 * @return Type of the declared variable.
+	 */
+	Type getType();
+
 }

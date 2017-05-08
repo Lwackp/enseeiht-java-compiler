@@ -54,9 +54,9 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
             }
         }
 
-        _local.append(" {");
+        _local.append(" {\n");
         for (ClassElement _element : this.elements) {
-            _local.append(_element);
+            _local.append(_element).append("\n");
         }
         _local.append("}");
 
@@ -70,7 +70,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     /**
@@ -80,7 +80,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public Type getType() {
-        return null;
+        return new InterfaceTypeImpl(this.name);
     }
 
     /**
@@ -90,7 +90,8 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public boolean checkType() {
-        return false;
+        //TODO: Inheritance checkType
+        return true;
     }
 
     /**

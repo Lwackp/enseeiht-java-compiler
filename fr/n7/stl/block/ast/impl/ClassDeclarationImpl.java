@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by thibault on 02/05/17.
+ * Created by Thibault Meunier on 02/05/17.
  */
 public class ClassDeclarationImpl implements ClassDeclaration {
 
@@ -43,7 +43,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     /**
@@ -53,7 +53,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public Type getType() {
-        return null;
+        return new ClassTypeImpl(this.name);
     }
 
     /* (non-Javadoc)
@@ -84,9 +84,9 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             }
         }
 
-        _local.append(" {");
+        _local.append(" {\n");
         for (ClassElement _element : this.elements) {
-            _local.append(_element);
+            _local.append(_element).append("\n");
         }
         _local.append("}");
 

@@ -1,8 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.Instruction;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -12,9 +10,9 @@ import fr.n7.stl.tam.ast.TAMFactory;
  * @author Marc Pantel
  *
  */
-public class AssignmentImpl implements Instruction {
+public class AssignmentImpl implements Expression, Instruction {
 
-	private VariableDeclaration declaration;
+	private Declaration declaration;
 	private Expression value;
 	private String name;
 	private Expression assignable;
@@ -25,7 +23,7 @@ public class AssignmentImpl implements Instruction {
 	 * @param _declaration Assigned variable declaration.
 	 * @param _value Assigned value.
 	 */
-	public AssignmentImpl(VariableDeclaration _declaration, Expression _value) {
+	public AssignmentImpl(Declaration _declaration, Expression _value) {
 		this.declaration = _declaration;
 		this.value = _value;
 	}
@@ -73,9 +71,19 @@ public class AssignmentImpl implements Instruction {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Instruction#getCode(fr.n7.stl.tam.ast.TAMFactory)
+	/**
+	 * Synthesized Semantics attribute to compute the type of an expression.
+	 *
+	 * @return Synthesized Type of the expression.
 	 */
+	@Override
+	public Type getType() {
+		return AtomicType.VoidType;
+	}
+
+	/* (non-Javadoc)
+         * @see fr.n7.stl.block.ast.Instruction#getCode(fr.n7.stl.tam.ast.TAMFactory)
+         */
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment fragment = _factory.createFragment();
@@ -85,7 +93,7 @@ public class AssignmentImpl implements Instruction {
 			fragment.append(assignable.getCode(_factory));
 			fragment.add(_factory.createStoreI(this.value.getType().length()));
 		} else {
-			fragment.append(declaration.getCode(_factory));
+			fragment.append(((VariableDeclaration) declaration).getCode(_factory));
 		}
 
 		return fragment;

@@ -1,5 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.n7.stl.block.ast.Block;
@@ -9,38 +10,70 @@ import fr.n7.stl.block.ast.Type;
 
 public class SignatureDeclarationImpl implements SignatureDeclaration {
 
-    public SignatureDeclarationImpl(String _name, Type _returnedType, List<ParameterDeclaration> _parametres) {
-        // TODO Auto-generated constructor stub
+    private String name;
+    private Type type;
+    private List<ParameterDeclaration> parameters;
+
+    public SignatureDeclarationImpl(String _name, Type _returnedType, List<ParameterDeclaration> _parameters) {
+        this.name = _name;
+        this.type = _returnedType;
+        this.parameters = new LinkedList<>(_parameters);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder _local = new StringBuilder();
+
+        _local.append(this.type).append(" ");
+        _local.append(this.name);
+
+        _local.append("(");
+        boolean first = true;
+        for (ParameterDeclaration _parameter : this.getParameters()) {
+            if (!first) {
+                _local.append(", ");
+            }
+            _local.append(_parameter);
+            first = false;
+        }
+        _local.append(")");
+
+        return _local.toString();
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.name;
     }
 
-//    @Override
-    public Type getReturnedType() {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * Synthesized semantics attribute for the type of the declared variable.
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getType() {
+        List<Type> _params = new LinkedList<>();
+        for (ParameterDeclaration _p : this.parameters) {
+            _params.add(_p.getType());
+        }
+        return new FunctionTypeImpl(this.type, _params);
     }
 
     @Override
-    public Type getType() {
-        // TODO Auto-generated method stub
-        return null;
+    public Type getReturnedType() {
+        return this.type;
     }
 
-//    @Override
+    @Override
     public List<ParameterDeclaration> getParameters() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.parameters;
     }
 
-//    @Override
+    @Override
     public boolean checkType() {
-        // TODO Auto-generated method stub
-        return false;
+        //TODO Override checktype
+        return true;
     }
 
 }

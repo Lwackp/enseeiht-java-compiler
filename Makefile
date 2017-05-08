@@ -46,4 +46,4 @@ clean :
 	-rm -rf tests/*.res
 
 debug : clean legg compile
-	$(JAVA) -classpath $(EGGJAR):. Main tests/Test_integer.java;
+	$(JAVA) -classpath $(EGGJAR):. Main tests/Test_simple.java;

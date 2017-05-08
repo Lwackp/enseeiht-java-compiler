@@ -70,10 +70,6 @@ public interface ExpressionFactory {
 	 */
 	Value createStringValue(String _value);
 	
-	// <REMOVE>
-	// public Expression createVariableUse(String _name);
-	// </REMOVE>
-	
 	/**
 	 * Create a node for a variable use expression in the Abstract Syntax Tree.
 	 * with resolving the reference with the Symbol Table.	 
@@ -81,6 +77,22 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access to a variable.
 	 */
     Expression createVariableUse(VariableDeclaration _declaration);
+
+	/**
+	 * Create a node for a parameter use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the variable.
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	Expression createParameterUse(ParameterDeclaration _declaration);
+
+	/**
+	 * Create a node for a class element use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the variable.
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	Expression createClassElementUse(ClassElement _declaration);
 	
 	/**
 	 * Create a node for a variable assignment in the Abstract Syntax Tree.
@@ -89,6 +101,38 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access to a variable.
 	 */
     Assignable createVariableAssignment(VariableDeclaration _declaration);
+
+	/**
+	 * Create a node for a class element assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the class element.
+	 * @return Abstract Syntax Tree node for the access to a class element.
+	 */
+	Assignable createClassElementAssignment(ClassElement _declaration);
+
+	/**
+	 * Create a node for a parameter assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the parameter.
+	 * @return Abstract Syntax Tree node for the access to a parameter.
+	 */
+	Assignable createParameterAssignment(ParameterDeclaration _declaration);
+
+	/**
+	 * Create an assignment node in the Abstract Syntax Tree.
+	 * @param _declaration Variable Declaration node in the Abstract Syntax Tree corresponding to the assigned variable.
+	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the variable.
+	 * @return An Assignment node in the Abstract Syntax Tree.
+	 */
+	Expression createAssignment(Declaration _declaration, Expression _value);
+
+	/**
+	 * Create an assignment node in the Abstract Syntax Tree.
+	 * @param _assignable Expression node in the Abstract Syntax Tree corresponding to the assignable part.
+	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the assignable part.
+	 * @return An Assignment node in the Abstract Syntax Tree.
+	 */
+	Expression createAssignment(Expression _assignable, Expression _value);
 	
 	/**
 	 * Create a node for a function call expression in the Abstract Syntax Tree.

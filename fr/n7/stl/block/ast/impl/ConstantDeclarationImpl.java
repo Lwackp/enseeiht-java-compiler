@@ -38,7 +38,17 @@ public class ConstantDeclarationImpl implements ConstantDeclaration {
 	public String getName() {
 		return this.name;
 	}
-	
+
+	/**
+	 * Synthesized semantics attribute for the type of the declared variable.
+	 *
+	 * @return Type of the declared variable.
+	 */
+	@Override
+	public Type getType() {
+		return this.type;
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ConstantDeclaration#getValue()
 	 */
