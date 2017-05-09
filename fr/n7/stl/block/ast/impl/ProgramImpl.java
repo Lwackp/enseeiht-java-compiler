@@ -108,6 +108,7 @@ public class ProgramImpl implements Program {
         if (this.main.getElements().size() == 1 ) {
             Declaration mainMethod = this.main.getElements().get(0).getDeclaration();
             if (mainMethod instanceof FunctionDeclaration) {
+                _program.add(_factory.createLoadL(-1));
                 _program.add(_factory.createCall(((FunctionDeclaration)mainMethod).getLabel(), Register.LB));
             }
             else {

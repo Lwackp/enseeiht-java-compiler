@@ -16,6 +16,9 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
     private Type type;
     private List<ParameterDeclaration> parameters;
 
+    private Register register;
+    private int offset;
+
     public SignatureDeclarationImpl(String _name, Type _returnedType, List<ParameterDeclaration> _parameters) {
         this.name = _name;
         this.type = _returnedType;
@@ -62,8 +65,28 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
         return new FunctionTypeImpl(this.type, _params);
     }
 
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
     @Override
-    public Type getReturnedType() {
+    public Register getRegister() {
+        return this.register;
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return this.offset;
+    }
+
+    @Override
+    public Type getValueType() {
         return this.type;
     }
 
@@ -88,6 +111,8 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        this.register = _register;
+        this.offset = _offset;
         return 0;
     }
 
@@ -100,7 +125,7 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        return _factory.createFragment();
     }
 
 }

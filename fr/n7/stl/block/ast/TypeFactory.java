@@ -65,21 +65,4 @@ public interface TypeFactory {
 	 * @return Abstract Syntax Tree node for a named type.
 	 */
     Type createNamedType(TypeDeclaration _declaration);
-	
-	/**
-	 * Create an Abstract Syntax Tree node for an empty (i.e. without fields) record type.
-	 * The fields can be added later on.
-	 * @param _name Name of the record type.
-	 * @return Abstract Syntax Tree node for a record type.
-	 */
-    RecordType createRecordType(String _name);
-
-	/**
-	 * Create an Abstract Syntax Tree node for record type containing fields.
-	 * @param _name Name of the record type.
-	 * @param _fields Abstract Syntax Tree nodes for the fields in the record type.
-	 * @return Abstract Syntax Tree node for a record type.
-	 */
-    RecordType createRecordType(String _name, Iterable<FieldDeclaration> _fields);
-
 }

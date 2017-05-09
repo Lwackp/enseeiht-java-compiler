@@ -524,22 +524,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.TypeFactory#createRecordType(java.lang.Iterable)
-	 */
-	@Override
-	public RecordType createRecordType(String _name, Iterable<FieldDeclaration> _fields) {
-		return new RecordTypeImpl(_name, _fields);
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.TypeFactory#createRecordType()
-	 */
-	@Override
-	public RecordType createRecordType(String _name) {
-		return new RecordTypeImpl(_name);
-	}
-
-	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.InstructionFactory#createConstantDeclaration(java.lang.String, fr.n7.stl.block.ast.Type, fr.n7.stl.block.ast.Expression)
 	 */
 	@Override

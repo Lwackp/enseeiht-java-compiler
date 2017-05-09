@@ -36,7 +36,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 		 */
 		@Override
 		public Fragment getCode(TAMFactory _factory) {
-			return null;
+			return _factory.createFragment();
 		}
 	}
 
@@ -89,6 +89,16 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 		return this.type;
 	}
 
+	/**
+	 * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+	 *
+	 * @return Type of the declared variable.
+	 */
+	@Override
+	public Type getValueType() {
+		return this.value.getType();
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.block.ast.VariableDeclaration#getName()
 	 */
@@ -131,19 +141,8 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment fragment = _factory.createFragment();
-
-		// Temporary fix --> with java compiler sequences are all stored in the heap
-		if (this.type instanceof ArrayTypeImpl && this.value instanceof SequenceImpl) {
-			fragment.add(_factory.createLoadL(this.value.getType().length()));
-			fragment.add(Library.MAlloc);
-		}
-
+		
 		fragment.append(this.value.getCode(_factory));
-
-		if (this.type instanceof ArrayTypeImpl && this.value instanceof SequenceImpl) {
-			fragment.add(_factory.createLoad(this.getRegister(), this.getOffset(), 1));
-			fragment.add(_factory.createStoreI(this.value.getType().length()));
-		}
 
 		return fragment;
 	}

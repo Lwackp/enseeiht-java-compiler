@@ -6,6 +6,8 @@ import fr.n7.stl.block.ast.Declaration;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.block.ast.impl.ParameterDeclarationImpl;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
+import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
 /**
@@ -46,7 +48,15 @@ public class ClassElementUseImpl implements ClassElementUse {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        _fragment.add(_factory.createLoad(this.declaration.getRegister(), -1, 1));
+        _fragment.add(_factory.createLoadL(this.declaration.getOffset()));
+        _fragment.add(Library.IAdd);
+
+        _fragment.add(_factory.createLoadI(this.declaration.getType().length()));
+
+        return _fragment;
     }
 
     @Override

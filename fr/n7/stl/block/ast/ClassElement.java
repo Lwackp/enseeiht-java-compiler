@@ -15,4 +15,8 @@ public interface ClassElement extends Declaration {
 	 */
 	Declaration getDeclaration();
 
+	boolean isStatic();
+
+	boolean isFinal();
+
 }

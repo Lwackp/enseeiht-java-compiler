@@ -1,12 +1,10 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ClassElement;
-import fr.n7.stl.block.ast.ClassType;
-import fr.n7.stl.block.ast.Type;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by thibault on 05/05/17.
@@ -84,6 +82,18 @@ public class ClassTypeImpl implements ClassType {
         for (ClassElement _element : this.elements) {
             if (_element.getName().equals(_name)) {
                 return _element;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public FunctionDeclaration getConstructor() {
+        for (ClassElement _element : this.elements) {
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {
+                    return (FunctionDeclaration) _element.getDeclaration();
+                }
             }
         }
         return null;

@@ -21,6 +21,9 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     private List<InheritanceDeclaration> inheritance;
     private List<ClassElement> elements;
 
+    private Register register;
+    private int offset;
+
     public InterfaceDeclarationImpl(String _name, Object _generics, List<InheritanceDeclaration> _inheritance,
                             List<ClassElement> _elements) {
         this.name = _name;
@@ -84,6 +87,36 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     }
 
     /**
+     * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getValueType() {
+        return this.getType();
+    }
+
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public Register getRegister() {
+        return this.register;
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return this.offset;
+    }
+
+    /**
      * Synthesized Semantics attribute to check that an instruction if well typed.
      *
      * @return Synthesized True if the instruction is well typed, False if not.
@@ -104,6 +137,8 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        this.register = _register;
+        this.offset = _offset;
         return 0;
     }
 

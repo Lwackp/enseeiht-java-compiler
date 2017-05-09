@@ -3,6 +3,7 @@ package fr.n7.stl.block.ast.impl;
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Library;
+import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
 /**
@@ -56,6 +57,13 @@ public class ObjectAllocationImpl implements ObjectAllocation {
 
         _fragment.add(_factory.createLoadL(_attributesSize));
         _fragment.add(Library.MAlloc);
+
+        ClassType _ctype = (ClassType) this.type;
+        //TODO: Constructor matching parameters
+        FunctionDeclaration _constructor = _ctype.getConstructor();
+        if (_constructor != null) {
+            _fragment.add(_factory.createCall(_constructor.getLabel(), Register.LB));
+        }
 
         return _fragment;
     }

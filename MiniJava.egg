@@ -637,7 +637,7 @@ do
     body := Constructeur^factory.createFunctionBody(Bloc^ast);
     Constructeur^ast := Constructeur^factory.createFunctionDeclaration(
                                         identificateur_type^txt,
-                                        FunctionDeclaration.ConstructorType,
+                                        new ConstructorTypeImpl(),
                                         Parametres^ast,
                                         body
                                       );

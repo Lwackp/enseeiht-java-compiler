@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -55,6 +56,36 @@ public class ClassElementImpl implements ClassElement {
     @Override
     public Type getType() {
         return this.declaration.getType();
+    }
+
+    /**
+     * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getValueType() {
+        return this.getType();
+    }
+
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public Register getRegister() {
+        return this.declaration.getRegister();
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return this.declaration.getOffset();
     }
 
     public void setModifiers(ElementModifier[] modifiers) {
@@ -114,5 +145,15 @@ public class ClassElementImpl implements ClassElement {
     @Override
     public Declaration getDeclaration() {
         return this.declaration;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return this.b_static;
+    }
+
+    @Override
+    public boolean isFinal() {
+        return this.b_final;
     }
 }

@@ -7,6 +7,7 @@ import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Thibault Meunier on 02/05/17.
@@ -20,10 +21,16 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     private List<ClassElement> elements;
     private ClassThisUse thisElement = new ClassThisUseImpl();
 
+    private Type classType;
+
+    private Register register;
+    private int offset;
+
     public ClassDeclarationImpl(String _name, ClassElement _element) {
         this.name = _name;
         this.elements = new LinkedList<>();
         this.elements.add(_element);
+        this.classType = new ClassTypeImpl(this.name, this.getElements());
     }
 
     public ClassDeclarationImpl(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
@@ -32,6 +39,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.inheritance = _inheritance;
         this.interfaces = new LinkedList<>(_interfaces);
         this.elements = new LinkedList<>(_elements);
+        this.classType = new ClassTypeImpl(this.name, this.getElements());
     }
 
     /**
@@ -51,7 +59,37 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public Type getType() {
-        return new ClassTypeImpl(this.name, this.getElements());
+        return this.classType;
+    }
+
+    /**
+     * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getValueType() {
+        return this.getType();
+    }
+
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public Register getRegister() {
+        return this.register;
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return this.offset;
     }
 
     /* (non-Javadoc)
@@ -126,8 +164,18 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        this.register = _register;
+        this.offset = _offset;
+
+        int _length = offset;
         for (ClassElement _element : this.elements) {
-            _element.allocateMemory(_register, _offset);
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {
+                    ((ConstructorType)((FunctionDeclaration)(_element.getDeclaration())).getValueType())
+                            .setClassDeclaration(this);
+                }
+            }
+            _length += _element.allocateMemory(Register.LB, _length);
         }
 
         return 0;

@@ -18,7 +18,7 @@ public interface SignatureDeclaration extends Declaration {
 	 * Synthesized semantics attribute for the type of the returned variable.
 	 * @return Type of the returned variable.
 	 */
-	Type getReturnedType();
+	Type getValueType();
 
 	/**
 	 * Synthesized Semantics attribute to check that an instruction if well typed.

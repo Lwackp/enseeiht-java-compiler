@@ -52,11 +52,7 @@ public class SequenceTypeImpl implements Type {
 				}
 				return _result;
 			} else {
-				if (_other instanceof RecordTypeImpl) {
-					return this.equalsTo(((RecordTypeImpl)_other).erase());
-				} else {
-					return false;
-				}
+				return false;
 			}
 		}
 	}
@@ -89,11 +85,7 @@ public class SequenceTypeImpl implements Type {
 				}
 				return _result;
 			} else {
-				if (_other instanceof RecordTypeImpl) {
-					return this.compatibleWith(((RecordTypeImpl)_other).erase());
-				} else {
-					return false;
-				}
+				return false;
 			}
 		}
 	}

@@ -46,7 +46,13 @@ public class ParameterUseImpl implements ParameterUse {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        _fragment.add(_factory.createLoad(this.declaration.getRegister(),
+                this.declaration.getOffset(),
+                this.getType().length()));
+
+        return _fragment;
     }
 
     @Override

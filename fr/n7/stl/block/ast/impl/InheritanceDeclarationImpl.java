@@ -56,6 +56,36 @@ public class InheritanceDeclarationImpl implements InheritanceDeclaration {
     }
 
     /**
+     * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getValueType() {
+        return this.getType();
+    }
+
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public Register getRegister() {
+        return null;
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return 0;
+    }
+
+    /**
      * Synthesized Semantics attribute to check that an instruction if well typed.
      *
      * @return Synthesized True if the instruction is well typed, False if not.

@@ -1,5 +1,7 @@
 package fr.n7.stl.block.ast.impl;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.n7.stl.block.ast.*;
@@ -20,7 +22,8 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
     private FunctionBody body;
     private String label;
 
-    //private Register register;
+    private Register register;
+    private int offset;
 
     /**
      * Creates a method declaration instruction node for the Abstract Syntax Tree.
@@ -60,6 +63,26 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
         return this.signature.getType();
     }
 
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public Register getRegister() {
+        return this.signature.getRegister();
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return this.signature.getOffset();
+    }
+
     @Override
     public boolean checkType() {
         return (this.signature.checkType());
@@ -67,30 +90,48 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        this.register = _register;
+        this.offset = _offset;
+
+        int _paramssize = 0;
+        if (this.signature.getValueType() instanceof ConstructorType) {
+            _paramssize += this.getValueType().length();
+        }
+
+        //List<ParameterDeclaration> reversedParameters = new LinkedList<>(this.getParameters());
+        //Collections.reverse(reversedParameters);
+        for (ParameterDeclaration _parameter : this.getParameters()) {
+            _paramssize += _parameter.allocateMemory(Register.LB, -1*_paramssize);
+        }
+
         // +3 because of CALL instruction inner behaviour
         this.body.allocateMemory(_register, _offset+3);
-        return 0;
+        return 3;
     }
 
     @Override
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
 
-        int _paramssize = 0;
+        //By default there is always the pointed object
+        int _paramssize = 1;
+
         for (ParameterDeclaration _parameter : this.signature.getParameters()) {
-            int _paramsize = _parameter.getType().length();
-            _fragment.add(_factory.createLoad(Register.LB, -1*_paramsize, _paramsize));
-            _paramssize += _paramsize;
+            _paramssize += _parameter.getType().length();
         }
 
         this.body.setParametersSize(_paramssize);
 
+        if (this.signature.getValueType() instanceof ConstructorType) {
+            _fragment.add(_factory.createLoad(Register.LB, -1, 1));
+        }
+
         _fragment.append(this.body.getCode(_factory));
 
-        //TODO: Return instructions must know parameters's size
-        if (this.signature.getReturnedType() == AtomicType.VoidType
-         || this.signature.getReturnedType() == ConstructorType) {
-            _fragment.add(_factory.createReturn(0, 0));
+        if (this.signature.getValueType() == AtomicType.VoidType) {
+            _fragment.add(_factory.createReturn(0, _paramssize));
+        } else if (this.signature.getValueType() instanceof ConstructorType) {
+            _fragment.add(_factory.createReturn(this.getValueType().length(), _paramssize));
         }
 
         this.label = "function_" + this.signature.getName() + _factory.createLabelNumber();
@@ -110,8 +151,8 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
     }
 
     @Override
-    public Type getReturnedType() {
-        return this.signature.getReturnedType();
+    public Type getValueType() {
+        return this.signature.getValueType();
     }
 
     @Override

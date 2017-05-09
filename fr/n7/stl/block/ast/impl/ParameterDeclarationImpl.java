@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.ParameterDeclaration;
 import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.VariableDeclaration;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -13,6 +14,8 @@ public class ParameterDeclarationImpl implements ParameterDeclaration {
 
     private String name;
     private Type type;
+    private Register register;
+    private int offset;
 
     ParameterDeclarationImpl(String _name, Type _type) {
         this.name = _name;
@@ -37,6 +40,36 @@ public class ParameterDeclarationImpl implements ParameterDeclaration {
     @Override
     public Type getType() {
         return this.type;
+    }
+
+    /**
+     * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+     *
+     * @return Type of the declared variable.
+     */
+    @Override
+    public Type getValueType() {
+        return VariableDeclarationImpl.SpecialValue.NoValue.getType();
+    }
+
+    /**
+     * Synthesized semantics attribute for the register used to compute the address of the variable.
+     *
+     * @return Register used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public Register getRegister() {
+        return this.register;
+    }
+
+    /**
+     * Synthesized semantics attribute for the offset used to compute the address of the variable.
+     *
+     * @return Offset used to compute the address where the declared variable will be stored.
+     */
+    @Override
+    public int getOffset() {
+        return this.offset;
     }
 
     /* (non-Javadoc)
@@ -70,7 +103,9 @@ public class ParameterDeclarationImpl implements ParameterDeclaration {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
-        return 0;
+        this.register = _register;
+        this.offset = _offset - this.getType().length();
+        return this.getType().length();
     }
 
     /**
@@ -82,6 +117,11 @@ public class ParameterDeclarationImpl implements ParameterDeclaration {
      */
     @Override
     public Fragment getCode(TAMFactory _factory) {
-        return null;
+        Fragment _fragment = _factory.createFragment();
+
+        int _length = this.getType().length();
+        _fragment.add(_factory.createLoad(this.register, this.offset, _length));
+
+        return _fragment;
     }
 }

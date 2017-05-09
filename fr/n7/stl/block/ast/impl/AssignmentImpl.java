@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -86,17 +87,28 @@ public class AssignmentImpl implements Expression, Instruction {
          */
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
-		Fragment fragment = _factory.createFragment();
+		Fragment _fragment = _factory.createFragment();
 
-		fragment.append(value.getCode(_factory));
+		_fragment.append(value.getCode(_factory));
 		if (this.declaration == null) {
-			fragment.append(assignable.getCode(_factory));
-			fragment.add(_factory.createStoreI(this.value.getType().length()));
+			_fragment.append(assignable.getCode(_factory));
+			_fragment.add(_factory.createStoreI(this.value.getType().length()));
 		} else {
-			fragment.append(((VariableDeclaration) declaration).getCode(_factory));
+			//Loading object address == this
+			//TODO: Not valid for static method
+			if (this.declaration instanceof ClassElement) {
+				_fragment.add(_factory.createLoad(Register.LB, -1, 1));
+				//Charge taille de ce qu'il y a avant
+				_fragment.add(_factory.createLoadL(this.declaration.getOffset()));
+				_fragment.add(Library.IAdd);
+			} else {
+				_fragment.add(_factory.createLoadA(this.declaration.getRegister(), this.declaration.getOffset()));
+			}
+
+			_fragment.add(_factory.createStoreI(this.value.getType().length()));
 		}
 
-		return fragment;
+		return _fragment;
 	}
 
 }

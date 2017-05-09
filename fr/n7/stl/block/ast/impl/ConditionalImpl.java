@@ -73,9 +73,9 @@ public class ConditionalImpl implements Instruction {
 		fragment.add(_factory.createJumpIf("else" + id, 0));
 		fragment.append(this.thenBranch.getCode(_factory));
 		fragment.add(_factory.createJump("fin_cond" + id));
-		fragment.addSuffix("else" + id);
+		fragment.addSuffix("else" + id + ":");
         elseBranch.ifPresent(block -> fragment.append(block.getCode(_factory)));
-		fragment.addSuffix("fin_cond"+id);
+		fragment.addSuffix("fin_cond"+id + ":");
 
 		return fragment;
 	}

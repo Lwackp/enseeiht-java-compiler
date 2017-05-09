@@ -6,6 +6,7 @@ import java.util.List;
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.TAMFactory;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 
 /**
  * Implementation of the Abstract Syntax Tree node for a function call expression.
@@ -55,6 +56,7 @@ public class FunctionCallImpl implements FunctionCall {
 	 */
 	@Override
 	public Type getType() {
+		//System.out.println("+++++++++++++++++++++++++ " + this.function.getType());
 		return this.function.getType();
 	}
 
