@@ -1,9 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ClassElement;
-import fr.n7.stl.block.ast.InheritanceDeclaration;
-import fr.n7.stl.block.ast.InterfaceDeclaration;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -17,14 +14,13 @@ import java.util.List;
 public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     private String name;
-    private Object generics;
+    private List<GenericParameter> generics;
     private List<InheritanceDeclaration> inheritance;
     private List<ClassElement> elements;
 
     private Register register;
     private int offset;
-
-    public InterfaceDeclarationImpl(String _name, Object _generics, List<InheritanceDeclaration> _inheritance,
+    public InterfaceDeclarationImpl(String _name,  List<GenericParameter> _generics, List<InheritanceDeclaration> _inheritance,
                             List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;

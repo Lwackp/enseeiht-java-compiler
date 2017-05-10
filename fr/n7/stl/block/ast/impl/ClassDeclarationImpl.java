@@ -7,7 +7,6 @@ import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Created by Thibault Meunier on 02/05/17.
@@ -15,7 +14,7 @@ import java.util.function.Function;
 public class ClassDeclarationImpl implements ClassDeclaration {
 
     private String name;
-    private Object generics;
+    private List<GenericParameter> generics;
     private InheritanceDeclaration inheritance;
     private List<InheritanceDeclaration> interfaces;
     private List<ClassElement> elements;
@@ -33,7 +32,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.classType = new ClassTypeImpl(this.name, this.getElements());
     }
 
-    public ClassDeclarationImpl(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
+    public ClassDeclarationImpl(String _name, List<GenericParameter> _generics, InheritanceDeclaration
+            _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;
         this.inheritance = _inheritance;
@@ -102,7 +102,17 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         _local.append(this.name);
 
         if (this.generics != null) {
-            _local.append(this.generics);
+            _local.append(" < ");
+            boolean first2 = true;
+            for (GenericParameter _param: this.generics){
+                if (!first2) {
+                    _local.append(", ");
+                }
+                _local.append(_param);
+                first2 = false;
+            }
+            _local.append(" > ");
+
         }
         if (this.inheritance != null) {
             _local.append(" extends ").append(this.inheritance);
@@ -118,6 +128,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
                 _local.append(_interface);
                 first = false;
             }
+
         }
 
         _local.append(" {\n");
