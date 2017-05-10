@@ -589,13 +589,12 @@ local
     sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
-        if (AttributOuMethode^tds.contains(identificateur^txt)) {
+        if (AttributOuMethode^tds.contains(identificateur^txt)) then
             error(MiniJava_ClassElement_Definition, identificateur^txt);
-        }
-        else {
+        else
              AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
         Type^ast);
-        }
+        end
 
     else
         AttributOuMethode^ast := AttributOuMethode^factory.createFunctionDeclaration(identificateur^txt,
@@ -835,8 +834,12 @@ local
     d: Declaration;
 do
     d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
-    Instruction^tds.register(d);
-    Instruction^ast := d;
+    if !Instruction^tds.contains(identificateur^txt) then
+        Instruction^tds.register(d);
+        Instruction^ast := d;
+    else
+        error(MiniJava_ClassElement_Definition, identificateur^txt);
+    end
 end
 }
 
