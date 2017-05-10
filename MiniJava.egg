@@ -589,8 +589,14 @@ local
     sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
-        AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
+        if (AttributOuMethode^tds.contains(identificateur^txt)) {
+            error(MiniJava_ClassElement_Definition, identificateur^txt);
+        }
+        else {
+             AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
         Type^ast);
+        }
+
     else
         AttributOuMethode^ast := AttributOuMethode^factory.createFunctionDeclaration(identificateur^txt,
             Type^ast, SuiteAttributOuMethode^ast, SuiteAttributOuMethode^body);
