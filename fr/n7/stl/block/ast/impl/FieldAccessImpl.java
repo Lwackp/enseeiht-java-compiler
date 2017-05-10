@@ -1,11 +1,10 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.Expression;
-import fr.n7.stl.block.ast.FieldDeclaration;
-import fr.n7.stl.block.ast.RecordType;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
+import sun.util.resources.cldr.de.CalendarData_de_LI;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,17 @@ public class FieldAccessImpl implements Expression {
 	 */
 	@Override
 	public Type getType() {
-		return this.getField().getType();
+		Declaration _declaration = this.getField();
+		if (_declaration instanceof ClassElement) {
+			Declaration _dec = ((ClassElement) _declaration).getDeclaration();
+			if (_dec instanceof FunctionDeclaration) {
+				return ((FunctionDeclaration) _dec).getValueType();
+			}
+		}
+//		if (_declaration instanceof VariableDeclaration) {
+//			return ((VariableDeclaration) _declaration).getValueType();
+//		}
+		return _declaration.getType();
 	}
 
 	/* (non-Javadoc)
@@ -54,21 +63,40 @@ public class FieldAccessImpl implements Expression {
 	 */
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
-		Fragment fragment = _factory.createFragment();
+		Fragment _fragment = _factory.createFragment();
 
-		int length = this.getField().getType().length();
-		fragment.append(this.record.getCode(_factory));
-		fragment.add(_factory.createPop(0, this.inOffset()));
-		fragment.add(_factory.createPop(length, this.record.getType().length() - length - this.inOffset()));
+		Declaration _field = this.getField();
 
-		return fragment;
+		if (_field instanceof ClassElement) {
+			ClassElement _element = (ClassElement)_field;
+			if (_element.isStatic()) {
+				//TODO Load class pointer on stack
+				_fragment.add(null);
+			} else {
+				_fragment.append(this.record.getCode(_factory));
+			}
+			Declaration _declaration = ((ClassElement) _field).getDeclaration();
+			if (_declaration instanceof FunctionDeclaration) {
+				_fragment.add(_factory.createCall(((FunctionDeclaration) _declaration).getLabel(), Register.LB));
+			}
+		} else {
+			int length = this.getField().getType().length();
+			_fragment.append(this.record.getCode(_factory));
+			_fragment.add(_factory.createPop(0, this.inOffset()));
+			_fragment.add(_factory.createPop(length, this.record.getType().length() - length - this.inOffset()));
+		}
+
+		return _fragment;
 	}
 
-	protected FieldDeclaration getField() {
-		if (field == null) {
-			Optional<FieldDeclaration> field = ((RecordTypeImpl)this.record.getType()).get(name);
-			if (field.isPresent()) {
-				return field.get();
+	protected Declaration getField() {
+		if (this.field == null) {
+			Type _recordType = this.record.getType();
+			if (_recordType instanceof ClassType) {
+				return ((ClassType) _recordType).getElement(this.name);
+			} else if (_recordType instanceof InterfaceType) {
+				System.out.println("-----------------------" + ((VariableUseImpl)this.record).getDeclaration().getClass());
+				return ((VariableUseImpl)this.record).getDeclaration();
 			}
 		}
 		return field;
@@ -77,13 +105,15 @@ public class FieldAccessImpl implements Expression {
 	protected int inOffset() {
 		int precLength = 0;
 		boolean dejaVu = false;
-		List<FieldDeclaration> fields = ((RecordType)this.record.getType()).getFields();
-		Collections.reverse(fields);
-		for (FieldDeclaration f : fields) {
-			dejaVu |= this.getField().getName().equals(f.getName());
+		if (this.record.getType() instanceof ClassType) {
+			List<VariableDeclaration> _attributes = ((ClassType)this.record.getType()).getAttributes();
+			Collections.reverse(_attributes);
+			for (VariableDeclaration f : _attributes) {
+				dejaVu |= this.getField().getName().equals(f.getName());
 
-			if (!dejaVu) {
-				precLength += f.getType().length();
+				if (!dejaVu) {
+					precLength += f.getType().length();
+				}
 			}
 		}
 		return precLength;

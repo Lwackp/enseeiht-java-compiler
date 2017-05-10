@@ -37,6 +37,36 @@ public class TypeDeclarationImpl implements TypeDeclaration {
 		return this.type;
 	}
 
+	/**
+	 * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
+	 *
+	 * @return Type of the declared variable.
+	 */
+	@Override
+	public Type getValueType() {
+		return this.getType();
+	}
+
+	/**
+	 * Synthesized semantics attribute for the register used to compute the address of the variable.
+	 *
+	 * @return Register used to compute the address where the declared variable will be stored.
+	 */
+	@Override
+	public Register getRegister() {
+		return null;
+	}
+
+	/**
+	 * Synthesized semantics attribute for the offset used to compute the address of the variable.
+	 *
+	 * @return Offset used to compute the address where the declared variable will be stored.
+	 */
+	@Override
+	public int getOffset() {
+		return 0;
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.Instruction#checkType()
 	 */

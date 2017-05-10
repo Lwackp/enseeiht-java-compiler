@@ -52,20 +52,7 @@ public class SequenceTypeImpl implements Type {
 				}
 				return _result;
 			} else {
-				if (_other instanceof RecordTypeImpl) {
-					return this.equalsTo(((RecordTypeImpl)_other).erase());
-				} else {
-					if (_other instanceof CoupleTypeImpl) {
-						if (this.types.size() == 2) {
-							return this.types.get(0).equalsTo(((CoupleTypeImpl)_other).getFirst()) &&
-									this.types.get(1).equalsTo(((CoupleTypeImpl)_other).getSecond());
-						} else {
-							return false;
-						}
-					} else {
-						return false;
-					}
-				}
+				return false;
 			}
 		}
 	}
@@ -98,20 +85,7 @@ public class SequenceTypeImpl implements Type {
 				}
 				return _result;
 			} else {
-				if (_other instanceof RecordTypeImpl) {
-					return this.compatibleWith(((RecordTypeImpl)_other).erase());
-				} else {
-					if (_other instanceof CoupleTypeImpl) {
-						if (this.types.size() == 2) {
-							return this.types.get(0).compatibleWith(((CoupleTypeImpl)_other).getFirst()) &&
-									this.types.get(1).compatibleWith(((CoupleTypeImpl)_other).getSecond());
-						} else {
-							return false;
-						}
-					} else {
-						return false;
-					}
-				}
+				return false;
 			}
 		}
 	}

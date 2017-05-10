@@ -49,12 +49,21 @@ public class PrinterImpl implements Instruction {
 	 */
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
-		Fragment fragment = _factory.createFragment();
+		Fragment _fragment = _factory.createFragment();
 
-		fragment.append(this.parameter.getCode(_factory));
-		fragment.add(Library.IOut);
+		_fragment.append(this.parameter.getCode(_factory));
 
-		return fragment;
+		Type _parameterType = this.parameter.getType();
+
+		if (_parameterType.compatibleWith(AtomicType.IntegerType)) {
+			_fragment.add(Library.IOut);
+		} else if (_parameterType.compatibleWith(AtomicType.StringType)) {
+			_fragment.add(Library.SOut);
+		} else if (_parameterType.compatibleWith(AtomicType.StringType)) {
+			_fragment.add(Library.COut);
+		}
+
+		return _fragment;
 	}
 
 }

@@ -1,6 +1,8 @@
 package fr.n7.stl.block.ast;
 
 import java.lang.Iterable;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Factory to create Abstract Syntax Tree nodes for common instructions in programming languages.
@@ -8,7 +10,16 @@ import java.lang.Iterable;
  *
  */
 public interface InstructionFactory {
-	
+
+	/**
+	 * Create a root Program node in the Abstract Syntax Tree.
+	 * @param _interfaces Abstract Syntax Tree of the interfaces contained in the program.
+	 * @param _classes Abstract Syntax Tree of the classes contained in the program.
+	 * @param _main Abstract Syntax Tree of the main method contained in the program.
+	 * @return A Program node in the Abstract Syntax Tree.
+	 */
+	Program createProgram(List<InterfaceDeclaration> _interfaces, List<ClassDeclaration> _classes, ClassDeclaration _main);
+
 	/**
 	 * Create a root Block node in the Abstract Syntax Tree.
 	 * @return A Block node in the Abstract Syntax Tree.
@@ -40,6 +51,13 @@ public interface InstructionFactory {
 	 * @return A Block node in the Abstract Syntax Tree.
 	 */
     Block createBlock(Block _context, Iterable<Instruction> _content);
+
+	/**
+	 * Create an Function Body node in the Abstract Syntax Tree.
+	 * @param _body Abstract Syntax Tree of the function body.
+	 * @return A Function body node in the Abstract Syntax Tree.
+	 */
+	FunctionBody createFunctionBody(Block _body);
 	
 	/**
 	 * Create a constant declaration node in the Abstract Syntax Tree.
@@ -54,11 +72,112 @@ public interface InstructionFactory {
 	 * Create a variable declaration node in the Abstract Syntax Tree.
 	 * @param _name Name of the declared variable.
 	 * @param _type Abstract Syntax Tree for the type of the declared variable.
+	 * @return A Variable Declaration node in the Abstract Syntax Tree.
+	 */
+    VariableDeclaration createVariableDeclaration(String _name, Type _type);
+
+	/**
+	 * Create a variable declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared variable.
+	 * @param _type Abstract Syntax Tree for the type of the declared variable.
 	 * @param _value Abstract Syntax Tree for the initial value of the declared variable.
 	 * @return A Variable Declaration node in the Abstract Syntax Tree.
 	 */
-    VariableDeclaration createVariableDeclaration(String _name, Type _type, Expression _value);
-	
+	VariableDeclaration createVariableDeclaration(String _name, Type _type, Expression _value);
+
+    //TODO: Change Object to generics' type
+	/**
+	 * Create a interface declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared interface.
+	 * @param _generics Abstract Syntax Tree for the generics of the declared interface.
+	 * @param _inheritance Abstract Syntax Tree for the inherited interfaces of the declared interface.
+	 * @param _elements Abstract Syntax Tree for the elements of the declared interface.
+	 * @return An InterfaceDeclaration node in the Abstract Syntax Tree.
+	 */
+	InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics, List<InheritanceDeclaration> _inheritance, List<ClassElement> _elements);
+
+	//TODO: Change Object to generics' type
+	/**
+	 * Create a class declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared class.
+	 * @param _generics Abstract Syntax Tree for the generics of the declared class.
+	 * @param _inheritance Abstract Syntax Tree for the inherited class of the declared class.
+	 * @param _interfaces Abstract Syntax Tree for the interfaces of the declared class.
+	 * @param _elements Abstract Syntax Tree for the elements of the declared class.
+	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
+	 */
+	ClassDeclaration createClassDeclaration(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements);
+
+	/**
+	 * Create a class declaration node in the Abstract Syntax Tree.
+	 *
+	 * @param _name        Name of the declared class.
+	 * @param _element    Abstract Syntax Tree for the element of the declared class.
+	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
+	 */
+	ClassDeclaration createClassDeclaration(String _name, ClassElement _element);
+
+	/**
+	 * Create a parameter declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared parameter.
+	 * @param _type Abstract Syntax Tree for the type of the declared parameter.
+	 * @return An ParameterDeclaration node in the Abstract Syntax Tree.
+	 */
+	ParameterDeclaration createParameterDeclaration(String _name, Type _type);
+
+
+	/**
+	 * Create an inherited type declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared inherited type.
+	 * @param _type Abstract Syntax Tree for the generics of the declared inherited type.
+	 * @return An InheritanceDeclaration node in the Abstract Syntax Tree.
+	 */
+	InheritanceDeclaration createInheritanceDeclaration(String _name, Object _type);
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 * @param _element Element of the declared class element.
+	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	ClassElement createClassElement(ClassElement _element, ElementModifier... _modifiers);
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 * @param _element Declaration of the declared class element.
+	 * @param _modifiers Abstract Syntax Tree for the modifier of the declared class element.
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	ClassElement createClassElement(Declaration _element, ElementModifier... _modifiers);
+
+	/**
+     * Create a class element declaration node in the Abstract Syntax Tree.
+     * @param _name Name of the declared class element.
+     * @param _type Abstract Syntax Tree for the generics of the declared class element.
+     * @param _params
+     * @return An ClassElement node in the Abstract Syntax Tree.
+     */
+    SignatureDeclaration createSignature(String _name, Type _type, List<ParameterDeclaration> _params);
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 * @param _name Name of the declared class element.
+	 * @param _type Abstract Syntax Tree for the generics of the declared class element.
+	 * @param _params
+	 * @param _body
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	FunctionDeclaration createFunctionDeclaration(String _name, Type _type, List<ParameterDeclaration> _params,
+												  FunctionBody _body);
+
+	/**
+	 * Create a class element declaration node in the Abstract Syntax Tree.
+	 * @param _signature Name of the declared class element.
+	 * @param _body
+	 * @return An ClassElement node in the Abstract Syntax Tree.
+	 */
+	FunctionDeclaration createFunctionDeclaration(SignatureDeclaration _signature, FunctionBody _body);
+
 	/**
 	 * Create a type declaration node in the Abstract Syntax Tree.
 	 * @param _name Name of the declared type.
@@ -66,26 +185,6 @@ public interface InstructionFactory {
 	 * @return A Type Declaration node in the Abstract Syntax Tree.
 	 */
     TypeDeclaration createTypeDeclaration(String _name, Type _type);
-
-	/**
-	 * Create an assignment node in the Abstract Syntax Tree.
-	 * @param _declaration Variable Declaration node in the Abstract Syntax Tree corresponding to the assigned variable.
-	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the variable.
-	 * @return An Assignment node in the Abstract Syntax Tree.
-	 */
-    Instruction createAssignment(VariableDeclaration _declaration, Expression _value);
-	
-	/**
-	 * Create an assignment node in the Abstract Syntax Tree.
-	 * @param _assignable Expression node in the Abstract Syntax Tree corresponding to the assignable part.
-	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the assignable part.
-	 * @return An Assignment node in the Abstract Syntax Tree.
-	 */
-    Instruction createAssignment(Expression _assignable, Expression _value);
-	
-	// <REMOVE>
-	// public Instruction createAssignment(String _name, Expression _value);
-	// </REMOVE>
 	
 	/**
 	 * Create a conditional node in the Abstract Syntax Tree.
@@ -121,7 +220,20 @@ public interface InstructionFactory {
 	 * @return A Repetition node in the Abstract Syntax Tree.
 	 */
     Instruction createRepetition(Expression _condition, Block _body);
-	
+
+	/**
+	 * Create a return node in the Abstract Syntax Tree.
+	 * @param _return Expression node in the Abstract Syntax Tree whose value is returned.
+	 * @return A Return node in the Abstract Syntax Tree.
+	 */
+	Instruction createReturn(Expression _return);
+
+	/**
+	 * Create a return node in the Abstract Syntax Tree.
+	 * @return A Return node in the Abstract Syntax Tree.
+	 */
+	Instruction createReturnThis();
+
 	/**
 	 * Create a printer node in the Abstract Syntax Tree.
 	 * @param _value Expression node in the Abstract Syntax Tree whose value is printed when the Printer node is executed.
@@ -129,5 +241,12 @@ public interface InstructionFactory {
 	 * @return A Printer node in the Abstract Syntax Tree.
 	 */
     Instruction createPrinter(Expression _value);
+
+	/**
+	 * Create a void instruction node in the Abstract Syntax Tree.
+	 * @param _expression Expression node in the Abstract Syntax Tree whose expression is executed.
+	 * @return A Void Instruction node in the Abstract Syntax Tree.
+	 */
+	Instruction createVoidInstruction(Expression _expression);
 
 }

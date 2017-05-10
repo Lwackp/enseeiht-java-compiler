@@ -4,12 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import fr.n7.stl.block.ast.Block;
-import fr.n7.stl.block.ast.ConstantDeclaration;
-import fr.n7.stl.block.ast.Declaration;
-import fr.n7.stl.block.ast.Instruction;
-import fr.n7.stl.block.ast.TypeDeclaration;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -17,7 +12,7 @@ import fr.n7.stl.tam.ast.impl.FragmentImpl;
 
 /**
  * Implementation of the Abstract Syntax Tree node for an instruction block.
- * @author Marc Pantel
+ * @author Thibault Meunier
  *
  */
 public class BlockImpl implements Block {
@@ -25,7 +20,7 @@ public class BlockImpl implements Block {
 	/**
 	 * Sequence of instructions contained in a block.
 	 */
-	private List<Instruction> instructions;
+	List<Instruction> instructions;
 
 	/**
 	 * Hierarchical structure of blocks.
@@ -49,14 +44,13 @@ public class BlockImpl implements Block {
 	 */
 	private List<TypeDeclaration> types;
 
-	private int offset;
+	int offset;
 
 	/**
 	 * Constructor for a block contained in a _context block.
 	 * @param _context Englobing block.
 	 */
 	public BlockImpl(Block _context) {
-		assert( _context != null);
 		this.instructions = new LinkedList<>();
 		this.variables = new LinkedList<>();
 		this.constants = new LinkedList<>();
@@ -79,9 +73,33 @@ public class BlockImpl implements Block {
 		this.context = Optional.empty();
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.n7.block.ast.Block#add(fr.n7.block.ast.Instruction)
+	/**
+	 * Synthesized semantics attribute for the type of the declared variable.
+	 *
+	 * @return Type of the declared variable.
 	 */
+	@Override
+	public Type getType() {
+		Type _type = AtomicType.VoidType;
+		boolean first = true;
+
+		for (Instruction _instruction : this.instructions) {
+			if (_instruction instanceof ReturnImpl) {
+				Type _typeInstruction = ((ReturnImpl) _instruction).getType();
+				if (!first) {
+					Type _merge = _typeInstruction.merge(_type);
+				}
+				_type = _typeInstruction;
+				first = false;
+			}
+		}
+
+		return _type;
+	}
+
+	/* (non-Javadoc)
+         * @see fr.n7.block.ast.Block#add(fr.n7.block.ast.Instruction)
+         */
 	@Override
 	public void add(Instruction _instruction) {
 		this.instructions.add(_instruction);
@@ -106,77 +124,6 @@ public class BlockImpl implements Block {
 			}
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.HierarchicalScope#knows(java.lang.String)
-	 */
-//	@Override
-//	public boolean knows(String _name) {
-//		if (this.contains(_name)) {
-//			return true;
-//		} else {
-//			if (context.isPresent()) {
-//				return context.get().knows(_name);
-//			} else {
-//				return false;
-//			}
-//		}
-//	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Scope#get(java.lang.String)
-	 */
-//	@Override
-//	public Optional<Declaration> get(String _name) {
-//		for (Declaration _declaration : this.variables) {
-//			if (_declaration.getName().equals(_name)) {
-//				return Optional.of(_declaration);
-//			}
-//		}
-//		for (Declaration _declaration : this.constants) {
-//			if (_declaration.getName().equals(_name)) {
-//				return Optional.of(_declaration);
-//			}
-//		}
-//		for (Declaration _declaration : this.types) {
-//			if (_declaration.getName().equals(_name)) {
-//				return Optional.of(_declaration);
-//			}
-//		}
-//		return Optional.empty();
-//	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Scope#contains(java.lang.String)
-	 */
-//	@Override
-//	public boolean contains(String _name) {
-//		for (Declaration _declaration : this.variables) {
-//			if (_declaration.getName().contentEquals(_name)) {
-//				return true;
-//			}
-//		}
-//		for (Declaration _declaration : this.constants) {
-//			if (_declaration.getName().contentEquals(_name)) {
-//				return true;
-//			}
-//		}
-//		for (Declaration _declaration : this.types) {
-//			if (_declaration.getName().contentEquals(_name)) {
-//				return true;
-//			}
-//		}
-//		return false;		
-//	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.Scope#accepts(fr.n7.stl.block.ast.Declaration)
-	 */
-//	@Override
-//	public boolean accepts(Declaration _declaration) {
-//		return (! this.contains(_declaration.getName()));
-//	}
-	// </REMOVE>
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.Block#addAll(java.lang.Iterable)

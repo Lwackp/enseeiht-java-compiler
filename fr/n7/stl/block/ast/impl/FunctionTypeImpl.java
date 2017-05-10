@@ -13,6 +13,8 @@ import fr.n7.stl.block.ast.Type;
  */
 public class FunctionTypeImpl implements Type {
 
+
+
 	private Type result;
 	private List<Type> parameters;
 
@@ -53,7 +55,7 @@ public class FunctionTypeImpl implements Type {
 	 */
 	@Override
 	public int length() {
-		throw new SemanticsUndefinedException("Semantics length is undefined in FunctionTypeImpl.");
+		return this.result.length();
 	}
 
 	/* (non-Javadoc)

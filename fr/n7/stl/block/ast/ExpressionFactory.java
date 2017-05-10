@@ -1,11 +1,20 @@
 package fr.n7.stl.block.ast;
 
+import java.util.List;
+
 /**
  * Factory to create Abstract Syntax Tree nodes for common expressions in programming languages.
  * @author Marc Pantel
  *
  */
 public interface ExpressionFactory {
+
+	/**
+	 * Create a node for expressions in the Abstract Syntax Tree.
+	 * @param _expressions Abstract Syntax Tree for the left parameter of the binary operation.
+	 * @return Abstract Syntax Tree node for expressions.
+	 */
+	Expression createExpressions(List<Expression> _expressions);
 
 	/**
 	 * Create a node for a binary expression in the Abstract Syntax Tree.
@@ -37,10 +46,29 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the boolean constant.
 	 */
     Value createBooleanValue(boolean _value);
-	
-	// <REMOVE>
-	// public Expression createVariableUse(String _name);
-	// </REMOVE>
+
+	/**
+	 * Create a node for a floating value expression in the Abstract Syntax Tree.
+	 * @param _value Floating value for the Abstract Syntax Tree FloatingValue node.
+	 * @return Abstract Syntax Tree node for the floating constant.
+	 */
+	Value createFloatingValue(String _value);
+
+
+	/**
+	 * Create a node for a char value expression in the Abstract Syntax Tree.
+	 * @param _value Char value for the Abstract Syntax Tree CharValue node.
+	 * @return Abstract Syntax Tree node for the char constant.
+	 */
+	Value createCharValue(String _value);
+
+
+	/**
+	 * Create a node for a string value expression in the Abstract Syntax Tree.
+	 * @param _value String value for the Abstract Syntax Tree StringValue node.
+	 * @return Abstract Syntax Tree node for the string constant.
+	 */
+	Value createStringValue(String _value);
 	
 	/**
 	 * Create a node for a variable use expression in the Abstract Syntax Tree.
@@ -49,6 +77,29 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access to a variable.
 	 */
     Expression createVariableUse(VariableDeclaration _declaration);
+
+	/**
+	 * Create a node for a parameter use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the variable.
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	Expression createParameterUse(ParameterDeclaration _declaration);
+
+	/**
+	 * Create a node for a class element use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the variable.
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	Expression createClassElementUse(ClassElement _declaration);
+
+	/**
+	 * Create a node for a this use expression in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @return Abstract Syntax Tree node for the access to a variable.
+	 */
+	Expression createClassThisUse();
 	
 	/**
 	 * Create a node for a variable assignment in the Abstract Syntax Tree.
@@ -57,28 +108,38 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access to a variable.
 	 */
     Assignable createVariableAssignment(VariableDeclaration _declaration);
-	
+
 	/**
-	 * Create a node for a couple creation expression in the Abstract Syntax Tree.
-	 * @param _left Abstract Syntax Tree node for the left part of the couple.
-	 * @param _right Abstract Syntax Tree node for the right part of the couple.
-	 * @return Abstract Syntax Tree node for a couple containing the _left and _right parts.
+	 * Create a node for a class element assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the class element.
+	 * @return Abstract Syntax Tree node for the access to a class element.
 	 */
-    Expression createCouple(Expression _left, Expression _right);
-	
+	Assignable createClassElementAssignment(ClassElement _declaration);
+
 	/**
-	 * Create a node for an access to the first value of a couple expression in the Abstract Syntax Tree.
-	 * @param _couple Abstract Syntax Tree node for the couple.
-	 * @return Abstract Syntax Tree node for the left part of the _couple.
+	 * Create a node for a parameter assignment in the Abstract Syntax Tree.
+	 * with resolving the reference with the Symbol Table.
+	 * @param _declaration Abstract Syntax Tree node for the declaration of the parameter.
+	 * @return Abstract Syntax Tree node for the access to a parameter.
 	 */
-    Expression createFirst(Expression _couple);
-	
+	Assignable createParameterAssignment(ParameterDeclaration _declaration);
+
 	/**
-	 * Create a node for an access to the first value of a couple expression in the Abstract Syntax Tree.
-	 * @param _couple Abstract Syntax Tree node for the couple.
-	 * @return Abstract Syntax Tree node for the right part of the _couple.
+	 * Create an assignment node in the Abstract Syntax Tree.
+	 * @param _declaration Variable Declaration node in the Abstract Syntax Tree corresponding to the assigned variable.
+	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the variable.
+	 * @return An Assignment node in the Abstract Syntax Tree.
 	 */
-    Expression createSecond(Expression _couple);
+	Expression createAssignment(Declaration _declaration, Expression _value);
+
+	/**
+	 * Create an assignment node in the Abstract Syntax Tree.
+	 * @param _assignable Expression node in the Abstract Syntax Tree corresponding to the assignable part.
+	 * @param _value Abstract Syntax Tree for the expression whose value is assigned to the assignable part.
+	 * @return An Assignment node in the Abstract Syntax Tree.
+	 */
+	Expression createAssignment(Expression _assignable, Expression _value);
 	
 	/**
 	 * Create a node for a function call expression in the Abstract Syntax Tree.
@@ -162,10 +223,10 @@ public interface ExpressionFactory {
 
 	/**
 	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
-	 * @param _type Abstract Syntax Tree node for the pointer.
-	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
+	 * @param _type Abstract Syntax Tree node for the object.
+	 * @return Abstract Syntax Tree node for the access of the content of the object.
 	 */
-    Expression createPointerAllocation(Type _type);
+    Expression createObjectAllocation(Type _type);
 
 	/**
 	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
@@ -173,6 +234,37 @@ public interface ExpressionFactory {
 	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
 	 */
     Expression createAddressAccess(Expression _variable);
+
+	/**
+	 * Create a node for an access to the function in an expression in the Abstract Syntax Tree.
+	 * @param _variable Abstract Syntax Tree node for the function.
+	 * @return Abstract Syntax Tree node for the access of the content of the function.
+	 */
+	Expression createFunctionAccess(Expression _variable);
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 * @param _variable Abstract Syntax Tree node for the accessed function.
+	 * @param _parameters Abstract Syntax Tree node for the parameters of the accessed function.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	Expression createFunctionAccess(Expression _variable, List<Expression> _parameters);
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 * @param _type Abstract Syntax Tree node for the accessed Type.
+	 * @param _id Abstract Syntax Tree node for the name of the accessed attribute.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	Expression createStaticCallOrAccess(String _type, String _id);
+
+	/**
+	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
+	 * @param _affectation Abstract Syntax Tree node for the accessed function.
+	 * @param _suiteAffectation Abstract Syntax Tree node for the value of the accessed function.
+	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
+	 */
+	Expression createAffectation(Expression _affectation, Expression _suiteAffectation);
 		
 	/**
 	 * Create a node for a type conversion of an expression in the Abstract Syntax Tree.

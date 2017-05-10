@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package fr.n7.stl.tam.ast.impl;
 
 import java.util.LinkedList;
@@ -64,6 +67,13 @@ class TAMInstructionImpl implements TAMInstruction {
 	protected Optional<Integer> size;
 
 	/**
+	 * Some TAM instructions manipulate explicitly the call stack and the current frame (CALL, CALLI instructions).
+	 * This is the frame of the caller function.
+	 * It is stored in the size bitfield in the instructions.
+	 */
+	private Optional<Register> frame;
+	
+	/**
 	 * Construction for a full TAM instruction with kind, label, location and size.
 	 * @param _kind Kind for the TAM instruction.
 	 * @param _label Optional Label for the TAM instruction.
@@ -71,19 +81,23 @@ class TAMInstructionImpl implements TAMInstruction {
 	 * @param _offset Optional Integer offset for the TAM instruction.
 	 * @param _target Optional Label target for the TAM instruction.
 	 * @param _size Optional Integer size for the TAM instruction.
+	 * @param _frame Optional Register frame for the TAM instruction.
 	 */
 	public TAMInstructionImpl(TAMInstructionKind _kind, Optional<String> _label, 
 			Optional<Register> _register, Optional<Integer> _offset, 
-			Optional<String> _target, Optional<Integer> _size) {
+			Optional<String> _target, Optional<Integer> _size, Optional<Register> _frame) {
 		this.kind = _kind;
-		this.comments = new LinkedList<>();
-		this.prefixes = new LinkedList<>();
-		this.suffixes = new LinkedList<>();
-        _label.ifPresent(s -> this.prefixes.add(s));
+		this.comments = new LinkedList<String>();
+		this.prefixes = new LinkedList<String>();
+		this.suffixes = new LinkedList<String>();
+		if (_label.isPresent()) {
+			this.prefixes.add(_label.get());
+		}
 		this.register = _register;
 		this.offset = _offset;
 		this.target = _target;
 		this.size = _size;
+		this.frame = _frame;
 	}
 	
 	/* (non-Javadoc)
@@ -111,23 +125,23 @@ class TAMInstructionImpl implements TAMInstruction {
 	}
 	
 	public String toString() {
-		StringBuilder _result = new StringBuilder();
+		String _result = "";
 		for (String _comment : this.comments) {
-			_result.append(";").append(_comment).append("\n");
+			_result += ";" + _comment + "\n";
 		}
 		for (String _label : this.prefixes) {
-			_result.append(_label).append(":\n");
+			_result += _label + ":\n";
 		}
-		_result.append(this.kind);
-		_result.append(size.map(integer1 -> (" (" + integer1 + ")")).orElse(""));
-		_result.append(offset.map(integer -> (" " + integer)).orElse(""));
-		_result.append(register.map(register -> ("[" + register + "]")).orElse(""));
-		//_result += ((this.target.isPresent())?(" (" + this.target.get() + ")"):"");
-		_result.append(target.map(s -> (" " + s)).orElse(""));
+		_result += this.kind;
+		_result += ((this.size.isPresent())?(" (" + this.size.get() + ")"):((this.frame.isPresent())?(this.frame.get()):""));
+		_result += ((this.offset.isPresent())?(" " + this.offset.get()):"");
+		_result += ((this.register.isPresent())?("[" + this.register.get() + "]"):"");
+		_result += ((this.target.isPresent())?(" " + this.target.get()):"");
+		_result += "\n";
 		for (String _label : this.suffixes) {
-			_result.append("\n").append(_label).append(":");
+			_result += _label + "\n";
 		}
-		return _result.toString();
+		return _result;
 	}
 
 }

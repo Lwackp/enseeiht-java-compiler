@@ -19,7 +19,7 @@ public class Main{
             System.out.println("Fichier analysé : "+  args[0]);
             ProblemReporter prp = new ProblemReporter(cu);
             ProblemRequestor prq = new ProblemRequestor(true);
-            Bloc bloc = new Bloc(prp);
+            MiniJava bloc = new MiniJava(prp);
             prq.beginReporting();
             bloc.set_eval(true);
             bloc.compile(cu);
@@ -49,7 +49,6 @@ public class Main{
                     bloc.get_ast().allocateMemory(Register.SB, 0);
                     TAMFactory factory = new TAMFactoryImpl();
                     Fragment code = bloc.get_ast().getCode(factory);
-                    code.add(factory.createHalt());
                     writer.println(code);
                     writer.close();
                 } catch (IOException e) {
