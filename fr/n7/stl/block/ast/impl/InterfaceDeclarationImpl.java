@@ -1,10 +1,8 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ClassElement;
-import fr.n7.stl.block.ast.InheritanceDeclaration;
-import fr.n7.stl.block.ast.InterfaceDeclaration;
-import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -141,6 +139,12 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     public int allocateMemory(Register _register, int _offset) {
         this.register = _register;
         this.offset = _offset;
+
+        int _length = 0;
+        for (ClassElement _element : this.elements) {
+            _length += _element.allocateMemory(Register.LB, _length);
+        }
+
         return 1;
     }
 
@@ -154,6 +158,19 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     @Override
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
+
+        for (ClassElement _element : this.getStaticElements()) {
+            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
+                _fragment.append(_element.getCode(_factory));
+                _fragment.add(_factory.createLoad(Register.LB, -1, 1));
+                _fragment.add(_factory.createLoadL(_element.getOffset()));
+                _fragment.add(Library.IAdd);
+                _fragment.add(_factory.createStoreI(_element.getType().length()));
+            }
+        }
+        _fragment.add(_factory.createReturn(0, 0));
+        this.label = "interface_" + this.name + _factory.createLabelNumber();
+        _fragment.addPrefix(this.label);
 
         //TODO: Inheritance
 

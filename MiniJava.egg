@@ -836,7 +836,7 @@ end
 }
 
 
-Instruction -> Type identificateur affectation #inh Expression point_virgule #ast;
+Instruction -> Type identificateur #inh SuiteAffectation point_virgule #ast;
 #inh {
 do
     if (Instruction^tds.contains(identificateur^txt)) then
@@ -848,7 +848,7 @@ end
 local
     d: Declaration;
 do
-    d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, Expression^ast);
+    d := Instruction^factory.createVariableDeclaration(identificateur^txt, Type^ast, SuiteAffectation^ast);
     if !Instruction^tds.contains(identificateur^txt) then
         Instruction^tds.register(d);
         Instruction^ast := d;
@@ -934,7 +934,7 @@ local
     e : Expression;
     d : Declaration;
 do
-    if SuiteAffectation^ast != null then
+    if SuiteAffectation^ast != SpecialValue.NoValue then
         e := Affectation^ast;
         match e
         with Usage then
@@ -971,7 +971,7 @@ end
 SuiteAffectation -> #ast;
 #ast {
 do
-    SuiteAffectation^ast := null;
+    SuiteAffectation^ast := SpecialValue.NoValue;
 end
 }
 
@@ -1373,7 +1373,7 @@ do
       with ParameterDeclarationImpl then AppelOuAcces^support := Facteur^factory.createParameterUse(d);
       end
    else
-      error(BLOC_undefined_ident, identificateur^txt);
+      error(MiniJava_undefined_ident, identificateur^txt);
    end
 end
 }

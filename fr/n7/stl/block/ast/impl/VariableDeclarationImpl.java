@@ -36,7 +36,10 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 		 */
 		@Override
 		public Fragment getCode(TAMFactory _factory) {
-			return _factory.createFragment();
+			Fragment _fragment = _factory.createFragment();
+			_fragment.add(_factory.createPush(1));
+			_fragment.add(Library.MVoid);
+			return _fragment;
 		}
 	}
 

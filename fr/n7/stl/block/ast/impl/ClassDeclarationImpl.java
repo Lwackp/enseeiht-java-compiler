@@ -169,7 +169,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.register = _register;
         this.offset = _offset;
 
-        int _length = offset;
+        int _length = 0;
         for (ClassElement _element : this.elements) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
                 if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {

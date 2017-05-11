@@ -105,8 +105,8 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
             _paramssize += _parameter.allocateMemory(Register.LB, -1*_paramssize);
         }
 
-        // +3 because of CALL instruction inner behaviour
-        this.body.allocateMemory(_register, _offset+3);
+        // 3 because of CALL instruction inner behaviour
+        this.body.allocateMemory(Register.LB, 3);
         return 0;
     }
 
