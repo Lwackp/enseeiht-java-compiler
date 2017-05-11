@@ -13,6 +13,26 @@ import java.io.*;
 
 public class Main{
 
+    private static String ident(String s) {
+        StringBuilder _builder = new StringBuilder(0);
+
+        int nident = -1;
+        for (String _s : s.split("\n")) {
+            int variation = 0;
+            for (char i : _s.toCharArray()) {
+                if (i == '}') variation--;
+                if (i == '{') variation++;
+            }
+            if (variation < 0) nident += variation;
+            for (int i = 0; i < nident; i++)
+                _builder.append("\t");
+            _builder.append(_s).append("\n");
+            if (variation > 0) nident += variation;
+        }
+
+        return _builder.toString();
+    }
+
     public static void main (String[] args){
         try {
             ISourceUnit cu = new SourceUnit(args[0]);
@@ -28,7 +48,7 @@ public class Main{
             }
             prq.endReporting();
 
-            System.out.println("AST :"+bloc.get_ast());
+            System.out.println(ident("AST :"+bloc.get_ast()));
 
             if (prp.getAllProblems().isEmpty()) {
                 System.out.println("Format: OK");

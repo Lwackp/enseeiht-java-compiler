@@ -81,7 +81,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 			_result += " = " + this.value;
 		}
 
-		return _result + ";\n";
+		return _result + ";";
 	}
 
 	/* (non-Javadoc)
