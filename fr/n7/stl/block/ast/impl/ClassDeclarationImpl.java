@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -20,6 +21,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     private List<InheritanceDeclaration> interfaces;
     private List<ClassElement> elements;
     private ClassThisUse thisElement = new ClassThisUseImpl();
+    private String label;
 
     private Type classType;
 
@@ -108,7 +110,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             _local.append(" extends ").append(this.inheritance);
         }
 
-        if (this.interfaces != null) {
+        if (this.interfaces != null && !this.interfaces.isEmpty()) {
             _local.append(" implements ");
             boolean first = true;
             for (InheritanceDeclaration _interface : this.interfaces) {
@@ -126,7 +128,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         }
         _local.append("}");
 
-        return "public static class " + _local + "\n" ;
+        return "public class " + _local + "\n" ;
     }
 
     /**
@@ -178,7 +180,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             _length += _element.allocateMemory(Register.LB, _length);
         }
 
-        return 0;
+        return 1;
     }
 
     /**
@@ -192,6 +194,19 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
 
+        for (ClassElement _element : this.getStaticElements()) {
+            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
+                _fragment.append(_element.getCode(_factory));
+                _fragment.add(_factory.createLoad(Register.LB, -1, 1));
+                _fragment.add(_factory.createLoadL(_element.getOffset()));
+                _fragment.add(Library.IAdd);
+                _fragment.add(_factory.createStoreI(_element.getType().length()));
+            }
+        }
+        _fragment.add(_factory.createReturn(0, 0));
+        this.label = "class_" + this.name + _factory.createLabelNumber();
+        _fragment.addPrefix(this.label);
+
         //TODO: Inheritance
 
         //TODO: Sort element regarding final, static, public, ...
@@ -200,5 +215,37 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         }
 
         return _fragment;
+    }
+
+    /**
+     * Synthesized semantics attribute for the label of the object.
+     *
+     * @return label of the object.
+     */
+    @Override
+    public String getLabel() {
+        return this.label;
+    }
+
+    @Override
+    public List<ClassElement> getStaticElements() {
+        List<ClassElement> _staticElements = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (_element.isStatic()) {
+                _staticElements.add(_element);
+            }
+        }
+        return _staticElements;
+    }
+
+    @Override
+    public List<FunctionDeclaration> getFunctions() {
+        List<FunctionDeclaration> _functions = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                _functions.add((FunctionDeclaration) _element);
+            }
+        }
+        return _functions;
     }
 }

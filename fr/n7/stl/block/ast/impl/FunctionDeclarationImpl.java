@@ -100,13 +100,14 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
         //List<ParameterDeclaration> reversedParameters = new LinkedList<>(this.getParameters());
         //Collections.reverse(reversedParameters);
+
         for (ParameterDeclaration _parameter : this.getParameters()) {
             _paramssize += _parameter.allocateMemory(Register.LB, -1*_paramssize);
         }
 
         // +3 because of CALL instruction inner behaviour
         this.body.allocateMemory(_register, _offset+3);
-        return 3;
+        return 0;
     }
 
     @Override

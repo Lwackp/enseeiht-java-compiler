@@ -54,6 +54,7 @@ syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteA
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
 syn body    : FunctionBody for SuiteAttributOuMethode;
+syn value   : Expression for SuiteAttributOuMethode;
 
 -- TODO(AST for the following classes)
 syn ast     : Object for Genericite, InstanceGenericite;
@@ -568,7 +569,6 @@ end
 ElementClasse -> AttributOuMethode #ast;
 #ast {
 do
-    -- bool static = true; by default
     ElementClasse^ast := ElementClasse^factory.createClassElement(AttributOuMethode^ast);
 end
 }
@@ -576,7 +576,6 @@ end
 ElementClasse -> Constructeur #ast;
 #ast {
 do
-    -- This method just set bool constructor to true;
     ElementClasse^ast := ElementClasse^factory.createClassElement(Constructeur^ast);
 end
 }
@@ -592,10 +591,14 @@ do
         if (AttributOuMethode^tds.contains(identificateur^txt)) then
             error(MiniJava_ClassElement_Definition, identificateur^txt);
         else
-             AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
-        Type^ast);
+            if SuiteAttributOuMethode^value = null then
+                AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
+                            Type^ast);
+            else
+                AttributOuMethode^ast := AttributOuMethode^factory.createVariableDeclaration(identificateur^txt,
+                            Type^ast, SuiteAttributOuMethode^value);
+            end
         end
-
     else
         AttributOuMethode^ast := AttributOuMethode^factory.createFunctionDeclaration(identificateur^txt,
             Type^ast, SuiteAttributOuMethode^ast, SuiteAttributOuMethode^body);
@@ -620,6 +623,17 @@ do
     SuiteAttributOuMethode^type := ClassElementType.Attribute;
     SuiteAttributOuMethode^ast := null;
     SuiteAttributOuMethode^body := null;
+    SuiteAttributOuMethode^value := null;
+end
+}
+
+SuiteAttributOuMethode -> affectation Expression point_virgule #ast;
+#ast {
+do
+    SuiteAttributOuMethode^type := ClassElementType.Attribute;
+    SuiteAttributOuMethode^ast := null;
+    SuiteAttributOuMethode^body := null;
+    SuiteAttributOuMethode^value := Expression^ast;
 end
 }
 
@@ -631,6 +645,7 @@ do
     SuiteAttributOuMethode^type := ClassElementType.Method;
     SuiteAttributOuMethode^ast := Parametres^ast;
     SuiteAttributOuMethode^body := SuiteAttributOuMethode^factory.createFunctionBody(Bloc^ast);
+    SuiteAttributOuMethode^value := null;
 end
 }
 
@@ -843,86 +858,6 @@ do
 end
 }
 
-
---Instruction -> Affectable affectation Expression point_virgule #ast ;
---#ast {
---do
---      Instruction^ast := Instruction^factory.createAssignment(Affectable^ast, Expression^ast);
---end
---}
---
---
---Affectable -> parenthese_ouvrante Affectable parenthese_fermante #ast ;
---#ast {
---do
---   Affectable^ast := Affectable1^ast;
---end
---}
---
---Affectable -> identificateur #inh SuiteAffectable #ast ;
---#inh {
---local
---   o : Optional<Declaration>;
---   d : Declaration;
---do
---   if (Affectable^tds.knows(identificateur^txt)) then
---      o := Affectable^tds.get(identificateur^txt);
---      d := o.get();
---      match d
---      with VariableDeclaration then SuiteAffectable^support := Affectable^factory.createVariableAssignment(d);
---      with ConstantDeclaration then error(BLOC_not_a_variable, identificateur^txt);
---      end
---   else
---      error(BLOC_undefined_ident, identificateur^txt);
---   end
---end
---}
---
---#ast {
---do
---   Affectable^ast := SuiteAffectable^ast;
---end
---}
---
---
---SuiteAffectable -> #ast ;
---#ast {
---do
---   SuiteAffectable^ast := SuiteAffectable^support;
---end
---}
---
---SuiteAffectable -> point identificateur #inh AppelOuAcces #ast;
---#inh {
---do
---    AppelOuAcces^support := SuiteAffectable^factory.createFieldAssignment(SuiteAffectable^support,identificateur^txt);
---end
---}
---#ast {
---local
---    sa : Expression;
---do
---    sa := AppelOuAcces^ast;
---    match sa
---    with Assignable then SuiteAffectable^ast := sa;
---    else
---        error(MiniJava_Illegal_Call_Or_Access,identificateur^txt);
---    end
---end
---}
---
---SuiteAffectable -> crochet_ouvrant Expression crochet_fermant #inh SuiteAffectable #ast ;
---#inh {
---do
---   SuiteAffectable1^support := SuiteAffectable^factory.createArrayAssignment(SuiteAffectable^support,Expression^ast);
---end
---}
---
---#ast {
---do
---   SuiteAffectable^ast := SuiteAffectable1^ast;
---end
---}
 Instruction -> Expression point_virgule #ast;
 #ast {
 do
@@ -1002,10 +937,12 @@ do
     if SuiteAffectation^ast != null then
         e := Affectation^ast;
         match e
-        with Usage then d := e.getDeclaration();
-        else d := null;
+        with Usage then
+            d := e.getDeclaration();
+            Expression^ast := Expression^factory.createAssignment(d, SuiteAffectation^ast);
+        else
+            Expression^ast := Expression^factory.createAssignment(Affectation^ast, SuiteAffectation^ast);
         end
-        Expression^ast := Expression^factory.createAssignment(d, SuiteAffectation^ast);
     else
         Expression^ast := Affectation^ast;
     end
@@ -1313,8 +1250,17 @@ end
 
 Facteur -> identificateur_type point identificateur #inh AppelOuAcces #ast;
 #inh {
+local
+   ocd : Optional<Declaration>;
+   cd : Declaration;
 do
-   AppelOuAcces^support := Facteur^factory.createStaticCallOrAccess(identificateur_type^txt, identificateur^txt);
+   if (Facteur^tds.knows(identificateur_type^txt)) then
+       ocd := Facteur^tds.get(identificateur_type^txt);
+       cd := ocd.get();
+       AppelOuAcces^support := Facteur^factory.createStaticCallOrAccess(cd, identificateur^txt);
+   else
+       error(MiniJava_Type_not_defined, identificateur_type^txt);
+   end
 end
 }
 #ast {

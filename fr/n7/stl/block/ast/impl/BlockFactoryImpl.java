@@ -666,8 +666,9 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
 	 */
 	@Override
-	public Expression createStaticCallOrAccess(String _type, String _id) {
-		return null;
+	public Expression createStaticCallOrAccess(Declaration _type, String _id) {
+		Expression classUse = new ClassStaticUseImpl((ClassDeclaration)_type);
+		return new FieldAccessImpl(classUse, _id);
 	}
 
 	//TODO: affectation = suiteAffectation

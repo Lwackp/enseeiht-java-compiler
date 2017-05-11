@@ -256,7 +256,7 @@ public interface ExpressionFactory {
 	 * @param _id Abstract Syntax Tree node for the name of the accessed attribute.
 	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
 	 */
-	Expression createStaticCallOrAccess(String _type, String _id);
+	Expression createStaticCallOrAccess(Declaration _type, String _id);
 
 	/**
 	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.

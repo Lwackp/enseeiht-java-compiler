@@ -21,11 +21,16 @@ public class ClassElementImpl implements ClassElement {
 
     public ClassElementImpl(Declaration _declaration, ElementModifier[] _modifiers) {
         this.declaration = _declaration;
-        this.setModifiers(_modifiers);
-    }
 
-    public ClassElementImpl(ClassElement element, ElementModifier[] _modifiers) {
-        this(((ClassElementImpl)element).declaration, _modifiers);
+        if (this.declaration instanceof ClassElementImpl) {
+            ClassElementImpl _c_decl = (ClassElementImpl) this.declaration;
+            this.b_static = _c_decl.b_static;
+            this.b_final = _c_decl.b_final;
+            this.access = _c_decl.access;
+            this.declaration = ((ClassElementImpl) this.declaration).declaration;
+        }
+
+        this.setModifiers(_modifiers);
     }
 
     /* (non-Javadoc)
@@ -94,10 +99,10 @@ public class ClassElementImpl implements ClassElement {
                 this.access = (AccessModifier) modifier;
             }
             else if (modifier == NonAccessModifier.Final) {
-                b_final = true;
+                this.b_final = true;
             }
             else if (modifier == NonAccessModifier.Static) {
-                b_static = true;
+                this.b_static = true;
             }
         }
     }
@@ -122,7 +127,11 @@ public class ClassElementImpl implements ClassElement {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
-        return this.declaration.allocateMemory(_register, _offset);
+        int _length = this.declaration.allocateMemory(_register, _offset);
+        if (this.b_static) {
+            return _length;
+        }
+        return 0;
     }
 
     /**

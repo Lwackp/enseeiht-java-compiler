@@ -21,6 +21,8 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     private List<InheritanceDeclaration> inheritance;
     private List<ClassElement> elements;
 
+    private String label;
+
     private Register register;
     private int offset;
 
@@ -139,7 +141,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     public int allocateMemory(Register _register, int _offset) {
         this.register = _register;
         this.offset = _offset;
-        return 0;
+        return 1;
     }
 
     /**
@@ -161,5 +163,32 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         }
 
         return _fragment;
+    }
+
+    /**
+     * Synthesized semantics attribute for the label of the object.
+     *
+     * @return label of the object.
+     */
+    @Override
+    public String getLabel() {
+        return this.label;
+    }
+
+    @Override
+    public List<ClassElement> getElements() {
+        //TODO: Inheritance
+        return this.elements;
+    }
+
+    @Override
+    public List<ClassElement> getStaticElements() {
+        List<ClassElement> _staticElements = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (_element.isStatic()) {
+                _staticElements.add(_element);
+            }
+        }
+        return _staticElements;
     }
 }

@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -108,6 +109,25 @@ public class ProgramImpl implements Program {
         if (this.main.getElements().size() == 1 ) {
             Declaration mainMethod = this.main.getElements().get(0).getDeclaration();
             if (mainMethod instanceof FunctionDeclaration) {
+                for (InterfaceDeclaration _interface : this.interfaces) {
+                    int _length = 0;
+                    for (ClassElement _element : _interface.getStaticElements()) {
+                        _length += _element.getType().length();
+                    }
+                    _program.add(_factory.createLoadL(_length));
+                    _program.add(Library.MAlloc);
+                    _program.add(_factory.createCall(_interface.getLabel(), Register.LB));
+                }
+                for (ClassDeclaration _class : this.classes) {
+                    int _length = 0;
+                    for (ClassElement _element : _class.getStaticElements()) {
+                        _length += _element.getType().length();
+                    }
+                    _program.add(_factory.createLoadL(_length));
+                    _program.add(Library.MAlloc);
+                    _program.add(_factory.createCall(_class.getLabel(), Register.LB));
+                }
+                //Should be the id of the main class object...
                 _program.add(_factory.createLoadL(-1));
                 _program.add(_factory.createCall(((FunctionDeclaration)mainMethod).getLabel(), Register.LB));
             }

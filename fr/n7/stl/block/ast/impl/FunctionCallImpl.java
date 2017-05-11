@@ -56,7 +56,6 @@ public class FunctionCallImpl implements FunctionCall {
 	 */
 	@Override
 	public Type getType() {
-		//System.out.println("+++++++++++++++++++++++++ " + this.function.getType());
 		return this.function.getType();
 	}
 
