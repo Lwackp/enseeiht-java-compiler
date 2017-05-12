@@ -41,13 +41,13 @@ syn ast     : InterfaceDeclaration for Interface;
 syn ast     : List<InterfaceDeclaration> for Interfaces;
 syn ast     : ClassDeclaration for Classe, Principale;
 syn ast     : List<ClassDeclaration> for Classes;
+syn ast     : InheritanceDeclaration<ClassDeclaration> for HeritageClasse;
+syn ast     : List<InheritanceDeclaration<InterfaceDeclaration>> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : ClassElement for ElementClasse, ElementInterface, MethodePrincipale;
 syn ast     : Declaration for AttributOuMethode;
 syn ast     : FunctionDeclaration for Constructeur;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : SignatureDeclaration for Signature;
-syn ast     : InheritanceDeclaration for HeritageClasse;
-syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
@@ -199,10 +199,7 @@ end
 
 HeritageInterface -> extension identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
 #inh {
-local
-    d : Declaration;
 do
-    d := HeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
     if HeritageInterface^tds.knows(identificateur_type^txt) then
         SuiteHeritageInterface^tds := HeritageInterface^tds;
     else
@@ -211,28 +208,32 @@ do
 end
 }
 #ast {
+local
+    oid : Optional<Declaration>;
+    intd: Declaration;
 do
-    SuiteHeritageInterface^ast.add(0, HeritageInterface^factory.createInheritanceDeclaration(
-                                identificateur_type^txt,
-                                InstanceGenericite^ast));
-    HeritageInterface^ast := SuiteHeritageInterface^ast;
+    oid := HeritageInterface^tds.get(identificateur_type^txt);
+    intd := oid.get();
+    match intd
+    with InterfaceDeclaration then
+        SuiteHeritageInterface^ast.add(0, HeritageInterface^factory.createInheritanceDeclaration(
+                                                intd, InstanceGenericite^ast));
+        HeritageInterface^ast := SuiteHeritageInterface^ast;
+    end
 end
 }
 
 HeritageInterface -> #ast;
 #ast {
 do
-    HeritageInterface^ast := new LinkedList<InheritanceDeclaration>();
+    HeritageInterface^ast := new LinkedList<InheritanceDeclaration<InterfaceDeclaration>>();
 end
 }
 
 
 SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
 #inh {
-local
-    d : Declaration;
 do
-    d := SuiteHeritageInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
     if SuiteHeritageInterface^tds.knows(identificateur_type^txt) then
         SuiteHeritageInterface1^tds := SuiteHeritageInterface^tds;
     else
@@ -241,18 +242,25 @@ do
 end
 }
 #ast {
+local
+    oid : Optional<Declaration>;
+    intd: Declaration;
 do
-    SuiteHeritageInterface1^ast.add(0, SuiteHeritageInterface^factory.createInheritanceDeclaration
-    (identificateur_type^txt,
-    InstanceGenericite^ast));
-    SuiteHeritageInterface^ast := SuiteHeritageInterface1^ast;
+    oid := SuiteHeritageInterface^tds.get(identificateur_type^txt);
+    intd := oid.get();
+    match intd
+    with InterfaceDeclaration then
+        SuiteHeritageInterface1^ast.add(0, SuiteHeritageInterface^factory.createInheritanceDeclaration(
+                                                intd, InstanceGenericite^ast));
+        SuiteHeritageInterface^ast := SuiteHeritageInterface1^ast;
+    end
 end
 }
 
 SuiteHeritageInterface -> #ast;
 #ast {
 do
-    SuiteHeritageInterface^ast := new LinkedList<InheritanceDeclaration>();
+    SuiteHeritageInterface^ast := new LinkedList<InheritanceDeclaration<InterfaceDeclaration>>();
 end
 }
 
@@ -377,10 +385,20 @@ end
 
 HeritageClasse -> extension identificateur_type InstanceGenericite #ast;
 #ast {
+local
+    ocd : Optional<Declaration>;
+    cd : Declaration;
 do
-    HeritageClasse^ast := HeritageClasse^factory.createInheritanceDeclaration(
-                                                          identificateur_type^txt,
-                                                          InstanceGenericite^ast);
+    if HeritageClasse^tds.knows(identificateur_type^txt) then
+        ocd := HeritageClasse^tds.get(identificateur_type^txt);
+        cd := ocd.get();
+        match cd
+        with ClassDeclaration then
+            HeritageClasse^ast := HeritageClasse^factory.createInheritanceDeclaration(cd, InstanceGenericite^ast);
+        end
+    else
+        error(MiniJava_Type_not_defined, identificateur_type^txt);
+    end
 end
 }
 
@@ -393,10 +411,7 @@ end
 
 ImplantationInterface -> implantation identificateur_type InstanceGenericite #inh SuiteHeritageInterface #ast;
 #inh {
-local
-    d : Declaration;
 do
-    d := ImplantationInterface^factory.createInheritanceDeclaration(identificateur_type^txt, null);
     if ImplantationInterface^tds.knows(identificateur_type^txt) then
         SuiteHeritageInterface^tds := ImplantationInterface^tds;
     else
@@ -405,18 +420,29 @@ do
 end
 }
 #ast {
+local
+    oid : Optional<Declaration>;
+    intd: Declaration;
 do
-    SuiteHeritageInterface^ast.add(0, ImplantationInterface^factory.createInheritanceDeclaration(
-                                identificateur_type^txt,
-                                InstanceGenericite^ast));
-    ImplantationInterface^ast := SuiteHeritageInterface^ast;
+    if ImplantationInterface^tds.knows(identificateur_type^txt) then
+        oid := ImplantationInterface^tds.get(identificateur_type^txt);
+        intd := oid.get();
+        match intd
+        with InterfaceDeclaration then
+            SuiteHeritageInterface^ast.add(0, ImplantationInterface^factory.createInheritanceDeclaration(
+                                                intd, InstanceGenericite^ast));
+            ImplantationInterface^ast := SuiteHeritageInterface^ast;
+        end
+    else
+        error(MiniJava_Interface_Inheritance, identificateur_type^txt);
+    end
 end
 }
 
 ImplantationInterface -> #ast;
 #ast {
 do
-    ImplantationInterface^ast := new LinkedList<InheritanceDeclaration>();
+    ImplantationInterface^ast := new LinkedList<InheritanceDeclaration<InterfaceDeclaration>>();
 end
 }
 

@@ -44,4 +44,8 @@ public interface ClassDeclaration extends TypeDeclaration, Labellable {
     List<ClassElement> getStaticElements();
 
     List<FunctionDeclaration> getFunctions();
+
+    List<InterfaceDeclaration> getInterfaces();
+
+	int getVirtualMethodTableLength();
 }

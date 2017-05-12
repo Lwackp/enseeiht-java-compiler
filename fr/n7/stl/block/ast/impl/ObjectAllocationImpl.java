@@ -36,7 +36,7 @@ public class ObjectAllocationImpl implements ObjectAllocation {
      */
     @Override
     public Type getType() {
-        return new ArrayTypeImpl(this.type);
+        return this.type;
     }
 
     /**

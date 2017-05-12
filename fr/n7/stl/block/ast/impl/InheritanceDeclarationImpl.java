@@ -1,5 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
+import fr.n7.stl.block.ast.Declaration;
 import fr.n7.stl.block.ast.InheritanceDeclaration;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.tam.ast.Fragment;
@@ -9,15 +10,15 @@ import fr.n7.stl.tam.ast.TAMFactory;
 /**
  * Created by thibault on 02/05/17.
  */
-public class InheritanceDeclarationImpl implements InheritanceDeclaration {
+public class InheritanceDeclarationImpl<T extends Declaration> implements InheritanceDeclaration {
 
-    private String name;
+    private T declaration;
     //TODO: type
-    private Object type;
+    private Object generics;
 
-    public InheritanceDeclarationImpl(String _name, Object _type) {
-        this.name = _name;
-        this.type = _type;
+    public InheritanceDeclarationImpl(T _declaration, Object _generics) {
+        this.declaration = _declaration;
+        this.generics = _generics;
     }
 
     /* (non-Javadoc)
@@ -27,9 +28,9 @@ public class InheritanceDeclarationImpl implements InheritanceDeclaration {
     public String toString() {
         StringBuilder _local = new StringBuilder();
 
-        _local.append(this.name);
-        if (this.type != null) {
-            _local.append(" " + this.type);
+        _local.append(this.declaration.getName());
+        if (this.generics != null) {
+            _local.append(" " + this.generics);
         }
 
         return _local.toString() ;
@@ -42,7 +43,7 @@ public class InheritanceDeclarationImpl implements InheritanceDeclaration {
      */
     @Override
     public String getName() {
-        return this.name;
+        return this.declaration.getName();
     }
 
     /**
@@ -52,7 +53,7 @@ public class InheritanceDeclarationImpl implements InheritanceDeclaration {
      */
     @Override
     public Type getType() {
-        return null;
+        return this.declaration.getType();
     }
 
     /**
@@ -119,5 +120,10 @@ public class InheritanceDeclarationImpl implements InheritanceDeclaration {
     @Override
     public Fragment getCode(TAMFactory _factory) {
         return null;
+    }
+
+    @Override
+    public T getDeclaration() {
+        return this.declaration;
     }
 }

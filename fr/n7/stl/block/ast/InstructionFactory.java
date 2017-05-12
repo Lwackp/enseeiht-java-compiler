@@ -94,7 +94,9 @@ public interface InstructionFactory {
 	 * @param _elements Abstract Syntax Tree for the elements of the declared interface.
 	 * @return An InterfaceDeclaration node in the Abstract Syntax Tree.
 	 */
-	InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics, List<InheritanceDeclaration> _inheritance, List<ClassElement> _elements);
+	InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics,
+													List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
+													List<ClassElement> _elements);
 
 	//TODO: Change Object to generics' type
 	/**
@@ -106,7 +108,10 @@ public interface InstructionFactory {
 	 * @param _elements Abstract Syntax Tree for the elements of the declared class.
 	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
 	 */
-	ClassDeclaration createClassDeclaration(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements);
+	ClassDeclaration createClassDeclaration(String _name, Object _generics,
+											InheritanceDeclaration<ClassDeclaration> _inheritance,
+											List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
+											List<ClassElement> _elements);
 
 	/**
 	 * Create a class declaration node in the Abstract Syntax Tree.
@@ -132,7 +137,7 @@ public interface InstructionFactory {
 	 * @param _type Abstract Syntax Tree for the generics of the declared inherited type.
 	 * @return An InheritanceDeclaration node in the Abstract Syntax Tree.
 	 */
-	InheritanceDeclaration createInheritanceDeclaration(String _name, Object _type);
+	<T extends Declaration> InheritanceDeclaration<T> createInheritanceDeclaration(T _name, Object _type);
 
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.

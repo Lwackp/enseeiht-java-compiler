@@ -8,7 +8,6 @@ import fr.n7.stl.tam.ast.TAMFactory;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Created by Thibault Meunier on 02/05/17.
@@ -17,8 +16,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 
     private String name;
     private Object generics;
-    private InheritanceDeclaration inheritance;
-    private List<InheritanceDeclaration> interfaces;
+    private InheritanceDeclaration<ClassDeclaration> inheritance;
+    private List<InheritanceDeclaration<InterfaceDeclaration>> interfaces = new LinkedList<>();
     private List<ClassElement> elements;
     private ClassThisUse thisElement = new ClassThisUseImpl();
     private String label;
@@ -35,7 +34,11 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.classType = new ClassTypeImpl(this.name, this.getElements());
     }
 
-    public ClassDeclarationImpl(String _name, Object _generics, InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
+    public ClassDeclarationImpl(String _name,
+                                Object _generics,
+                                InheritanceDeclaration<ClassDeclaration> _inheritance,
+                                List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
+                                List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;
         this.inheritance = _inheritance;
@@ -194,25 +197,35 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
 
-        for (ClassElement _element : this.getStaticElements()) {
-            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
-                _fragment.append(_element.getCode(_factory));
-                _fragment.add(_factory.createLoad(Register.LB, -1, 1));
-                _fragment.add(_factory.createLoadL(_element.getOffset()));
-                _fragment.add(Library.IAdd);
-                _fragment.add(_factory.createStoreI(_element.getType().length()));
-            }
-        }
-        _fragment.add(_factory.createReturn(0, 0));
-        this.label = "class_" + this.name + _factory.createLabelNumber();
-        _fragment.addPrefix(this.label);
-
-        //TODO: Inheritance
-
         //TODO: Sort element regarding final, static, public, ...
         for (ClassElement _element : this.elements) {
             _fragment.append(_element.getCode(_factory));
         }
+
+        //Creation of Virtual Method Table
+        Fragment _virtualMethodTable = _factory.createFragment();
+        for (ClassElement _element : this.getStaticElements()) {
+            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
+                _virtualMethodTable.append(_element.getCode(_factory));
+                _virtualMethodTable.add(_factory.createLoad(Register.LB, -1, 1));
+                _virtualMethodTable.add(_factory.createLoadL(_element.getOffset()));
+                _virtualMethodTable.add(Library.IAdd);
+                _virtualMethodTable.add(_factory.createStoreI(_element.getType().length()));
+            }
+        }
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
+        }
+        for (InterfaceDeclaration _interface : this.getInterfaces()) {
+            //_virtualMethodTable.add();
+        }
+        _virtualMethodTable.add(_factory.createReturn(0, 0));
+        this.label = "class_" + this.name + "_static_" + _factory.createLabelNumber();
+        _virtualMethodTable.addPrefix(this.label);
+
+        _fragment.append(_virtualMethodTable);
+
+        //TODO: Inheritance
 
         return _fragment;
     }
@@ -243,9 +256,33 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         List<FunctionDeclaration> _functions = new LinkedList<>();
         for (ClassElement _element : this.getElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
-                _functions.add((FunctionDeclaration) _element);
+                FunctionDeclaration _fDeclaration = (FunctionDeclaration)(_element.getDeclaration());
+                if (!(_fDeclaration.getValueType() instanceof ConstructorType)) {
+                    _functions.add(_fDeclaration);
+                }
             }
         }
         return _functions;
     }
+
+    @Override
+    public List<InterfaceDeclaration> getInterfaces() {
+        List<InterfaceDeclaration> _interfaces = new LinkedList<>();
+        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
+            _interfaces.add((InterfaceDeclaration) _interface.getDeclaration());
+        }
+        return _interfaces;
+    }
+
+    @Override
+    public int getVirtualMethodTableLength() {
+        int _length = 0;
+        for (ClassElement _element : this.getStaticElements()) {
+            _length += _element.getType().length();
+        }
+        _length += this.getFunctions().size();
+        _length += this.getInterfaces().size();
+        return _length;
+    }
+
 }

@@ -16,7 +16,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     private String name;
     private Object generics;
-    private List<InheritanceDeclaration> inheritance;
+    private List<InheritanceDeclaration<InterfaceDeclaration>> inheritance;
     private List<ClassElement> elements;
 
     private String label;
@@ -24,8 +24,9 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     private Register register;
     private int offset;
 
-    public InterfaceDeclarationImpl(String _name, Object _generics, List<InheritanceDeclaration> _inheritance,
-                            List<ClassElement> _elements) {
+    public InterfaceDeclarationImpl(String _name, Object _generics,
+                                    List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
+                                    List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;
         this.inheritance = new LinkedList<>(_inheritance);

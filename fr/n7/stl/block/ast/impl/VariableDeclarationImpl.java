@@ -144,7 +144,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment fragment = _factory.createFragment();
-		
+
 		fragment.append(this.value.getCode(_factory));
 
 		return fragment;
