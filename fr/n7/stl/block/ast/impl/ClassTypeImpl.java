@@ -4,19 +4,16 @@ import fr.n7.stl.block.ast.*;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Created by thibault on 05/05/17.
  */
 public class ClassTypeImpl implements ClassType {
 
-    private String name;
-    private List<ClassElement> elements;
+    private ClassDeclaration declaration;
 
-    public ClassTypeImpl(String name, List<ClassElement> _elements) {
-        this.name = name;
-        this.elements = new LinkedList<>(_elements);
+    public ClassTypeImpl(ClassDeclaration _declaration) {
+        this.declaration = _declaration;
     }
 
     /* (non-Javadoc)
@@ -24,7 +21,7 @@ public class ClassTypeImpl implements ClassType {
 	 */
     @Override
     public String toString() {
-        return this.name;
+        return this.declaration.getName();
     }
 
     /**
@@ -79,7 +76,7 @@ public class ClassTypeImpl implements ClassType {
 
     @Override
     public ClassElement getElement(String _name) {
-        for (ClassElement _element : this.elements) {
+        for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getName().equals(_name)) {
                 return _element;
             }
@@ -88,26 +85,32 @@ public class ClassTypeImpl implements ClassType {
     }
 
     @Override
-    public FunctionDeclaration getConstructor() {
-        for (ClassElement _element : this.elements) {
+    public List<FunctionDeclaration> getConstructor() {
+        List<FunctionDeclaration> _constructors = new LinkedList<>();
+        for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
                 if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {
-                    return (FunctionDeclaration) _element.getDeclaration();
+                    _constructors.add((FunctionDeclaration) _element.getDeclaration());
                 }
             }
         }
-        return null;
+        return _constructors;
     }
 
     @Override
     public List<VariableDeclaration> getAttributes() {
         List<VariableDeclaration> _attributes = new LinkedList<>();
 
-        for (ClassElement _element : this.elements) {
+        for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getDeclaration() instanceof VariableDeclaration) {
                 _attributes.add((VariableDeclaration) _element.getDeclaration());
             }
         }
         return _attributes;
+    }
+
+    @Override
+    public ClassDeclaration getDeclaration() {
+        return this.declaration;
     }
 }

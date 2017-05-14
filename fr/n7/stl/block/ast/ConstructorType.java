@@ -5,6 +5,8 @@ package fr.n7.stl.block.ast;
  */
 public interface ConstructorType extends Type {
 
+    ClassDeclaration getClassDeclaration();
+
     void setClassDeclaration(ClassDeclaration _classDeclaration);
 
 }

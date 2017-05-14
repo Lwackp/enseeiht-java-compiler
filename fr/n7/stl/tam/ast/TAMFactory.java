@@ -174,10 +174,9 @@ public interface TAMFactory {
 	 * from the stack, build a call frame (current value of LB, current value of ST, current
 	 * value of CP), push it on the stack and transfer the control to the popped address
 	 * (assign the Control Pointer register to that address).
-	 * @param _frame The caller frame in the call stack.
 	 * @return A TAM Call Immediate instruction AST node.
 	 */
-	public TAMInstruction createCallI(Register _frame);
+	public TAMInstruction createCallI();
 
 	/**
 	 * Build a TAM Return instruction AST node whose execution will pop a memory chunk of the

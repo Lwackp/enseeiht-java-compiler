@@ -31,7 +31,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.name = _name;
         this.elements = new LinkedList<>();
         this.elements.add(_element);
-        this.classType = new ClassTypeImpl(this.name, this.getElements());
+        this.classType = new ClassTypeImpl(this);
     }
 
     public ClassDeclarationImpl(String _name,
@@ -44,7 +44,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.inheritance = _inheritance;
         this.interfaces = new LinkedList<>(_interfaces);
         this.elements = new LinkedList<>(_elements);
-        this.classType = new ClassTypeImpl(this.name, this.getElements());
+        this.classType = new ClassTypeImpl(this);
     }
 
     /**
@@ -172,8 +172,14 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.register = _register;
         this.offset = _offset;
 
-        int _length = 0;
-        for (ClassElement _element : this.elements) {
+        int _staticLength = 0;
+        for (ClassElement _element : this.getStaticElements()) {
+            _staticLength += _element.allocateMemory(Register.LB, _staticLength);
+        }
+
+        //1 is Virtual Method table size
+        int _length = 1;
+        for (ClassElement _element : this.getNonStaticElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
                 if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {
                     ((ConstructorType)((FunctionDeclaration)(_element.getDeclaration())).getValueType())
@@ -207,10 +213,6 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         for (ClassElement _element : this.getStaticElements()) {
             if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
                 _virtualMethodTable.append(_element.getCode(_factory));
-                _virtualMethodTable.add(_factory.createLoad(Register.LB, -1, 1));
-                _virtualMethodTable.add(_factory.createLoadL(_element.getOffset()));
-                _virtualMethodTable.add(Library.IAdd);
-                _virtualMethodTable.add(_factory.createStoreI(_element.getType().length()));
             }
         }
         for (FunctionDeclaration _function : this.getFunctions()) {
@@ -219,6 +221,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         for (InterfaceDeclaration _interface : this.getInterfaces()) {
             //_virtualMethodTable.add();
         }
+        _virtualMethodTable.add(_factory.createLoad(Register.LB, -1, 1));
+        _virtualMethodTable.add(_factory.createStoreI(this.getVirtualMethodTableLength()));
         _virtualMethodTable.add(_factory.createReturn(0, 0));
         this.label = "class_" + this.name + "_static_" + _factory.createLabelNumber();
         _virtualMethodTable.addPrefix(this.label);
@@ -249,6 +253,17 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             }
         }
         return _staticElements;
+    }
+
+    //TODO: separation between function, attributes, static, inheritance, ...
+    public List<ClassElement> getNonStaticElements() {
+        List<ClassElement> _nonStaticElements = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (!_element.isStatic()) {
+                _nonStaticElements.add(_element);
+            }
+        }
+        return _nonStaticElements;
     }
 
     @Override
@@ -283,6 +298,18 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         _length += this.getFunctions().size();
         _length += this.getInterfaces().size();
         return _length;
+    }
+
+    @Override
+    public List<VariableDeclaration> getAttributes() {
+        List<VariableDeclaration> _attributes = new LinkedList<>();
+
+        for (ClassElement _element : this.elements) {
+            if (_element.getDeclaration() instanceof VariableDeclaration) {
+                _attributes.add((VariableDeclaration) _element.getDeclaration());
+            }
+        }
+        return _attributes;
     }
 
 }

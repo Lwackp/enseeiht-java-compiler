@@ -6,6 +6,9 @@ import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by thibault on 28/03/17.
  */
@@ -54,15 +57,23 @@ public class ObjectAllocationImpl implements ObjectAllocation {
         for (VariableDeclaration _v : ((ClassType)this.type).getAttributes()) {
             _attributesSize += _v.getType().length();
         }
+        _attributesSize += 1; //Size of virtual method table
 
         _fragment.add(_factory.createLoadL(_attributesSize));
         _fragment.add(Library.MAlloc);
 
         ClassType _ctype = (ClassType) this.type;
         //TODO: Constructor matching parameters
-        FunctionDeclaration _constructor = _ctype.getConstructor();
-        if (_constructor != null) {
-            _fragment.add(_factory.createCall(_constructor.getLabel(), Register.LB));
+        List<FunctionDeclaration> _constructors = _ctype.getConstructor();
+
+        if (_constructors.isEmpty()) {
+            //Initialize Object with default constructor == virtual method table linking
+            _fragment.add(_factory.createLoad(_ctype.getDeclaration().getRegister(),
+                    _ctype.getDeclaration().getOffset(), 1));
+            _fragment.add(_factory.createLoad(Register.ST, -2, 1));
+            _fragment.add(_factory.createStoreI(1));
+        } else {
+            _fragment.add(_factory.createCall(_constructors.get(0).getLabel(), Register.LB));
         }
 
         return _fragment;

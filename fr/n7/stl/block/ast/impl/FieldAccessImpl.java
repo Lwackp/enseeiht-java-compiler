@@ -70,14 +70,24 @@ public class FieldAccessImpl implements Expression {
 
 		if (_field instanceof ClassElement) {
 			ClassElement _element = (ClassElement)_field;
-			if (_element.isStatic()) {
-				_fragment.append(this.record.getCode(_factory));
-			} else {
-				_fragment.append(this.record.getCode(_factory));
-			}
+			_fragment.append(this.record.getCode(_factory));
+
 			Declaration _declaration = ((ClassElement) _field).getDeclaration();
 			if (_declaration instanceof FunctionDeclaration) {
-				_fragment.add(_factory.createCall(((FunctionDeclaration) _declaration).getLabel(), Register.LB));
+				//Load virtual method table address
+				_fragment.add(_factory.createLoadI(1));
+				//Load method's address from virtual method table (may have problem on functions coming from interface)
+				_fragment.add(_factory.createLoadL(_field.getOffset()));
+				_fragment.add(Library.IAdd);
+				//Load function address
+				_fragment.add(_factory.createLoadI(1));
+
+				//Because CallI doesn't work, load the address twice
+				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
+				_fragment.add(_factory.createCallI());
+				FunctionDeclaration _functionDeclaration = (FunctionDeclaration) _declaration;
+//				//_fragment.add(_factory.createLoad(_functionDeclaration.));
+//				_fragment.add(_factory.createCall(((FunctionDeclaration) _declaration).getLabel(), Register.LB));
 			} else {
 				_fragment.add(_factory.createLoadL(_declaration.getOffset()));
 				_fragment.add(Library.IAdd);

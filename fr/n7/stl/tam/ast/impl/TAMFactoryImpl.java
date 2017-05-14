@@ -288,7 +288,7 @@ public class TAMFactoryImpl implements TAMFactory {
 	 * @see fr.n7.stl.tam.ast.TAMFactory#createCallI(int)
 	 */
 	@Override
-	public TAMInstruction createCallI(Register _frame) {
+	public TAMInstruction createCallI() {
 		return new TAMInstructionImpl(
 				TAMInstructionKind.CALLI,
 				Optional.empty(),
@@ -296,7 +296,7 @@ public class TAMFactoryImpl implements TAMFactory {
 				Optional.empty(),
 				Optional.empty(), 
 				Optional.empty(),
-				Optional.of(_frame));
+				Optional.empty());
 	}
 
 	/* (non-Javadoc)
