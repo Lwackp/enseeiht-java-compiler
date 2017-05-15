@@ -10,25 +10,30 @@ option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
-inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode, Bloc,
+inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Arguments,
+              ArgumentGenericite, ArgumentsGenericite, AttributOuMethode, Bloc,
               Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface,
               ElementsClasse, Genericite,ElementsInterface, Expression, Expressions,
               Facteur, HeritageClasse, HeritageInterface,
-              ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
+              ImplantationInterface,InstanceGenericite, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
               Parametres ,ParametreGenericite, ParametresGenericite, Principale,
-              Programme, Signature, SuiteAffectation,
+              Programme, Signature, SuiteAffectation, SuiteArgumentsGenericite,
               SuiteAttributOuMethode, SuiteCondition,
               SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
               SuiteParametres, SuiteParametresGenericite, SuiteTerme, SuiteTypeAtomique,
               Terme, Type, TypeAtomique,
               Valeur;
-inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode,
+inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments,
+              ArgumentGenericite,
+              ArgumentsGenericite, AttributOuMethode,
               Bloc, Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
               ElementsInterface, Expression, Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface,
-              ImplantationInterface, Instruction, Instructions, Interface, Interfaces,
+              ImplantationInterface,InstanceGenericite, Instruction, Instructions,
+              Interface, Interfaces,
               MethodePrincipale, Parametre, Parametres, ParametreGenericite,
               ParametresGenericite,
-              Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode,SuiteCondition,
+              Principale, Programme, Signature, SuiteAffectation,
+              SuiteArgumentsGenericite, SuiteAttributOuMethode,SuiteCondition,
               SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
               SuiteParametres,SuiteParametresGenericite, SuiteTerme, Terme , Type,
               TypeAtomique;
@@ -62,13 +67,14 @@ SuiteParametresGenericite;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
+syn ast     : List<ArgumentGenericite> for InstanceGenericite, ArgumentsGenericite, SuiteArgumentsGenericite;
+syn ast     : ArgumentGenericite for ArgumentGenericite;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
 syn body    : FunctionBody for SuiteAttributOuMethode;
 syn value   : Expression for SuiteAttributOuMethode;
 
--- TODO(AST for the following classes)
-syn ast     : Object for InstanceGenericite;
+
 
 space separateur				is    "[\n\r\t ]+";
 space commentaire		    	is    "\/\/.*\n";
@@ -570,28 +576,54 @@ end
 --SuiteHeritageGenericite -> ;
 
 
---TODO (Generics)
+--TODO (Instance Genericite)
 InstanceGenericite -> #ast;
 #ast {
 do
-    InstanceGenericite^ast := null;
+    InstanceGenericite^ast := new LinkedList<ArgumentGenericite>();
 end
 }
---
---InstanceGenericite -> inferieur ArgumentsGenericite superieur ;
+
+InstanceGenericite -> inferieur ArgumentsGenericite superieur #ast;
+#ast {
+do
+    InstanceGenericite^ast := ArgumentsGenericite^ast;
+end
+}
+
+--TODO (Arguments Genericite)
+ArgumentsGenericite -> ArgumentGenericite SuiteArgumentsGenericite #ast;
+#ast {
+do
+    SuiteArgumentsGenericite^ast.add(0, ArgumentGenericite^ast);
+    ArgumentsGenericite^ast := SuiteArgumentsGenericite^ast;
+end
+}
 
 
---TODO (Generics)
---ArgumentsGenericite -> ArgumentGenericite SuiteArgumentsGenericite ;
---
---
---SuiteArgumentsGenericite -> virgule ArgumentGenericite SuiteArgumentsGenericite ;
---
---SuiteArgumentsGenericite -> ;
---
---
---ArgumentGenericite -> identificateur_type InstanceGenericite ;
---
+SuiteArgumentsGenericite -> virgule ArgumentGenericite SuiteArgumentsGenericite #ast;
+#ast {
+do
+    SuiteArgumentsGenericite1^ast.add(0, ArgumentGenericite^ast);
+    SuiteArgumentsGenericite^ast := SuiteArgumentsGenericite1^ast;
+end
+}
+
+SuiteArgumentsGenericite -> #ast;
+#ast {
+do
+    SuiteArgumentsGenericite^ast := new LinkedList<ArgumentGenericite>();
+end
+}
+
+ArgumentGenericite -> TypeAtomique InstanceGenericite #ast;
+#ast {
+do
+    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+    (TypeAtomique^ast, InstanceGenericite^ast);
+end
+}
+
 --ArgumentGenericite -> type_String ;
 
 
@@ -865,7 +897,7 @@ do
 end
 }
 -- TODO(Genericite)
-TypeAtomique -> identificateur_type #ast;--InstanceGenericite  ;
+TypeAtomique -> identificateur_type #ast; --InstanceGenericite #ast;
 #ast {
 local
     od : Optional<Declaration>;

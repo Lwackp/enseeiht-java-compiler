@@ -718,4 +718,8 @@ public class BlockFactoryImpl implements BlockFactory {
 		return AtomicType.StringType;
 	}
 
+	@Override
+	public ArgumentGenericite createGenericArgument(Type _type, List<ArgumentGenericite> _instance){
+		return new ArgumentGenericiteImpl(_type, _instance);
+	}
 }

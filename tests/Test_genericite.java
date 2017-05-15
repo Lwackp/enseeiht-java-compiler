@@ -8,6 +8,6 @@ class Box <T, H> {
 
 public class Test_genericite {
     public static void main(String[] args) {
-        // Box <int, char> b = new Box<int, char>();
+         Box<int, int> b;
     }
 }
