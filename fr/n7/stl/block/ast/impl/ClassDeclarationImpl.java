@@ -2,7 +2,6 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
-import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -43,7 +42,6 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.interfaces = new LinkedList<>(_interfaces);
         this.elements = new LinkedList<>(_elements);
         this.classType = new ClassTypeImpl(this);
-        this.sortFunctions();
     }
 
     /**
@@ -322,13 +320,20 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return _attributes;
     }
 
-
-    private void sortFunctions() {
-        if (this.inheritance != null) {
-            for (FunctionDeclaration _function : this.inheritance.getDeclaration().getFunctions()) {
-                //TODO
-                ;
+    @Override
+    public boolean checkGenericsParameter(List<GenericType> _params){
+        if (_params.size() == this.generics.size()){
+            for (int i = 0; i < _params.size(); i++) {
+                for (GenericType _type: this.generics.get(i).getInheritance()) {
+                    if (!_params.get(i).compatibleWith(_type)){
+                        return false;
+                    }
+                }
             }
         }
+        else {
+            return false;
+        }
+        return true;
     }
 }

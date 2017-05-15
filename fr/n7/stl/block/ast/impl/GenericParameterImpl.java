@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Project: enseeiht-java-compiler
- * Created by sacha on 03/05/2017.
+ * Created by Sacha on 03/05/2017.
  */
 public class GenericParameterImpl implements GenericParameter {
 
@@ -28,7 +28,7 @@ public class GenericParameterImpl implements GenericParameter {
         return this.name;
     }
 
-    //TODO getType Generic
+
     @Override
     public Type getType() {
         return new GenericParameterTypeImpl(this.name);
@@ -68,4 +68,10 @@ public class GenericParameterImpl implements GenericParameter {
     public Fragment getCode(TAMFactory _factory) {
         return null;
     }
+
+    @Override
+    public List<GenericType> getInheritance() {
+        return this.inheritance;
+    }
 }
+

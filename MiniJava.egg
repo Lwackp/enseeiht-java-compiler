@@ -502,7 +502,6 @@ do
 end
 }
 
---TODO (Generics)
 ParametresGenericite -> ParametreGenericite #inh SuiteParametresGenericite #ast;
 #inh {
 do
