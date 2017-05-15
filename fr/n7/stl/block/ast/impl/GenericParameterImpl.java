@@ -1,10 +1,13 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.GenericParameter;
+import fr.n7.stl.block.ast.GenericType;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
+
+import java.util.List;
 
 /**
  * Project: enseeiht-java-compiler
@@ -12,10 +15,12 @@ import fr.n7.stl.tam.ast.TAMFactory;
  */
 public class GenericParameterImpl implements GenericParameter {
 
-    String name;
+    private String name;
+    private List<GenericType> inheritance;
 
-    GenericParameterImpl(String _identificateur){
+    GenericParameterImpl(String _identificateur, List<GenericType> _inheritance){
         this.name = _identificateur;
+        this.inheritance = _inheritance;
     }
 
     @Override

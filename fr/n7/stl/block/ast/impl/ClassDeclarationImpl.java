@@ -43,6 +43,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.interfaces = new LinkedList<>(_interfaces);
         this.elements = new LinkedList<>(_elements);
         this.classType = new ClassTypeImpl(this);
+        this.sortFunctions();
     }
 
     /**
@@ -321,4 +322,13 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return _attributes;
     }
 
+
+    private void sortFunctions() {
+        if (this.inheritance != null) {
+            for (FunctionDeclaration _function : this.inheritance.getDeclaration().getFunctions()) {
+                //TODO
+                ;
+            }
+        }
+    }
 }

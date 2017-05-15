@@ -521,8 +521,8 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	@Override
-	public GenericParameter createGenericParameter(String _identificateur) {
-		return new GenericParameterImpl(_identificateur);
+	public GenericParameter createGenericParameter(String _identificateur, List<GenericType> _inheritance) {
+		return new GenericParameterImpl(_identificateur, _inheritance);
 	}
 
 	/* (non-Javadoc)

@@ -218,9 +218,10 @@ public interface InstructionFactory {
     /**
 	 * Create a conditional node in the Abstract Syntax Tree with only the then part.
 	 * @param _identificateur Abstract Syntax Tree for the generics of the declared generic parameter.
+	 * @param _inheritance Abstract Syntax Tree for the generics of the declared generic parameter.
 	 * @return A Conditional node in the Abstract Syntax Tree with only a Then branch.
 	 */
-    GenericParameter createGenericParameter(String _identificateur);
+    GenericParameter createGenericParameter(String _identificateur, List<GenericType> _inheritance);
 	
 	/**
 	 * Create a repetition node in the Abstract Syntax Tree.
