@@ -15,7 +15,7 @@ import java.util.List;
 public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     private String name;
-    private Object generics;
+    private List<GenericParameter> generics;
     private List<InheritanceDeclaration<InterfaceDeclaration>> inheritance;
     private List<ClassElement> elements;
 
@@ -23,9 +23,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     private Register register;
     private int offset;
-
-    public InterfaceDeclarationImpl(String _name, Object _generics,
-                                    List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
+    public InterfaceDeclarationImpl(String _name,  List<GenericParameter> _generics, List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
                                     List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;

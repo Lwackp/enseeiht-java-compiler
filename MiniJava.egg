@@ -11,26 +11,34 @@ option version = 0.0.1 ;
 option k=2;
 
 inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode, Bloc,
-              Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
-              ElementsInterface, Expression, Expressions, Facteur, HeritageClasse, HeritageInterface,
+              Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface,
+              ElementsClasse, Genericite,ElementsInterface, Expression, Expressions,
+              Facteur, HeritageClasse, HeritageInterface,
               ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
-              Parametres, Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode, SuiteCondition,
+              Parametres ,ParametreGenericite, ParametresGenericite, Principale,
+              Programme, Signature, SuiteAffectation,
+              SuiteAttributOuMethode, SuiteCondition,
               SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
-              SuiteParametres, SuiteTerme, SuiteTypeAtomique, Terme, Type, TypeAtomique, Valeur;
+              SuiteParametres, SuiteParametresGenericite, SuiteTerme, SuiteTypeAtomique,
+              Terme, Type, TypeAtomique,
+              Valeur;
 inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments, AttributOuMethode,
               Bloc, Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
               ElementsInterface, Expression, Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface,
-              ImplantationInterface, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
-              Parametres, Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode,SuiteCondition,
+              ImplantationInterface, Instruction, Instructions, Interface, Interfaces,
+              MethodePrincipale, Parametre, Parametres, ParametreGenericite,
+              ParametresGenericite,
+              Principale, Programme, Signature, SuiteAffectation, SuiteAttributOuMethode,SuiteCondition,
               SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
-              SuiteParametres, SuiteTerme, Terme, Type, TypeAtomique;
+              SuiteParametres,SuiteParametresGenericite, SuiteTerme, Terme , Type,
+              TypeAtomique;
 inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
 
 syn ast     : Program for Fichier, Programme;
 syn ast     : Block for Bloc, SuiteConditionnelle;
-syn ast		: Type for Type, TypeAtomique, SuiteTypeAtomique;
+syn ast		: Type for  Type, TypeAtomique, SuiteTypeAtomique;
 syn ast		: Instruction for Instruction;
 syn ast     : List<Instruction> for Instructions;
 syn ast		: Expression for Expression, Facteur, SuiteFacteur, SuiteNouveau, Terme, SuiteTerme, Condition,
@@ -48,6 +56,9 @@ syn ast     : Declaration for AttributOuMethode;
 syn ast     : FunctionDeclaration for Constructeur;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : SignatureDeclaration for Signature;
+syn ast     : GenericParameter for ParametreGenericite;
+syn ast     : List<GenericParameter> for Genericite, ParametresGenericite,
+SuiteParametresGenericite;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
@@ -57,7 +68,7 @@ syn body    : FunctionBody for SuiteAttributOuMethode;
 syn value   : Expression for SuiteAttributOuMethode;
 
 -- TODO(AST for the following classes)
-syn ast     : Object for Genericite, InstanceGenericite;
+syn ast     : Object for InstanceGenericite;
 
 space separateur				is    "[\n\r\t ]+";
 space commentaire		    	is    "\/\/.*\n";
@@ -362,9 +373,10 @@ end
 }
 
 
-Classe -> classe  identificateur_type #inh Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante #ast;
+Classe -> classe identificateur_type #inh Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante #ast;
 #inh {
 do
+
     Genericite^tds := Classe^tds;
     HeritageClasse^tds := Classe^tds;
     ImplantationInterface^tds := Classe^tds;
@@ -477,34 +489,83 @@ end
 }
 
 --TODO (Generics)
---Genericite -> inferieur ParametresGenericite superieur ;
---
+Genericite -> inferieur ParametresGenericite superieur #ast;
+#ast {
+do
+    Genericite^ast := ParametresGenericite^ast;
+end
+}
+
 Genericite -> #ast;
 #ast {
 do
-    Genericite^ast := null;
+    Genericite^ast := new LinkedList<GenericParameter>();
 end
 }
 
 --TODO (Generics)
---ParametresGenericite -> ParametreGenericite SuiteParametresGenericite ;
+ParametresGenericite -> ParametreGenericite #inh SuiteParametresGenericite #ast;
+#inh {
+do
+    if !ParametresGenericite^tds.knows(ParametreGenericite^ast.getName()) then
+        ParametresGenericite^tds.register(ParametreGenericite^ast);
+        SuiteParametresGenericite^tds := ParametresGenericite^tds;
+    else
+          error(MiniJava_ParametreGenericite_Definition, ParametreGenericite^ast);
+    end
+end
+}
+#ast {
+do
+
+    SuiteParametresGenericite^ast.add(0, ParametreGenericite^ast);
+    ParametresGenericite^ast := SuiteParametresGenericite^ast;
+end
+}
+
+
+SuiteParametresGenericite -> virgule ParametreGenericite #inh SuiteParametresGenericite #ast;
+#inh {
+do
+    if !SuiteParametresGenericite^tds.knows(ParametreGenericite^ast.getName()) then
+        SuiteParametresGenericite^tds.register(ParametreGenericite^ast);
+        SuiteParametresGenericite1^tds := SuiteParametresGenericite^tds;
+    else
+          error(MiniJava_ParametreGenericite_Definition, ParametreGenericite^ast);
+    end
+end
+}
+#ast {
+do
+    SuiteParametresGenericite1^ast.add(0,(ParametreGenericite^ast));
+    SuiteParametresGenericite^ast := SuiteParametresGenericite1^ast;
+end
+}
+
+SuiteParametresGenericite -> #ast;
+#ast {
+do
+    SuiteParametresGenericite^ast := new LinkedList<GenericParameter>();
+end
+}
+
+--TODO: Heritage Genericite
+--ParametreGenericite -> identificateur_type HeritageGenericite #ast;
+ParametreGenericite -> identificateur_type #ast;
+#ast {
+do
+    ParametreGenericite^ast := ParametreGenericite^factory.createGenericParameter(identificateur_type^txt);
+end
+}
+
+--ArgumentGenericite -> choix HeritageGenericite ;
+
 --
---
---SuiteParametresGenericite -> virgule ParametreGenericite SuiteParametresGenericite ;
---
---SuiteParametresGenericite -> ;
---
---
---ParametreGenericite -> identificateur_type HeritageGenericite ;
---
---ParametreGenericite -> choix HeritageGenericite ;
---
---
---HeritageGenericite -> extension identificateur_type SuiteHeritageGenericite ;
+--HeritageGenericite -> extension identificateur_type InstanceGenericite SuiteHeritageGenericite ;
 --
 --HeritageGenericite -> ;
 --
---SuiteHeritageGenericite -> adresse identificateur_type SuiteHeritageGenericite ;
+--SuiteHeritageGenericite -> adresse identificateur_type InstanceGenericite SuiteHeritageGenericite ;
 --
 --SuiteHeritageGenericite -> ;
 
@@ -803,8 +864,7 @@ do
    TypeAtomique^ast := TypeAtomique^factory.createStringType();
 end
 }
-
---TODO (Generics)
+-- TODO(Genericite)
 TypeAtomique -> identificateur_type #ast;--InstanceGenericite  ;
 #ast {
 local
@@ -824,6 +884,7 @@ do
     end
 end
 }
+
 
 
 SuiteTypeAtomique -> crochet_ouvrant crochet_fermant #inh SuiteTypeAtomique #ast;

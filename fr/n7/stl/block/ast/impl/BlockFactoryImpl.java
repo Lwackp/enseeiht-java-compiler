@@ -70,7 +70,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An InterfaceDeclaration node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics,
+	public InterfaceDeclaration createInterfaceDeclaration(String _name,  List<GenericParameter> _generics,
 														   List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
 														   List<ClassElement> _elements) {
 		return new InterfaceDeclarationImpl(_name, _generics, _inheritance, _elements);
@@ -87,7 +87,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public ClassDeclaration createClassDeclaration(String _name, Object _generics,
+	public ClassDeclaration createClassDeclaration(String _name,  List<GenericParameter> _generics,
 												   InheritanceDeclaration<ClassDeclaration> _inheritance,
 												   List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
 												   List<ClassElement> _elements) {
@@ -518,6 +518,11 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public FunctionBody createFunctionBody(Block _body) {
 		return new FunctionBodyImpl(_body);
+	}
+
+	@Override
+	public GenericParameter createGenericParameter(String _identificateur) {
+		return new GenericParameterImpl(_identificateur);
 	}
 
 	/* (non-Javadoc)

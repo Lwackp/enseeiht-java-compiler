@@ -94,7 +94,7 @@ public interface InstructionFactory {
 	 * @param _elements Abstract Syntax Tree for the elements of the declared interface.
 	 * @return An InterfaceDeclaration node in the Abstract Syntax Tree.
 	 */
-	InterfaceDeclaration createInterfaceDeclaration(String _name, Object _generics,
+	InterfaceDeclaration createInterfaceDeclaration(String _name,  List<GenericParameter> _generics,
 													List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
 													List<ClassElement> _elements);
 
@@ -108,7 +108,7 @@ public interface InstructionFactory {
 	 * @param _elements Abstract Syntax Tree for the elements of the declared class.
 	 * @return An ClassDeclaration node in the Abstract Syntax Tree.
 	 */
-	ClassDeclaration createClassDeclaration(String _name, Object _generics,
+	ClassDeclaration createClassDeclaration(String _name,  List<GenericParameter> _generics,
 											InheritanceDeclaration<ClassDeclaration> _inheritance,
 											List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
 											List<ClassElement> _elements);
@@ -214,6 +214,13 @@ public interface InstructionFactory {
 	 * @return A Conditional node in the Abstract Syntax Tree with only a Then branch.
 	 */
     Instruction createConditional(Expression _condition, Block _then);
+
+    /**
+	 * Create a conditional node in the Abstract Syntax Tree with only the then part.
+	 * @param _identificateur Abstract Syntax Tree for the generics of the declared generic parameter.
+	 * @return A Conditional node in the Abstract Syntax Tree with only a Then branch.
+	 */
+    GenericParameter createGenericParameter(String _identificateur);
 	
 	/**
 	 * Create a repetition node in the Abstract Syntax Tree.

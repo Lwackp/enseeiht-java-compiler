@@ -15,7 +15,7 @@ import java.util.List;
 public class ClassDeclarationImpl implements ClassDeclaration {
 
     private String name;
-    private Object generics;
+    private List<GenericParameter> generics;
     private InheritanceDeclaration<ClassDeclaration> inheritance;
     private List<InheritanceDeclaration<InterfaceDeclaration>> interfaces = new LinkedList<>();
     private List<ClassElement> elements;
@@ -34,9 +34,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.classType = new ClassTypeImpl(this);
     }
 
-    public ClassDeclarationImpl(String _name,
-                                Object _generics,
-                                InheritanceDeclaration<ClassDeclaration> _inheritance,
+    public ClassDeclarationImpl(String _name, List<GenericParameter> _generics,InheritanceDeclaration<ClassDeclaration> _inheritance,
                                 List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
                                 List<ClassElement> _elements) {
         this.name = _name;
@@ -107,7 +105,17 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         _local.append(this.name);
 
         if (this.generics != null) {
-            _local.append(this.generics);
+            _local.append(" < ");
+            boolean first2 = true;
+            for (GenericParameter _param: this.generics){
+                if (!first2) {
+                    _local.append(", ");
+                }
+                _local.append(_param);
+                first2 = false;
+            }
+            _local.append(" > ");
+
         }
         if (this.inheritance != null) {
             _local.append(" extends ").append(this.inheritance);
@@ -123,6 +131,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
                 _local.append(_interface);
                 first = false;
             }
+
         }
 
         _local.append(" {\n");
