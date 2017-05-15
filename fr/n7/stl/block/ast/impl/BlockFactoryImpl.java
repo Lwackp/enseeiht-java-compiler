@@ -126,8 +126,10 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return An InheritanceDeclaration node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public <T extends Declaration> InheritanceDeclaration<T> createInheritanceDeclaration(T _type, Object _generics) {
-		return new InheritanceDeclarationImpl<>(_type, _generics);
+	public <T extends Declaration> InheritanceDeclaration<T> createInheritanceDeclaration(T _type, List<GenericType> _generics) {
+		@SuppressWarnings("unchecked")
+		InheritanceDeclaration<T> _r = new InheritanceDeclarationImpl<>(_type, _generics);
+		return _r;
 	}
 
 	/**

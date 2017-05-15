@@ -144,7 +144,6 @@ end
 }
 
 Programme -> #inh1 Interfaces Classes Principale #ast;
---TODO: Classes^tds := new ST(Interfaces^tds);
 #inh1 {
 do
    Interfaces^tds := Programme^tds;
@@ -487,7 +486,7 @@ do
 end
 }
 
---TODO (Generics)
+
 Genericite -> inferieur ParametresGenericite superieur #ast;
 #ast {
 do
@@ -677,9 +676,7 @@ ArgumentGenericite -> type_bool #ast;
 #ast {
 do
     ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-                                                         (AtomicType.BooleanType,
-                                                         new
-                                                         LinkedList<GenericType>());
+                                (AtomicType.BooleanType, new LinkedList<GenericType>());
 end
 }
 
@@ -687,9 +684,7 @@ ArgumentGenericite -> type_int #ast;
 #ast {
 do
     ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-                                                         (AtomicType.IntegerType,
-                                                         new
-                                                         LinkedList<GenericType>());
+                                (AtomicType.BooleanType, new LinkedList<GenericType>());
 end
 }
 
@@ -766,7 +761,6 @@ end
 }
 
 
---TODO: Remove WARNING - want to check if ast instanceof List<ParamDeclaration> but not possible
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
 local
@@ -962,7 +956,7 @@ do
    TypeAtomique^ast := TypeAtomique^factory.createStringType();
 end
 }
--- TODO(Genericite)
+
 TypeAtomique -> identificateur_type InstanceGenericite #ast;
 #ast {
 local

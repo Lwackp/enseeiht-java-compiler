@@ -1,11 +1,14 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.Declaration;
+import fr.n7.stl.block.ast.GenericType;
 import fr.n7.stl.block.ast.InheritanceDeclaration;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
+
+import java.util.List;
 
 /**
  * Created by thibault on 02/05/17.
@@ -13,10 +16,9 @@ import fr.n7.stl.tam.ast.TAMFactory;
 public class InheritanceDeclarationImpl<T extends Declaration> implements InheritanceDeclaration {
 
     private T declaration;
-    //TODO: type
-    private Object generics;
+    private List<GenericType> generics;
 
-    public InheritanceDeclarationImpl(T _declaration, Object _generics) {
+    public InheritanceDeclarationImpl(T _declaration, List<GenericType> _generics) {
         this.declaration = _declaration;
         this.generics = _generics;
     }

@@ -2,7 +2,6 @@ package fr.n7.stl.block.ast;
 
 import java.lang.Iterable;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Factory to create Abstract Syntax Tree nodes for common instructions in programming languages.
@@ -137,7 +136,7 @@ public interface InstructionFactory {
 	 * @param _type Abstract Syntax Tree for the generics of the declared inherited type.
 	 * @return An InheritanceDeclaration node in the Abstract Syntax Tree.
 	 */
-	<T extends Declaration> InheritanceDeclaration<T> createInheritanceDeclaration(T _name, Object _type);
+	<T extends Declaration> InheritanceDeclaration<T> createInheritanceDeclaration(T _name, List<GenericType> _type);
 
 	/**
 	 * Create a class element declaration node in the Abstract Syntax Tree.
