@@ -189,15 +189,6 @@ public interface ExpressionFactory {
 	 */
     Assignable createFieldAssignment(Assignable _record, FieldDeclaration _field);
 
-
-	/**
-	 *
-	 * @param _type abstract Syntax Tree node for the type
-	 * @param _instance abstract Syntax Tree node for the generic instance
-	 * @return Abstract Syntax Tree node for the Generic Argument
-	 */
-	ArgumentGenericite createGenericArgument(Type _type, List<ArgumentGenericite> _instance);
-
 	/**
 	 * Create a node for an access to a field in a record expression in the Abstract Syntax Tree.
 	 * without resolving the reference to the field name with the Symbol Table.

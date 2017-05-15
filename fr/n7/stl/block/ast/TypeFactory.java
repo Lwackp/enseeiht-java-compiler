@@ -1,5 +1,7 @@
 package fr.n7.stl.block.ast;
 
+import java.util.List;
+
 /**
  * Factory to create nodes for types.
  * @author Marc Pantel
@@ -65,4 +67,12 @@ public interface TypeFactory {
 	 * @return Abstract Syntax Tree node for a named type.
 	 */
     Type createNamedType(TypeDeclaration _declaration);
+
+	/**
+	 * Create an Abstract Syntax Tree node for a Generic Type
+	 * @param _type Abstract Syntax Tree for the target type in the generic type.
+	 * @param _args Abstract Syntax Tree for the arguments
+	 * @return Abstract Syntax Tree node for a generic type.
+	 */
+	GenericType createGenericType(Type _type, List<GenericType> _args);
 }

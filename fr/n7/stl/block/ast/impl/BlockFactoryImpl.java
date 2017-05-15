@@ -719,7 +719,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	@Override
-	public ArgumentGenericite createGenericArgument(Type _type, List<ArgumentGenericite> _instance){
-		return new ArgumentGenericiteImpl(_type, _instance);
+	public GenericType createGenericType(Type _type, List<GenericType> _args){
+		return new GenericTypeImpl(_type, _args);
 	}
 }

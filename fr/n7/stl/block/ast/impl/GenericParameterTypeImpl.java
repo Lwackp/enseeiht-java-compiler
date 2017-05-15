@@ -15,7 +15,7 @@ public class GenericParameterTypeImpl implements GenericParameterType {
         this.identificateur = name;
     }
 
-    //TODO tres sale, à modifier
+    
     @Override
     public boolean equalsTo(Type _other) {
         return this.identificateur == _other.toString();

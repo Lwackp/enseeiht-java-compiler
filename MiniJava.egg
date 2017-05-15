@@ -67,8 +67,9 @@ SuiteParametresGenericite;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
-syn ast     : List<ArgumentGenericite> for InstanceGenericite, ArgumentsGenericite, SuiteArgumentsGenericite;
-syn ast     : ArgumentGenericite for ArgumentGenericite;
+syn ast     : List<GenericType> fr InstanceGenericite, ArgumentsGenericite,
+SuiteArgumentsGenericite;
+syn ast     : GenericType for ArgumentGenericite;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
 syn body    : FunctionBody for SuiteAttributOuMethode;
@@ -580,7 +581,7 @@ end
 InstanceGenericite -> #ast;
 #ast {
 do
-    InstanceGenericite^ast := new LinkedList<ArgumentGenericite>();
+    InstanceGenericite^ast := new LinkedList<GenericType>();
 end
 }
 
@@ -612,7 +613,7 @@ end
 SuiteArgumentsGenericite -> #ast;
 #ast {
 do
-    SuiteArgumentsGenericite^ast := new LinkedList<ArgumentGenericite>();
+    SuiteArgumentsGenericite^ast := new LinkedList<GenericType>();
 end
 }
 
@@ -627,7 +628,7 @@ do
         ot := ArgumentGenericite^tds.get(identificateur_type^txt);
         d  := ot.get();
         t  := d.getType();
-        ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+        ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
         (t, InstanceGenericite^ast);
     else
         error(MiniJava_Type_Error, identificateur_type^txt);
@@ -638,20 +639,20 @@ end
 ArgumentGenericite -> type_bool #ast;
 #ast {
 do
-    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
                                                          (AtomicType.BooleanType,
                                                          new
-                                                         LinkedList<ArgumentGenericite>());
+                                                         LinkedList<GenericType>());
 end
 }
 
 ArgumentGenericite -> type_int #ast;
 #ast {
 do
-    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
                                                          (AtomicType.IntegerType,
                                                          new
-                                                         LinkedList<ArgumentGenericite>());
+                                                         LinkedList<GenericType>());
 end
 }
 
@@ -935,7 +936,12 @@ do
         od := TypeAtomique^tds.get(identificateur_type^txt);
         if od.isPresent() then
             d := od.get();
-            TypeAtomique^ast := d.getType();
+            if !InstanceGenericite^ast.isEmpty() then
+                TypeAtomique^ast := TypeAtomique^factory.createGenericType(
+                d.getType(), InstanceGenericite^ast);
+            else
+                TypeAtomique^ast := d.getType();
+            end
         else
             error(MiniJava_Type_Error, identificateur_type^txt);
         end
