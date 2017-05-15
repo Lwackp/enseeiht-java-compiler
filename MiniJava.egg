@@ -616,16 +616,44 @@ do
 end
 }
 
-ArgumentGenericite -> TypeAtomique InstanceGenericite #ast;
+ArgumentGenericite -> identificateur_type InstanceGenericite #ast;
 #ast {
+local
+    ot : Optional<Declaration>;
+    t  : Type;
+    d  : Declaration;
 do
-    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
-    (TypeAtomique^ast, InstanceGenericite^ast);
+    if ArgumentGenericite^tds.knows(identificateur_type^txt) then
+        ot := ArgumentGenericite^tds.get(identificateur_type^txt);
+        d  := ot.get();
+        t  := d.getType();
+        ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+        (t, InstanceGenericite^ast);
+    else
+        error(MiniJava_Type_Error, identificateur_type^txt);
+    end
 end
 }
 
---ArgumentGenericite -> type_String ;
+ArgumentGenericite -> type_bool #ast;
+#ast {
+do
+    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+                                                         (AtomicType.BooleanType,
+                                                         new
+                                                         LinkedList<ArgumentGenericite>());
+end
+}
 
+ArgumentGenericite -> type_int #ast;
+#ast {
+do
+    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericArgument
+                                                         (AtomicType.IntegerType,
+                                                         new
+                                                         LinkedList<ArgumentGenericite>());
+end
+}
 
 ElementsClasse -> DroitAcces ElementClasse #inh ElementsClasse #ast;
 #inh {
@@ -897,7 +925,7 @@ do
 end
 }
 -- TODO(Genericite)
-TypeAtomique -> identificateur_type #ast; --InstanceGenericite #ast;
+TypeAtomique -> identificateur_type InstanceGenericite #ast;
 #ast {
 local
     od : Optional<Declaration>;
@@ -955,7 +983,8 @@ end
 }
 
 
-Instruction -> Type identificateur #inh SuiteAffectation point_virgule #ast;
+Instruction -> Type identificateur #inh SuiteAffectation point_virgule
+#ast;
 #inh {
 do
     if (Instruction^tds.contains(identificateur^txt)) then
