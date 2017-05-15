@@ -37,41 +37,10 @@ public class InheritanceDeclarationImpl<T extends Declaration> implements Inheri
     }
 
     /**
-     * Provide the identifier (i.e. name) given to the declaration.
-     *
-     * @return Name of the declaration.
-     */
-    @Override
-    public String getName() {
-        return this.declaration.getName();
-    }
-
-    /**
-     * Synthesized semantics attribute for the type of the declared variable.
-     *
-     * @return Type of the declared variable.
-     */
-    @Override
-    public Type getType() {
-        return this.declaration.getType();
-    }
-
-    /**
-     * Synthesized semantics attribute for the real type of the declared variable. (like getClass() in Java)
-     *
-     * @return Type of the declared variable.
-     */
-    @Override
-    public Type getValueType() {
-        return this.getType();
-    }
-
-    /**
      * Synthesized semantics attribute for the register used to compute the address of the variable.
      *
      * @return Register used to compute the address where the declared variable will be stored.
      */
-    @Override
     public Register getRegister() {
         return null;
     }
@@ -81,7 +50,6 @@ public class InheritanceDeclarationImpl<T extends Declaration> implements Inheri
      *
      * @return Offset used to compute the address where the declared variable will be stored.
      */
-    @Override
     public int getOffset() {
         return 0;
     }
@@ -91,11 +59,11 @@ public class InheritanceDeclarationImpl<T extends Declaration> implements Inheri
      *
      * @return Synthesized True if the instruction is well typed, False if not.
      */
-    @Override
+    /*@Override
     public boolean checkType() {
         //TODO What do we need to check?
         return true;
-    }
+    }*/
 
     /**
      * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.
