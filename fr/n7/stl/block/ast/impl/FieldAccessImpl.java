@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 import sun.util.resources.cldr.de.CalendarData_de_LI;
@@ -19,14 +20,14 @@ public class FieldAccessImpl implements Expression {
 
 	protected Expression record;
 	private String name;
-	private FieldDeclaration field;
+	private Declaration field;
 
 	public FieldAccessImpl(Expression _record, String _name) {
 		this.record = _record;
 		this.name = _name;
 	}
 
-	public FieldAccessImpl(Expression _record, FieldDeclaration _field) {
+	public FieldAccessImpl(Expression _record, Declaration _field) {
 		this.record = _record;
 		this.field = _field;
 		this.name = this.field.getName();
@@ -69,15 +70,28 @@ public class FieldAccessImpl implements Expression {
 
 		if (_field instanceof ClassElement) {
 			ClassElement _element = (ClassElement)_field;
-			if (_element.isStatic()) {
-				//TODO Load class pointer on stack
-				_fragment.add(null);
-			} else {
-				_fragment.append(this.record.getCode(_factory));
-			}
+			_fragment.append(this.record.getCode(_factory));
+
 			Declaration _declaration = ((ClassElement) _field).getDeclaration();
 			if (_declaration instanceof FunctionDeclaration) {
-				_fragment.add(_factory.createCall(((FunctionDeclaration) _declaration).getLabel(), Register.LB));
+				//Load virtual method table address
+				_fragment.add(_factory.createLoadI(1));
+				//Load method's address from virtual method table (may have problem on functions coming from interface)
+				_fragment.add(_factory.createLoadL(_field.getOffset()));
+				_fragment.add(Library.IAdd);
+				//Load function address
+				_fragment.add(_factory.createLoadI(1));
+
+				//Because CallI doesn't work, load the address twice
+				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
+				_fragment.add(_factory.createCallI());
+				FunctionDeclaration _functionDeclaration = (FunctionDeclaration) _declaration;
+//				//_fragment.add(_factory.createLoad(_functionDeclaration.));
+//				_fragment.add(_factory.createCall(((FunctionDeclaration) _declaration).getLabel(), Register.LB));
+			} else {
+				_fragment.add(_factory.createLoadL(_declaration.getOffset()));
+				_fragment.add(Library.IAdd);
+				_fragment.add(_factory.createLoadI(_declaration.getType().length()));
 			}
 		} else {
 			int length = this.getField().getType().length();
@@ -95,7 +109,6 @@ public class FieldAccessImpl implements Expression {
 			if (_recordType instanceof ClassType) {
 				return ((ClassType) _recordType).getElement(this.name);
 			} else if (_recordType instanceof InterfaceType) {
-				System.out.println("-----------------------" + ((VariableUseImpl)this.record).getDeclaration().getClass());
 				return ((VariableUseImpl)this.record).getDeclaration();
 			}
 		}

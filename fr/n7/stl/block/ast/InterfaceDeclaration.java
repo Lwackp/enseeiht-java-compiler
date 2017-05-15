@@ -4,11 +4,13 @@ import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import java.util.List;
+
 /**
  * @author Marc Pantel
  *
  */
-public interface InterfaceDeclaration extends Declaration {
+public interface InterfaceDeclaration extends Declaration, Labellable {
 
 	/**
 	 * Synthesized semantics attribute for the type of the declared variable.
@@ -39,4 +41,7 @@ public interface InterfaceDeclaration extends Declaration {
 	 */
 	Fragment getCode(TAMFactory _factory);
 
+	List<ClassElement> getElements();
+
+	List<ClassElement> getStaticElements();
 }

@@ -2,6 +2,7 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -15,13 +16,15 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     private String name;
     private List<GenericParameter> generics;
-    private List<InheritanceDeclaration> inheritance;
+    private List<InheritanceDeclaration<InterfaceDeclaration>> inheritance;
     private List<ClassElement> elements;
+
+    private String label;
 
     private Register register;
     private int offset;
-    public InterfaceDeclarationImpl(String _name,  List<GenericParameter> _generics, List<InheritanceDeclaration> _inheritance,
-                            List<ClassElement> _elements) {
+    public InterfaceDeclarationImpl(String _name,  List<GenericParameter> _generics, List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
+                                    List<ClassElement> _elements) {
         this.name = _name;
         this.generics = _generics;
         this.inheritance = new LinkedList<>(_inheritance);
@@ -135,7 +138,13 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     public int allocateMemory(Register _register, int _offset) {
         this.register = _register;
         this.offset = _offset;
-        return 0;
+
+        int _length = 0;
+        for (ClassElement _element : this.elements) {
+            _length += _element.allocateMemory(Register.LB, _length);
+        }
+
+        return 1;
     }
 
     /**
@@ -149,6 +158,19 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
 
+        for (ClassElement _element : this.getStaticElements()) {
+            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
+                _fragment.append(_element.getCode(_factory));
+                _fragment.add(_factory.createLoad(Register.LB, -1, 1));
+                _fragment.add(_factory.createLoadL(_element.getOffset()));
+                _fragment.add(Library.IAdd);
+                _fragment.add(_factory.createStoreI(_element.getType().length()));
+            }
+        }
+        _fragment.add(_factory.createReturn(0, 0));
+        this.label = "interface_" + this.name + _factory.createLabelNumber();
+        _fragment.addPrefix(this.label);
+
         //TODO: Inheritance
 
         //TODO: Sort element regarding final, static, public, ...
@@ -157,5 +179,32 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         }
 
         return _fragment;
+    }
+
+    /**
+     * Synthesized semantics attribute for the label of the object.
+     *
+     * @return label of the object.
+     */
+    @Override
+    public String getLabel() {
+        return this.label;
+    }
+
+    @Override
+    public List<ClassElement> getElements() {
+        //TODO: Inheritance
+        return this.elements;
+    }
+
+    @Override
+    public List<ClassElement> getStaticElements() {
+        List<ClassElement> _staticElements = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (_element.isStatic()) {
+                _staticElements.add(_element);
+            }
+        }
+        return _staticElements;
     }
 }

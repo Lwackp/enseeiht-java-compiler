@@ -142,7 +142,7 @@ public class BlockImpl implements Block {
 	public String toString() {
 		StringBuilder _local = new StringBuilder();
 		for (Instruction _instruction : this.instructions) {
-			_local.append(_instruction);
+			_local.append(_instruction).append("\n");
 		}
 		return "{\n" + _local + "}\n" ;
 	}

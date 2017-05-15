@@ -14,5 +14,6 @@
     <import    lib="java.util.*"/>
     <import    lib="fr.n7.stl.block.ast.*"/>
     <import    lib="fr.n7.stl.block.ast.impl.*"/>
+    <import    lib="fr.n7.stl.block.ast.impl.VariableDeclarationImpl.SpecialValue"/>
     <import    lib="fr.n7.stl.util.*"/>
   </egg>

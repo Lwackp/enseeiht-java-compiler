@@ -52,7 +52,7 @@ public class AssignmentImpl implements Expression, Instruction {
 	public String toString() {
 		return ((this.declaration != null)
 				?this.declaration.getName()
-				:this.assignable) /*:this.name)*/ + " = " + this.value.toString() + ";\n";
+				:this.assignable) /*:this.name)*/ + " = " + this.value.toString() + ";";
 	}
 
 	/* (non-Javadoc)

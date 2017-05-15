@@ -6,6 +6,7 @@ import java.util.List;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
@@ -100,13 +101,14 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
         //List<ParameterDeclaration> reversedParameters = new LinkedList<>(this.getParameters());
         //Collections.reverse(reversedParameters);
+
         for (ParameterDeclaration _parameter : this.getParameters()) {
             _paramssize += _parameter.allocateMemory(Register.LB, -1*_paramssize);
         }
 
-        // +3 because of CALL instruction inner behaviour
-        this.body.allocateMemory(_register, _offset+3);
-        return 3;
+        // 3 because of CALL instruction inner behaviour
+        this.body.allocateMemory(Register.LB, 3);
+        return 0;
     }
 
     @Override
@@ -131,7 +133,13 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
         if (this.signature.getValueType() == AtomicType.VoidType) {
             _fragment.add(_factory.createReturn(0, _paramssize));
         } else if (this.signature.getValueType() instanceof ConstructorType) {
-            _fragment.add(_factory.createReturn(this.getValueType().length(), _paramssize));
+            ConstructorType _classType = (ConstructorType)this.getValueType();
+            _fragment.add(_factory.createLoad(_classType.getClassDeclaration().getRegister(),
+                                              _classType.getClassDeclaration().getOffset(),
+                                              1));
+            _fragment.add(_factory.createLoad(Register.LB, -1, 1));
+            _fragment.add(_factory.createStoreI(1));
+            _fragment.add(_factory.createReturn(_classType.length(), _paramssize));
         }
 
         this.label = "function_" + this.signature.getName() + _factory.createLabelNumber();
@@ -147,7 +155,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
      */
     @Override
     public SignatureDeclaration getSignature() {
-        return this.getSignature();
+        return this.signature;
     }
 
     @Override

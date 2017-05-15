@@ -10,13 +10,7 @@ import java.util.List;
  * @author Marc Pantel
  *
  */
-public interface ClassDeclaration extends TypeDeclaration {
-
-	/**
-	 * Synthesized semantics attribute for the type of the declared class.
-	 * @return Type of the declared class.
-	 */
-    Type getType();
+public interface ClassDeclaration extends TypeDeclaration, Labellable {
 
 	/**
 	 * Synthesized Semantics attribute to check that an instruction if well typed.
@@ -46,4 +40,14 @@ public interface ClassDeclaration extends TypeDeclaration {
 	 * @return Synthesized AST for the generated TAM code.
 	 */
 	Fragment getCode(TAMFactory _factory);
+
+    List<ClassElement> getStaticElements();
+
+    List<FunctionDeclaration> getFunctions();
+
+    List<InterfaceDeclaration> getInterfaces();
+
+	int getVirtualMethodTableLength();
+
+    List<VariableDeclaration> getAttributes();
 }

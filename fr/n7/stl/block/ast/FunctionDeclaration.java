@@ -8,7 +8,7 @@ import static fr.n7.stl.block.ast.AtomicType.ErrorType;
  * @author Matthieu Perrier
  *
  */
-public interface FunctionDeclaration extends Declaration, Instruction {
+public interface FunctionDeclaration extends Declaration, Labellable {
 
     /**
      * Synthesized semantics attribute for the type of the returned variable.
@@ -33,11 +33,5 @@ public interface FunctionDeclaration extends Declaration, Instruction {
 	 * @return body of the method.
 	 */
 	Block getBody();
-
-    /**
-     * Synthesized semantics attribute for the label of the method.
-     * @return label of the method.
-     */
-    String getLabel();
 
 }

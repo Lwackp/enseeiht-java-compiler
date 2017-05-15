@@ -81,6 +81,11 @@ public class ConstructorTypeImpl implements ConstructorType {
     }
 
     @Override
+    public ClassDeclaration getClassDeclaration() {
+        return this.classDeclaration;
+    }
+
+    @Override
     public void setClassDeclaration(ClassDeclaration _classDeclaration) {
         this.classDeclaration = _classDeclaration;
     }

@@ -104,7 +104,7 @@ public class BinaryExpressionImpl implements Expression {
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment _code = this.left.getCode(_factory);
 		_code.append(this.right.getCode(_factory));
-		_code.add(TAMFactory.createBinaryOperator(this.operator));
+		_code.add(TAMFactory.createBinaryOperator(this.operator, this.left.getType()));
 		return _code;
 	}
 

@@ -36,7 +36,10 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 		 */
 		@Override
 		public Fragment getCode(TAMFactory _factory) {
-			return _factory.createFragment();
+			Fragment _fragment = _factory.createFragment();
+			_fragment.add(_factory.createPush(1));
+			_fragment.add(Library.MVoid);
+			return _fragment;
 		}
 	}
 
@@ -78,7 +81,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 			_result += " = " + this.value;
 		}
 
-		return _result + ";\n";
+		return _result + ";";
 	}
 
 	/* (non-Javadoc)
@@ -141,7 +144,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment fragment = _factory.createFragment();
-		
+
 		fragment.append(this.value.getCode(_factory));
 
 		return fragment;

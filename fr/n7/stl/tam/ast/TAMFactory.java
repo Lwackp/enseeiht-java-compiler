@@ -5,7 +5,9 @@ package fr.n7.stl.tam.ast;
 
 import java.util.List;
 
+import fr.n7.stl.block.ast.AtomicType;
 import fr.n7.stl.block.ast.BinaryOperator;
+import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.block.ast.UnaryOperator;
 import fr.n7.stl.block.ast.impl.SemanticsUndefinedException;
 
@@ -172,10 +174,9 @@ public interface TAMFactory {
 	 * from the stack, build a call frame (current value of LB, current value of ST, current
 	 * value of CP), push it on the stack and transfer the control to the popped address
 	 * (assign the Control Pointer register to that address).
-	 * @param _frame The caller frame in the call stack.
 	 * @return A TAM Call Immediate instruction AST node.
 	 */
-	public TAMInstruction createCallI(Register _frame);
+	public TAMInstruction createCallI();
 
 	/**
 	 * Build a TAM Return instruction AST node whose execution will pop a memory chunk of the
@@ -210,23 +211,51 @@ public interface TAMFactory {
 	 * @param _operator The binary operator from the Bloc language.
 	 * @return A TAM instruction AST node corresponding to a binary operator.
 	 */
-	public static TAMInstruction createBinaryOperator(BinaryOperator _operator) {
-		switch (_operator) {
-		case Add : return Library.IAdd;
-		case And: return Library.BAnd;
-		case Different: return Library.INeq;
-		case Divide: return Library.IDiv;
-		case Equals: return Library.IEq;
-		case Greater: return Library.IGtr;
-		case GreaterOrEqual: return Library.IGeq;
-		case Lesser: return Library.ILss;
-		case LesserOrEqual: return Library.ILeq;
-		case Modulo: return Library.IMod;
-		case Multiply: return Library.IMul;
-		case Or: return Library.BOr;
-		case Substract: return Library.ISub;
-		default: throw new SemanticsUndefinedException("Unexpected unary operator: " + _operator);
+	public static TAMInstruction createBinaryOperator(BinaryOperator _operator, Type _type) {
+		if (_type.compatibleWith(AtomicType.IntegerType)) {
+			switch (_operator) {
+				case Add:
+					return Library.IAdd;
+				case And:
+					return Library.BAnd;
+				case Different:
+					return Library.INeq;
+				case Divide:
+					return Library.IDiv;
+				case Equals:
+					return Library.IEq;
+				case Greater:
+					return Library.IGtr;
+				case GreaterOrEqual:
+					return Library.IGeq;
+				case Lesser:
+					return Library.ILss;
+				case LesserOrEqual:
+					return Library.ILeq;
+				case Modulo:
+					return Library.IMod;
+				case Multiply:
+					return Library.IMul;
+				case Or:
+					return Library.BOr;
+				case Substract:
+					return Library.ISub;
+				default:
+					throw new SemanticsUndefinedException("Unexpected bianry operator: " + _operator);
+			}
+		} else if (_type.compatibleWith(AtomicType.StringType)) {
+			switch (_operator) {
+				case Add:
+					return Library.SConcat;
+				case Different:
+					throw new SemanticsUndefinedException(_operator + " not defined for " + _type);
+				case Equals:
+					throw new SemanticsUndefinedException(_operator + " not defined for " + _type);
+				default:
+					throw new SemanticsUndefinedException("Unexpected bianry operator: " + _operator);
+			}
 		}
+		throw new SemanticsUndefinedException("Unexpected type " + _type + " for binary operator: " + _operator);
 	}
 	
 	/**

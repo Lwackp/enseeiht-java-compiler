@@ -71,7 +71,8 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public InterfaceDeclaration createInterfaceDeclaration(String _name,  List<GenericParameter> _generics,
-														   List<InheritanceDeclaration> _inheritance, List<ClassElement> _elements) {
+														   List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
+														   List<ClassElement> _elements) {
 		return new InterfaceDeclarationImpl(_name, _generics, _inheritance, _elements);
 	}
 
@@ -87,7 +88,9 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public ClassDeclaration createClassDeclaration(String _name,  List<GenericParameter> _generics,
-												   InheritanceDeclaration _inheritance, List<InheritanceDeclaration> _interfaces, List<ClassElement> _elements) {
+												   InheritanceDeclaration<ClassDeclaration> _inheritance,
+												   List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
+												   List<ClassElement> _elements) {
 		return new ClassDeclarationImpl(_name, _generics, _inheritance, _interfaces, _elements);
 	}
 
@@ -118,13 +121,13 @@ public class BlockFactoryImpl implements BlockFactory {
 	/**
 	 * Create an inherited type declaration node in the Abstract Syntax Tree.
 	 *
-	 * @param _name Name of the declared inherited type.
-	 * @param _type Abstract Syntax Tree for the generics of the declared inherited type.
+	 * @param _type Inherited type.
+	 * @param _generics Abstract Syntax Tree for the generics of the declared inherited type.
 	 * @return An InheritanceDeclaration node in the Abstract Syntax Tree.
 	 */
 	@Override
-	public InheritanceDeclaration createInheritanceDeclaration(String _name, Object _type) {
-		return new InheritanceDeclarationImpl(_name, _type);
+	public <T extends Declaration> InheritanceDeclaration<T> createInheritanceDeclaration(T _type, Object _generics) {
+		return new InheritanceDeclarationImpl<>(_type, _generics);
 	}
 
 	/**
@@ -673,8 +676,9 @@ public class BlockFactoryImpl implements BlockFactory {
 	 * @return Abstract Syntax Tree node for the access of the content of the accessed function.
 	 */
 	@Override
-	public Expression createStaticCallOrAccess(String _type, String _id) {
-		return null;
+	public Expression createStaticCallOrAccess(Declaration _type, String _id) {
+		Expression classUse = new ClassStaticUseImpl((ClassDeclaration)_type);
+		return new FieldAccessImpl(classUse, _id);
 	}
 
 	//TODO: affectation = suiteAffectation
