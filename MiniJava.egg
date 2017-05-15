@@ -59,8 +59,6 @@ syn ast     : SignatureDeclaration for Signature;
 syn ast     : GenericParameter for ParametreGenericite;
 syn ast     : List<GenericParameter> for Genericite, ParametresGenericite,
 SuiteParametresGenericite;
-syn ast     : InheritanceDeclaration for HeritageClasse;
-syn ast     : List<InheritanceDeclaration> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
