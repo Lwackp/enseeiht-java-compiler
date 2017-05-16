@@ -61,4 +61,6 @@ public interface ClassDeclaration extends TypeDeclaration, Labellable {
 	int getVirtualMethodTableLength();
 
     List<VariableDeclaration> getAttributes();
+
+    boolean checkGenericsParameter(List<GenericType> _params);
 }

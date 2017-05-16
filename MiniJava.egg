@@ -10,33 +10,25 @@ option auto= true;
 option version = 0.0.1 ;
 option k=2;
 
-inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Arguments,
-              ArgumentGenericite, ArgumentsGenericite, AttributOuMethode, Bloc,
-              Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface,
-              ElementsClasse, Genericite,ElementsInterface, Expression, Expressions,
-              Facteur, HeritageClasse, HeritageInterface,
-              ImplantationInterface,InstanceGenericite, Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre,
-              Parametres ,ParametreGenericite, ParametresGenericite, Principale,
-              Programme, Signature, SuiteAffectation, SuiteArgumentsGenericite,
-              SuiteAttributOuMethode, SuiteCondition,
-              SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
-              SuiteParametres, SuiteParametresGenericite, SuiteTerme, SuiteTypeAtomique,
-              Terme, Type, TypeAtomique,
+inh factory	: BlockFactory for Acces, Affectation, Appel, AppelOuAcces, Arguments, ArgumentGenericite,
+              ArgumentsGenericite, AttributOuMethode, Bloc, Classe, Classes, Condition, Constructeur, ElementClasse,
+              ElementInterface, ElementsClasse, Genericite,ElementsInterface, Expression, Expressions, Facteur,
+              HeritageClasse, HeritageGenericite, HeritageInterface, ImplantationInterface,InstanceGenericite,
+              Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre, Parametres ,
+              ParametreGenericite, ParametresGenericite, Principale, Programme, Signature, SuiteAffectation,
+              SuiteArgumentsGenericite, SuiteAttributOuMethode, SuiteCondition, SuiteConditionnelle,
+              SuiteExpressions, SuiteFacteur, SuiteHeritageGenericite, SuiteHeritageInterface, SuiteNouveau,
+              SuiteParametres, SuiteParametresGenericite, SuiteTerme, SuiteTypeAtomique, Terme, Type, TypeAtomique,
               Valeur;
-inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments,
-              ArgumentGenericite,
-              ArgumentsGenericite, AttributOuMethode,
-              Bloc, Classe, Classes, Condition, Constructeur, ElementClasse, ElementInterface, ElementsClasse,
-              ElementsInterface, Expression, Expressions, Facteur, Genericite, HeritageClasse, HeritageInterface,
-              ImplantationInterface,InstanceGenericite, Instruction, Instructions,
-              Interface, Interfaces,
-              MethodePrincipale, Parametre, Parametres, ParametreGenericite,
-              ParametresGenericite,
-              Principale, Programme, Signature, SuiteAffectation,
-              SuiteArgumentsGenericite, SuiteAttributOuMethode,SuiteCondition,
-              SuiteConditionnelle, SuiteExpressions, SuiteFacteur, SuiteHeritageInterface, SuiteNouveau,
-              SuiteParametres,SuiteParametresGenericite, SuiteTerme, Terme , Type,
-              TypeAtomique;
+inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Arguments, ArgumentGenericite,
+              ArgumentsGenericite, AttributOuMethode, Bloc, Classe, Classes, Condition, Constructeur, ElementClasse,
+              ElementInterface, ElementsClasse, ElementsInterface, Expression, Expressions, Facteur, Genericite,
+              HeritageClasse, HeritageGenericite, HeritageInterface, ImplantationInterface,InstanceGenericite,
+              Instruction, Instructions, Interface, Interfaces, MethodePrincipale, Parametre, Parametres,
+              ParametreGenericite, ParametresGenericite, Principale, Programme, Signature, SuiteAffectation,
+              SuiteArgumentsGenericite, SuiteAttributOuMethode,SuiteCondition, SuiteConditionnelle, SuiteExpressions,
+              SuiteFacteur, SuiteHeritageGenericite, SuiteHeritageInterface, SuiteNouveau, SuiteParametres,
+              SuiteParametresGenericite, SuiteTerme, Terme , Type, TypeAtomique;
 inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
@@ -55,20 +47,20 @@ syn ast     : List<InterfaceDeclaration> for Interfaces;
 syn ast     : ClassDeclaration for Classe, Principale;
 syn ast     : List<ClassDeclaration> for Classes;
 syn ast     : InheritanceDeclaration<ClassDeclaration> for HeritageClasse;
-syn ast     : List<InheritanceDeclaration<InterfaceDeclaration>> for ImplantationInterface, HeritageInterface, SuiteHeritageInterface;
+syn ast     : List<InheritanceDeclaration<InterfaceDeclaration>> for ImplantationInterface, HeritageInterface,
+              SuiteHeritageInterface;
 syn ast     : ClassElement for ElementClasse, ElementInterface, MethodePrincipale;
 syn ast     : Declaration for AttributOuMethode;
 syn ast     : FunctionDeclaration for Constructeur;
 syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : SignatureDeclaration for Signature;
 syn ast     : GenericParameter for ParametreGenericite;
-syn ast     : List<GenericParameter> for Genericite, ParametresGenericite,
-					SuiteParametresGenericite;
+syn ast     : List<GenericParameter> for Genericite, ParametresGenericite, SuiteParametresGenericite;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
-syn ast     : List<GenericType> for InstanceGenericite, ArgumentsGenericite,
-					SuiteArgumentsGenericite;
+syn ast     : List<GenericType> for InstanceGenericite, ArgumentsGenericite, SuiteArgumentsGenericite,
+              HeritageGenericite, SuiteHeritageGenericite;
 syn ast     : GenericType for ArgumentGenericite;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;
@@ -152,7 +144,6 @@ end
 }
 
 Programme -> #inh1 Interfaces Classes Principale #ast;
---TODO: Classes^tds := new ST(Interfaces^tds);
 #inh1 {
 do
    Interfaces^tds := Programme^tds;
@@ -495,7 +486,7 @@ do
 end
 }
 
---TODO (Generics)
+
 Genericite -> inferieur ParametresGenericite superieur #ast;
 #ast {
 do
@@ -510,7 +501,6 @@ do
 end
 }
 
---TODO (Generics)
 ParametresGenericite -> ParametreGenericite #inh SuiteParametresGenericite #ast;
 #inh {
 do
@@ -556,25 +546,73 @@ do
 end
 }
 
---TODO: Heritage Genericite
---ParametreGenericite -> identificateur_type HeritageGenericite #ast;
-ParametreGenericite -> identificateur_type #ast;
+ParametreGenericite -> identificateur_type HeritageGenericite #ast;
 #ast {
 do
-    ParametreGenericite^ast := ParametreGenericite^factory.createGenericParameter(identificateur_type^txt);
+    ParametreGenericite^ast := ParametreGenericite^factory.createGenericParameter(
+                                    identificateur_type^txt, HeritageGenericite^ast);
 end
 }
 
+--TODO: Wildcard Genericite
 --ArgumentGenericite -> choix HeritageGenericite ;
 
---
---HeritageGenericite -> extension identificateur_type InstanceGenericite SuiteHeritageGenericite ;
---
---HeritageGenericite -> ;
---
---SuiteHeritageGenericite -> adresse identificateur_type InstanceGenericite SuiteHeritageGenericite ;
---
---SuiteHeritageGenericite -> ;
+
+HeritageGenericite -> extension identificateur_type InstanceGenericite SuiteHeritageGenericite #ast;
+#ast {
+local
+    ot : Optional<Declaration>;
+    d  : Declaration;
+    t  : Type;
+    gt : GenericType;
+do
+    if !HeritageGenericite^tds.knows(identificateur_type^txt) then
+        ot := HeritageGenericite^tds.get(identificateur_type^txt);
+        d  := ot.get();
+        t  := d.getType();
+        gt := HeritageGenericite^factory.createGenericType(t, InstanceGenericite^ast);
+        SuiteHeritageGenericite^ast.add(0, gt);
+        HeritageGenericite^ast := SuiteHeritageGenericite^ast;
+    else
+        error(MiniJava_Type_Error, identificateur_type^txt);
+    end
+end
+}
+
+HeritageGenericite -> #ast;
+#ast{
+do
+    HeritageGenericite^ast := new LinkedList<GenericType>();
+end
+}
+
+SuiteHeritageGenericite -> adresse identificateur_type InstanceGenericite SuiteHeritageGenericite #ast;
+#ast {
+local
+    ot : Optional<Declaration>;
+    d  : Declaration;
+    t  : Type;
+    gt : GenericType;
+do
+    if !SuiteHeritageGenericite^tds.knows(identificateur_type^txt) then
+        ot := SuiteHeritageGenericite^tds.get(identificateur_type^txt);
+        d  := ot.get();
+        t  := d.getType();
+        gt := SuiteHeritageGenericite^factory.createGenericType(t, InstanceGenericite^ast);
+        SuiteHeritageGenericite1^ast.add(0, gt);
+        SuiteHeritageGenericite^ast := SuiteHeritageGenericite1^ast;
+    else
+        error(MiniJava_Type_Error, identificateur_type^txt);
+    end
+end
+}
+
+SuiteHeritageGenericite -> #ast;
+#ast{
+do
+    SuiteHeritageGenericite^ast := new LinkedList<GenericType>();
+end
+}
 
 
 --TODO (Instance Genericite)
@@ -592,7 +630,6 @@ do
 end
 }
 
---TODO (Arguments Genericite)
 ArgumentsGenericite -> ArgumentGenericite SuiteArgumentsGenericite #ast;
 #ast {
 do
@@ -628,8 +665,7 @@ do
         ot := ArgumentGenericite^tds.get(identificateur_type^txt);
         d  := ot.get();
         t  := d.getType();
-        ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-        (t, InstanceGenericite^ast);
+        ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType(t, InstanceGenericite^ast);
     else
         error(MiniJava_Type_Error, identificateur_type^txt);
     end
@@ -640,9 +676,7 @@ ArgumentGenericite -> type_bool #ast;
 #ast {
 do
     ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-                                                         (AtomicType.BooleanType,
-                                                         new
-                                                         LinkedList<GenericType>());
+                                (AtomicType.BooleanType, new LinkedList<GenericType>());
 end
 }
 
@@ -650,9 +684,7 @@ ArgumentGenericite -> type_int #ast;
 #ast {
 do
     ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-                                                         (AtomicType.IntegerType,
-                                                         new
-                                                         LinkedList<GenericType>());
+                                (AtomicType.BooleanType, new LinkedList<GenericType>());
 end
 }
 
@@ -729,7 +761,6 @@ end
 }
 
 
---want to check if ast instanceof List<ParamDeclaration> but not possible
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
 local
@@ -925,7 +956,7 @@ do
    TypeAtomique^ast := TypeAtomique^factory.createStringType();
 end
 }
--- TODO(Genericite)
+
 TypeAtomique -> identificateur_type InstanceGenericite #ast;
 #ast {
 local

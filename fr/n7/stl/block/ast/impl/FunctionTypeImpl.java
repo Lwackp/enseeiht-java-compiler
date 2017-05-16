@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.n7.stl.block.ast.FunctionType;
 import fr.n7.stl.block.ast.Type;
 
 /**
@@ -11,7 +12,7 @@ import fr.n7.stl.block.ast.Type;
  * @author Marc Pantel
  *
  */
-public class FunctionTypeImpl implements Type {
+public class FunctionTypeImpl implements FunctionType {
 
 
 
@@ -31,7 +32,18 @@ public class FunctionTypeImpl implements Type {
 	 */
 	@Override
 	public boolean equalsTo(Type _other) {
-		throw new SemanticsUndefinedException( "equalsTo is undefined in FunctionTypeImpl.");
+		if (_other instanceof FunctionType) {
+			FunctionTypeImpl _otherType = (FunctionTypeImpl) _other;
+			boolean _res = (this.result.equalsTo(_otherType.result))
+						&& (this.parameters.size() == _otherType.parameters.size());
+
+			for (int i = 0; i < this.parameters.size(); i++) {
+				_res &= this.parameters.get(i).equalsTo(_otherType.parameters.get(i));
+			}
+
+			return _res;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -39,7 +51,18 @@ public class FunctionTypeImpl implements Type {
 	 */
 	@Override
 	public boolean compatibleWith(Type _other) {
-		throw new SemanticsUndefinedException( "compatibleWith is undefined in FunctionTypeImpl.");
+		if (_other instanceof FunctionTypeImpl) {
+			FunctionTypeImpl _otherType = (FunctionTypeImpl) _other;
+			boolean _res = (this.result.compatibleWith(_otherType.result))
+					&& (this.parameters.size() == _otherType.parameters.size());
+
+			for (int i = 0; i < this.parameters.size(); i++) {
+				_res &= this.parameters.get(i).equalsTo(_otherType.parameters.get(i));
+			}
+
+			return _res;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

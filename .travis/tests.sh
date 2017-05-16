@@ -6,7 +6,7 @@ function okOut {
     if [ $? = 0 ] ; then
         echo OK
     else
-        allTests=1
+        allTests=$[allTests+1]
         echo FAIL
     fi
 }
@@ -32,6 +32,7 @@ for f in tests/*.ast; do
 done
 
 printf "Tests: "
-[ ${allTests} = 0 ]; okOut
+[ ${allTests} = 0 ]; okOut; allTests=$[allTests-1]
+printf "On %d Tests, %d Succeded and %d Failed\n" $(ls -1 tests/*.ast | wc -l) $[$(ls -1 tests/*.ast | wc -l)-allTests] $allTests
 
-exit ${allTests}
+[ ${allTests} = 0 ]; exit $?

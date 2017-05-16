@@ -12,7 +12,7 @@ import java.util.List;
 public class GenericTypeImpl implements GenericType {
 
     Type type;
-    List<GenericType> arguments;
+    private List<GenericType> arguments;
 
     public GenericTypeImpl(Type _type, List<GenericType> _args){
         this.type = _type;
@@ -26,7 +26,7 @@ public class GenericTypeImpl implements GenericType {
 
     @Override
     public boolean compatibleWith(Type _other) {
-        return false;
+        return true;
     }
 
     @Override

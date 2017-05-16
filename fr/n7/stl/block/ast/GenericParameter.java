@@ -1,5 +1,7 @@
 package fr.n7.stl.block.ast;
 
+import java.util.List;
+
 /**
  * @author Marc Pantel
  *
@@ -13,4 +15,5 @@ public interface GenericParameter extends Declaration {
 	 */
     Type getType();
 
+    List<GenericType> getInheritance();
 }
