@@ -676,7 +676,8 @@ ArgumentGenericite -> type_bool #ast;
 #ast {
 do
     ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-                                (AtomicType.BooleanType, new LinkedList<GenericType>());
+                                (ArgumentGenericite^factory.createBooleanType(),
+                                 new LinkedList<GenericType>());
 end
 }
 
@@ -684,7 +685,8 @@ ArgumentGenericite -> type_int #ast;
 #ast {
 do
     ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
-                                (AtomicType.BooleanType, new LinkedList<GenericType>());
+                                (ArgumentGenericite^factory.createIntegerType(),
+                                 new LinkedList<GenericType>());
 end
 }
 

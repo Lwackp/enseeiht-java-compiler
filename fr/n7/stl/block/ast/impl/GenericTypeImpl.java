@@ -1,8 +1,11 @@
 package fr.n7.stl.block.ast.impl;
 
+import fr.n7.stl.block.ast.ClassType;
 import fr.n7.stl.block.ast.GenericType;
 import fr.n7.stl.block.ast.Type;
+import fr.n7.stl.block.ast.VariableDeclaration;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -57,5 +60,21 @@ public class GenericTypeImpl implements GenericType {
             _local.append(">");
         }
         return _local.toString();
+    }
+
+    @Override
+    public List<VariableDeclaration> getAttributes() {
+        if (this.type instanceof ClassType) {
+            return ((ClassType) this.type).getAttributes();
+        }
+        return new LinkedList<>();
+    }
+
+    @Override
+    public ClassType getClassType() {
+        if (this.type instanceof ClassType) {
+            return (ClassType) this.type;
+        }
+        return null;
     }
 }
