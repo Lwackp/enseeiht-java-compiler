@@ -54,7 +54,13 @@ public class ObjectAllocationImpl implements ObjectAllocation {
         Fragment _fragment = _factory.createFragment();
 
         int _attributesSize = 0;
-        for (VariableDeclaration _v : ((ClassType)this.type).getAttributes()) {
+        List<VariableDeclaration> _attributes = null;
+        if (this.type instanceof ClassType) {
+            _attributes = ((ClassType) this.type).getAttributes();
+        } else if (this.type instanceof GenericType) {
+            _attributes = ((GenericType) this.type).getAttributes();
+        }
+        for (VariableDeclaration _v : _attributes) {
             _attributesSize += _v.getType().length();
         }
         _attributesSize += 1; //Size of virtual method table
@@ -62,7 +68,12 @@ public class ObjectAllocationImpl implements ObjectAllocation {
         _fragment.add(_factory.createLoadL(_attributesSize));
         _fragment.add(Library.MAlloc);
 
-        ClassType _ctype = (ClassType) this.type;
+        ClassType _ctype = null;
+        if (this.type instanceof ClassType) {
+            _ctype = (ClassType) this.type;
+        } else if (this.type instanceof GenericType) {
+            _ctype = ((GenericType) this.type).getClassType();
+        }
         //TODO: Constructor matching parameters
         List<FunctionDeclaration> _constructors = _ctype.getConstructor();
 
