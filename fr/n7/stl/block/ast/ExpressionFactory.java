@@ -1,5 +1,7 @@
 package fr.n7.stl.block.ast;
 
+import fr.n7.stl.block.ast.impl.ArrayAccessImpl;
+
 import java.util.List;
 
 /**
@@ -8,13 +10,6 @@ import java.util.List;
  *
  */
 public interface ExpressionFactory {
-
-	/**
-	 * Create a node for expressions in the Abstract Syntax Tree.
-	 * @param _expressions Abstract Syntax Tree for the left parameter of the binary operation.
-	 * @return Abstract Syntax Tree node for expressions.
-	 */
-	Expression createExpressions(List<Expression> _expressions);
 
 	/**
 	 * Create a node for a binary expression in the Abstract Syntax Tree.
@@ -165,6 +160,13 @@ public interface ExpressionFactory {
     Assignable createArrayAssignment(Assignable _array, Expression _index);
 
 	/**
+	 * Create a node for an assignment to an element in an array expression in the Abstract Syntax Tree.
+	 * @param _acces Abstract Syntax Tree node for the array.
+	 * @return Abstract Syntax Tree node for the access of the _index cell in the _array.
+	 */
+	Assignable createArrayAssignment(ArrayAccessImpl _acces);
+
+	/**
 	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
 	 * @param _type Abstract Syntax Tree node for the pointer.
 	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
@@ -209,31 +211,10 @@ public interface ExpressionFactory {
 
 	/**
 	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
-	 * @param _pointer Abstract Syntax Tree node for the pointer.
-	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
-	 */
-    Expression createPointerAccess(Expression _pointer);
-	
-	/**
-	 * Create a node for an assignment to the pointed value in an expression in the Abstract Syntax Tree.
-	 * @param _pointer Abstract Syntax Tree node for the pointer.
-	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
-	 */
-    Assignable createPointerAssignment(Assignable _pointer);
-
-	/**
-	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
 	 * @param _type Abstract Syntax Tree node for the object.
 	 * @return Abstract Syntax Tree node for the access of the content of the object.
 	 */
     Expression createObjectAllocation(Type _type);
-
-	/**
-	 * Create a node for an access to the pointed value in an expression in the Abstract Syntax Tree.
-	 * @param _variable Abstract Syntax Tree node for the pointer.
-	 * @return Abstract Syntax Tree node for the access of the content of the _pointer.
-	 */
-    Expression createAddressAccess(Expression _variable);
 
 	/**
 	 * Create a node for an access to the function in an expression in the Abstract Syntax Tree.

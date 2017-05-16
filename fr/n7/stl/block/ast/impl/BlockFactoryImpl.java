@@ -18,17 +18,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	public BlockFactoryImpl() {
 	}
 
-	/**
-	 * Create a node for expressions in the Abstract Syntax Tree.
-	 *
-	 * @param _expressions Abstract Syntax Tree for the left parameter of the binary operation.
-	 * @return Abstract Syntax Tree node for expressions.
-	 */
-	@Override
-	public Expression createExpressions(List<Expression> _expressions) {
-		return null;
-	}
-
 	/* (non-Javadoc)
          * @see fr.n7.block.ast.ASTFactory#createBinaryExpression(fr.n7.block.ast.Expression, fr.n7.block.ast.Expression)
          */
@@ -433,6 +422,17 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new ArrayAssignmentImpl(_array,_index);
 	}
 
+	/**
+	 * Create a node for an assignment to an element in an array expression in the Abstract Syntax Tree.
+	 *
+	 * @param _acces Abstract Syntax Tree node for the array.
+	 * @return Abstract Syntax Tree node for the access of the _index cell in the _array.
+	 */
+	@Override
+	public Assignable createArrayAssignment(ArrayAccessImpl _acces) {
+		return new ArrayAssignmentImpl(_acces);
+	}
+
 	/* (non-Javadoc)
          * @see fr.n7.stl.block.ast.ExpressionFactory#createArrayAllocation(fr.n7.stl.block.ast.Assignable)
          */
@@ -573,14 +573,6 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.TypeFactory#createPointerType(fr.n7.stl.block.ast.Type)
-	 */
-	@Override
-	public Type createPointerType(Type _element) {
-		return new PointerTypeImpl(_element);
-	}
-
-	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.TypeFactory#createFunctionType(fr.n7.stl.block.ast.Type, java.lang.Iterable)
 	 */
 	@Override
@@ -613,39 +605,11 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.TypeFactory#createNamedType(fr.n7.stl.block.ast.TypeDeclaration)
-	 */
-	@Override
-	public Type createNamedType(TypeDeclaration _declaration) {
-		return new NamedTypeImpl(_declaration);
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createPointerAccess(fr.n7.stl.block.ast.Expression)
-	 */
-	@Override
-	public Expression createPointerAccess(Expression _pointer) {
-		return new PointerAccessImpl(_pointer);
-	}
-	
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createPointerAssignment(fr.n7.stl.block.ast.Assignable)
-	 */
-	@Override
-	public Assignable createPointerAssignment(Assignable _pointer) {
-		return new PointerAssignmentImpl(_pointer);
-	}
-
-	/* (non-Javadoc)
-	 * @see fr.n7.stl.block.ast.ExpressionFactory#createPointerAssignment(fr.n7.stl.block.ast.Assignable)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createObjectAllocation(fr.n7.stl.block.ast.Assignable)
 	 */
 	@Override
 	public Expression createObjectAllocation(Type _type) {
 		return new ObjectAllocationImpl(_type);
-	}
-
-	public Expression createAddressAccess(Expression _assignable)  {
-		return new AddressAccessImpl(_assignable);
 	}
 
 	/**

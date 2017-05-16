@@ -7,6 +7,8 @@ import fr.n7.stl.block.ast.Sequence;
 import fr.n7.stl.block.ast.Expression;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
+import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
 /**
@@ -69,9 +71,19 @@ public class SequenceImpl implements Sequence {
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment fragment = _factory.createFragment();
 
+		int _length = 0;
+		for (Expression e : this.values) {
+			_length += e.getType().length();
+		}
+		fragment.add(_factory.createLoadL(_length));
+		fragment.add(Library.MAlloc);
+
 		for (Expression e : this.values) {
 			fragment.append(e.getCode(_factory));
 		}
+		//Load sequence address
+		fragment.add(_factory.createLoad(Register.ST, -(_length+1), 1));
+		fragment.add(_factory.createStoreI(_length));
 
 		return fragment;
 	}

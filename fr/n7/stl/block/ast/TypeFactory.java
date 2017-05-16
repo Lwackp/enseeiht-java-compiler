@@ -47,26 +47,12 @@ public interface TypeFactory {
     Type createArrayType(Type _element);
 	
 	/**
-	 * Create an Abstract Syntax Tree node for a pointer type.
-	 * @param _element Abstract Syntax Tree for the type of the target element in the pointer type.
-	 * @return Abstract Syntax Tree node for a pointer type.
-	 */
-    Type createPointerType(Type _element);
-	
-	/**
 	 * Create an Abstract Syntax Tree node for a function type.
 	 * @param _result Abstract Syntax Tree for the type of the result in the function type.
 	 * @param _parameters Abstract Syntax Trees for the types of the sequence of parameters in the function type.
 	 * @return Abstract Syntax Tree node for a function type.
 	 */
     Type createFunctionType(Type _result, Iterable<Type> _parameters);
-	
-	/**
-	 * Create an Abstract Syntax Tree node for a named type (e.g. in a type definition).
-	 * @param _declaration Abstract Syntax Tree for the target type in the named type.
-	 * @return Abstract Syntax Tree node for a named type.
-	 */
-    Type createNamedType(TypeDeclaration _declaration);
 
 	/**
 	 * Create an Abstract Syntax Tree node for a Generic Type

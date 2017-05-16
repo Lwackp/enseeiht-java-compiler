@@ -33,10 +33,7 @@ public class ArrayAccessImpl implements Expression {
 	 */
 	@Override
 	public Type getType() {
-		if (this.array.getType() instanceof ArrayType) {
-			return ((ArrayTypeImpl)this.array.getType()).getPointedType();
-		}
-		return AtomicType.ErrorType;
+		return this.array.getType();
 	}
 
 	/* (non-Javadoc)

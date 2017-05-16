@@ -1,7 +1,0 @@
-test_pointer_02 {
-   int v = 1;
-   int *ptr = &v;
-   *ptr = 2; 
-   int t[] = new int[5];
-   t[3] = 4;
-}

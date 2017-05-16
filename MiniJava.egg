@@ -1132,6 +1132,9 @@ do
     if SuiteAffectation^ast != SpecialValue.NoValue then
         e := Affectation^ast;
         match e
+        with ArrayAccessImpl then
+            Expression^ast := Expression^factory.createAssignment(
+                                Expression^factory.createArrayAssignment(e), SuiteAffectation^ast);
         with Usage then
             d := e.getDeclaration();
             Expression^ast := Expression^factory.createAssignment(d, SuiteAffectation^ast);
@@ -1232,7 +1235,7 @@ do
 end
 }
 
---Condition
+
 Condition -> Terme #inh SuiteTerme #ast ;
 #inh {
 do
@@ -1362,7 +1365,7 @@ end
 Facteur -> accolade_ouvrante Expressions accolade_fermante #ast;
 #ast {
 do
-   Facteur^ast := Facteur^factory.createExpressions(Expressions^ast);
+   Facteur^ast := Facteur^factory.createSequence(Expressions^ast);
 end
 }
 

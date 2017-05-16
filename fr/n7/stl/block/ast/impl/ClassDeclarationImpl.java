@@ -85,8 +85,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 				}
 				break;
 			default:
-				// Shouldn't be triggered
-				break;
+				throw new RuntimeException("Modifier " + ce.getAccessModifier() + " is not defined.");
 			}
     	}
     	res.addAll(publicmethods);
