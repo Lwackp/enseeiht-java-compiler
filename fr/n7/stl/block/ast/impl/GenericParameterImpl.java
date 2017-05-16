@@ -51,7 +51,21 @@ public class GenericParameterImpl implements GenericParameter {
 
     @Override
     public String toString(){
-        return this.name;
+        StringBuilder _local = new StringBuilder();
+        _local.append(this.name);
+        if (!this.inheritance.isEmpty()){
+            boolean first = true;
+            _local.append(" extends ");
+            for (GenericType _type: this.inheritance
+                 ) {
+                if (!first){
+                    _local.append(", ");
+                }
+                _local.append(_type.toString());
+
+            }
+        }
+        return _local.toString() ;
     }
 
     @Override

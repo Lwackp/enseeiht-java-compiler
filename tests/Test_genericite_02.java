@@ -1,4 +1,8 @@
-class Box <T, H> {
+class Carton {
+    public int i;
+}
+
+class Box <T extends Carton> {
     // T stands for "Type"
     private T t;
 
@@ -9,6 +13,6 @@ class Box <T, H> {
 public class Test_genericite {
     public static void main(String[] args) {
         //Box<int, int> b = new Box<int, int>();
-        Box<boolean,int> b = new Box<boolean, int>();
+        Box<boolean> b = new Box<boolean>();
     }
 }

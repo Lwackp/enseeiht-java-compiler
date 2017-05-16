@@ -566,7 +566,7 @@ local
     t  : Type;
     gt : GenericType;
 do
-    if !HeritageGenericite^tds.knows(identificateur_type^txt) then
+    if HeritageGenericite^tds.knows(identificateur_type^txt) then
         ot := HeritageGenericite^tds.get(identificateur_type^txt);
         d  := ot.get();
         t  := d.getType();
@@ -615,7 +615,6 @@ end
 }
 
 
---TODO (Instance Genericite)
 InstanceGenericite -> #ast;
 #ast {
 do
