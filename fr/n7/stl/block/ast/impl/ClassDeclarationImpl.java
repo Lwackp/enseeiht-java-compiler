@@ -231,6 +231,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     				res.add(ce);
     			}
     		}
+    	} else {
+    		res.addAll(this.elements);
     	}
     	return res;
     }
