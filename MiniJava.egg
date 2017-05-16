@@ -63,12 +63,12 @@ syn ast     : List<ClassElement> for ElementsClasse, ElementsInterface;
 syn ast     : SignatureDeclaration for Signature;
 syn ast     : GenericParameter for ParametreGenericite;
 syn ast     : List<GenericParameter> for Genericite, ParametresGenericite,
-SuiteParametresGenericite;
+					SuiteParametresGenericite;
 syn ast     : AccessModifier for DroitAcces;
 syn ast     : ParameterDeclaration for Parametre;
 syn ast     : List<ParameterDeclaration> for Parametres, SuiteParametres, SuiteAttributOuMethode;
-syn ast     : List<GenericType> fr InstanceGenericite, ArgumentsGenericite,
-SuiteArgumentsGenericite;
+syn ast     : List<GenericType> for InstanceGenericite, ArgumentsGenericite,
+					SuiteArgumentsGenericite;
 syn ast     : GenericType for ArgumentGenericite;
 syn bin_op	: BinaryOperator for Additif, Multiplicatif, Comparatif;
 syn type    : ClassElementType for SuiteAttributOuMethode;

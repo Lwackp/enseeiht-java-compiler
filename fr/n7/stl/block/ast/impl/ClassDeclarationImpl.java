@@ -41,10 +41,64 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.generics = _generics;
         this.inheritance = _inheritance;
         this.interfaces = new LinkedList<>(_interfaces);
-        this.elements = new LinkedList<>(_elements);
+        this.elements = this.sortElements(_elements);
         this.classType = new ClassTypeImpl(this);
     }
 
+    /** Sort elements in the following order : 
+     * 			public methods
+     * 			public attributes
+     * 			protected methods
+     * 			protected attributes
+     * 			private methods
+     * 			private attributes
+     */
+    private LinkedList<ClassElement> sortElements(List<ClassElement> lce) {
+    	LinkedList<ClassElement> res = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> publicmethods = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> publicattributes = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> protectedmethods = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> protectedattributes = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> privatemethods = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> privateattributes = new LinkedList<ClassElement>();
+
+    	for (ClassElement ce : lce) {
+    		switch (ce.getAccessModifier()) {
+			case Public:
+				if (ce instanceof VariableDeclaration) {
+					publicattributes.add(ce);
+				} else {
+					publicmethods.add(ce);
+				}
+				break;
+			case Protected:
+				if (ce instanceof VariableDeclaration) {
+					protectedattributes.add(ce);
+				} else {
+					protectedmethods.add(ce);
+				}
+				break;
+			case Private:
+				if (ce instanceof VariableDeclaration) {
+					privateattributes.add(ce);
+				} else {
+					privatemethods.add(ce);
+				}
+				break;
+			default:
+				// Shouldn't be triggered
+				break;
+			}
+    	}
+    	res.addAll(publicmethods);
+    	res.addAll(publicattributes);
+    	res.addAll(protectedmethods);
+    	res.addAll(protectedattributes);
+    	res.addAll(privatemethods);
+    	res.addAll(privateattributes);
+    	return res;
+    }
+    
     /**
      * Provide the identifier (i.e. name) given to the declaration.
      *
@@ -165,10 +219,91 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public List<ClassElement> getElements() {
-        return new LinkedList<>(elements);
+    	LinkedList<ClassElement> res = new LinkedList<>();
+    	if (this.inheritance != null) {
+    		res.addAll(this.inheritance.getDeclaration().getHeritableElements());
+    		for (ClassElement ce : this.elements) {
+    			int i = indexOf(res, ce);
+    			if (i != -1) {
+    				// if the element already exists, override it
+    				res.set(i, ce);
+    			} else {
+    				// the element doesn't exist, add it
+    				res.add(ce);
+    			}
+    		}
+    	}
+    	return res;
     }
-
-    /**
+    
+    /* Returns -1 if not found */
+    private int indexOf(List<ClassElement> l, ClassElement ce) {
+    	for (int i = 0; i<l.size() ; i++) {
+    		if (conflictualDeclaration(ce,l.get(i))) {
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+    
+    private static boolean conflictualDeclaration(ClassElement ce1, ClassElement ce2) {
+    	if (ce1.getDeclaration().getClass().equals(ce2.getDeclaration().getClass())) {
+    		// Meme type de déclaration (variable, const, fonction, ...)
+    		if (ce1.getDeclaration().getName().equals(ce2.getDeclaration().getName())) {
+    			// Noms identiques
+    			if (ce1.getDeclaration().getType().equalsTo(ce2.getDeclaration().getType())) {
+    				// Type identique
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+	@Override
+	public List<ClassElement> getPrivateElements() {
+		LinkedList<ClassElement> resu = new LinkedList<>();
+		for (ClassElement e : this.getElements()) {
+			if (e.getAccessModifier() == AccessModifier.Private) {
+				resu.add(e);
+			}
+		}
+		return resu;
+	}
+    
+	@Override
+	public List<ClassElement> getProtectedElements() {
+		LinkedList<ClassElement> resu = new LinkedList<>();
+		for (ClassElement e : this.getElements()) {
+			if (e.getAccessModifier() == AccessModifier.Protected) {
+				resu.add(e);
+			}
+		}
+		return resu;
+	}
+    
+	@Override
+	public List<ClassElement> getPublicElements() {
+		LinkedList<ClassElement> resu = new LinkedList<>();
+		for (ClassElement e : this.getElements()) {
+			if (e.getAccessModifier() == AccessModifier.Public) {
+				resu.add(e);
+			}
+		}
+		return resu;
+	}
+	
+	@Override
+	public List<ClassElement> getHeritableElements() {
+		LinkedList<ClassElement> resu = new LinkedList<>();
+		for (ClassElement e : this.getElements()) {
+			if (e.getAccessModifier() == AccessModifier.Public || e.getAccessModifier() == AccessModifier.Public) {
+				resu.add(e);
+			}
+		}
+		return resu;
+	}
+	/**
      * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.
      * Synthesized Semantics attribute that compute the size of the allocated memory.
      *
@@ -313,7 +448,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     public List<VariableDeclaration> getAttributes() {
         List<VariableDeclaration> _attributes = new LinkedList<>();
 
-        for (ClassElement _element : this.elements) {
+        for (ClassElement _element : this.getElements()) {
             if (_element.getDeclaration() instanceof VariableDeclaration) {
                 _attributes.add((VariableDeclaration) _element.getDeclaration());
             }

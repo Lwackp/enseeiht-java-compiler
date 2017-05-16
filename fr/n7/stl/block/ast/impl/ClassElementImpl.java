@@ -165,4 +165,9 @@ public class ClassElementImpl implements ClassElement {
     public boolean isFinal() {
         return this.b_final;
     }
+
+	@Override
+	public AccessModifier getAccessModifier() {
+		return this.access;
+	}
 }

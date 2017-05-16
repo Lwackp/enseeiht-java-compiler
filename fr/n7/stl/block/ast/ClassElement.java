@@ -19,4 +19,6 @@ public interface ClassElement extends Declaration {
 
 	boolean isFinal();
 
+	AccessModifier getAccessModifier();
+
 }

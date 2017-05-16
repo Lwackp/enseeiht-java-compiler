@@ -4,6 +4,7 @@ import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,6 +24,16 @@ public interface ClassDeclaration extends TypeDeclaration, Labellable {
 	 * @return Elements of the declared class.
 	 */
 	List<ClassElement> getElements();
+	
+	/**
+	 * Synthesized semantics attribute for the private/protected/public elements of the declared class.
+	 * @return private/protected/public elements of the declared class.
+	 */
+	List<ClassElement> getPrivateElements();
+	List<ClassElement> getProtectedElements();
+	List<ClassElement> getPublicElements();
+	List<ClassElement> getHeritableElements();
+
 
 	/**
 	 * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.
