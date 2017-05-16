@@ -53,13 +53,13 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      * 			private attributes
      */
     private LinkedList<ClassElement> sortElements(List<ClassElement> lce) {
-    	LinkedList<ClassElement> res = new LinkedList<ClassElement>();
-    	LinkedList<ClassElement> publicmethods = new LinkedList<ClassElement>();
-    	LinkedList<ClassElement> publicattributes = new LinkedList<ClassElement>();
-    	LinkedList<ClassElement> protectedmethods = new LinkedList<ClassElement>();
-    	LinkedList<ClassElement> protectedattributes = new LinkedList<ClassElement>();
-    	LinkedList<ClassElement> privatemethods = new LinkedList<ClassElement>();
-    	LinkedList<ClassElement> privateattributes = new LinkedList<ClassElement>();
+    	LinkedList<ClassElement> res = new LinkedList<>();
+    	LinkedList<ClassElement> publicmethods = new LinkedList<>();
+    	LinkedList<ClassElement> publicattributes = new LinkedList<>();
+    	LinkedList<ClassElement> protectedmethods = new LinkedList<>();
+    	LinkedList<ClassElement> protectedattributes = new LinkedList<>();
+    	LinkedList<ClassElement> privatemethods = new LinkedList<>();
+    	LinkedList<ClassElement> privateattributes = new LinkedList<>();
 
     	for (ClassElement ce : lce) {
     		switch (ce.getAccessModifier()) {
@@ -297,11 +297,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 	@Override
 	public List<ClassElement> getHeritableElements() {
 		LinkedList<ClassElement> resu = new LinkedList<>();
-		for (ClassElement e : this.getElements()) {
-			if (e.getAccessModifier() == AccessModifier.Public || e.getAccessModifier() == AccessModifier.Public) {
-				resu.add(e);
-			}
-		}
+		resu.addAll(this.getPublicElements());
+		resu.addAll(this.getProtectedElements());
 		return resu;
 	}
 	/**
@@ -353,26 +350,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             _fragment.append(_element.getCode(_factory));
         }
 
-        //Creation of Virtual Method Table
-        Fragment _virtualMethodTable = _factory.createFragment();
-        for (ClassElement _element : this.getStaticElements()) {
-            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
-                _virtualMethodTable.append(_element.getCode(_factory));
-            }
-        }
-        for (FunctionDeclaration _function : this.getFunctions()) {
-            _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
-        }
-        for (InterfaceDeclaration _interface : this.getInterfaces()) {
-            //_virtualMethodTable.add();
-        }
-        _virtualMethodTable.add(_factory.createLoad(Register.LB, -1, 1));
-        _virtualMethodTable.add(_factory.createStoreI(this.getVirtualMethodTableLength()));
-        _virtualMethodTable.add(_factory.createReturn(0, 0));
-        this.label = "class_" + this.name + "_static_" + _factory.createLabelNumber();
-        _virtualMethodTable.addPrefix(this.label);
-
-        _fragment.append(_virtualMethodTable);
+        _fragment.append(this.getVirtualMethodTableCode(_factory));
 
         //TODO: Inheritance
 
@@ -429,7 +407,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     public List<InterfaceDeclaration> getInterfaces() {
         List<InterfaceDeclaration> _interfaces = new LinkedList<>();
         for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
-            _interfaces.add((InterfaceDeclaration) _interface.getDeclaration());
+            _interfaces.add(_interface.getDeclaration());
         }
         return _interfaces;
     }
@@ -455,6 +433,29 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             }
         }
         return _attributes;
+    }
+
+    @Override
+    public Fragment getVirtualMethodTableCode(TAMFactory _factory) {
+        Fragment _virtualMethodTable = _factory.createFragment();
+        for (ClassElement _element : this.getStaticElements()) {
+            if (!(_element.getDeclaration() instanceof FunctionDeclaration)) {
+                _virtualMethodTable.append(_element.getCode(_factory));
+            }
+        }
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
+        }
+        for (InterfaceDeclaration _interface : this.getInterfaces()) {
+            //_virtualMethodTable.add();
+        }
+        _virtualMethodTable.add(_factory.createLoad(Register.LB, -1, 1));
+        _virtualMethodTable.add(_factory.createStoreI(this.getVirtualMethodTableLength()));
+        _virtualMethodTable.add(_factory.createReturn(0, 0));
+        this.label = "class_" + this.name + "_static_" + _factory.createLabelNumber();
+        _virtualMethodTable.addPrefix(this.label);
+
+        return _virtualMethodTable;
     }
 
     @Override

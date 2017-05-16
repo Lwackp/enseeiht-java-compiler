@@ -25,9 +25,9 @@ public class Test_heritage_simple {
     public static void main(String[] args) {
         boolean isBebe = true;
 
-        Humain Pierre;
-        Pierre = new Bebe();
+        Humain pierre;
+        pierre = new Bebe();
 
-        print Pierre.printAge();
+        print pierre.printAge();
     }
 }

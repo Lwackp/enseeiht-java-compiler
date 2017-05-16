@@ -1,6 +1,7 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
+import fr.n7.stl.util.SymbolTable;
 
 import java.util.List;
 
@@ -723,5 +724,24 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public GenericType createGenericType(Type _type, List<GenericType> _args){
 		return new GenericTypeImpl(_type, _args);
+	}
+
+	/**
+	 * Add Inherited Class Elements to the SymbolTable
+	 *
+	 * @param _s        SymbolTable to be modified
+	 * @param _elements All class elements to be added
+	 * @return The SymbolTable with all elements added
+	 */
+	@Override
+	public SymbolTable addInheritedElements(SymbolTable _s, List<ClassElement> _elements) {
+		for (ClassElement _element : _elements) {
+			try {
+				_s.register(_element);
+			} catch (ForbiddenDeclarationException e) {
+				e.printStackTrace();
+			}
+		}
+		return _s;
 	}
 }

@@ -7,5 +7,5 @@ import java.util.List;
  * @author Marc Pantel
  *
  */
-public interface BlockFactory extends ExpressionFactory, InstructionFactory, TypeFactory {
+public interface BlockFactory extends ExpressionFactory, InstructionFactory, TypeFactory, SymbolTableFactory {
 }
