@@ -86,7 +86,6 @@ public class FunctionCallImpl implements FunctionCall {
         for (Expression p : parameters)
         {
             _paramAux.add(p.getType());
-            System.out.println(String.valueOf(p.getType()));
         }
         if (this.function instanceof ObjectAllocation) {
             ((ObjectAllocationImpl) this.function).setParameters(_paramAux);

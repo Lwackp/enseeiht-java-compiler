@@ -709,30 +709,13 @@ end
 ElementsClasse -> DroitAcces ElementClasse #inh ElementsClasse #ast;
 #inh {
 local
-    signatureDecl : SignatureDeclaration;
-    decl : Declaration;
 do
-    decl := ElementClasse^ast.getDeclaration();
-    match decl
-    with FunctionDeclaration then
-    signatureDecl := decl.getSignature();
-        if !ElementsClasse^tds.contains(signatureDecl.toString()) then
-            error(MiniJava_debug, signatureDecl.toString() + "l546\n");
-            ElementsClasse^tds.register(ElementClasse^ast);
-            ElementsClasse1^tds := ElementsClasse^tds;
-        else
-            error(MiniJava_debug, signatureDecl.toString() + "l550\n");
-            error(MiniJava_ClassElement_Definition, ElementClasse^ast);
-        end
-    else
-            error(MiniJava_debug, ElementClasse^ast + "\nl554\n");
         if !ElementsClasse^tds.contains(ElementClasse^ast.getName()) then
             ElementsClasse^tds.register(ElementClasse^ast);
             ElementsClasse1^tds := ElementsClasse^tds;
         else
-              error(MiniJava_ClassElement_Definition, ElementClasse^ast);
+            error(MiniJava_ClassElement_Definition, ElementClasse^ast);
         end
-    end
 end
 }
 #ast {
@@ -881,8 +864,6 @@ do
                                         Parametres^ast,
                                         body
                                       );
---    error(MiniJava_debug, identificateur_type^txt);
---    error(MiniJava_debug, Parametres^ast.toString());
 end
 }
 

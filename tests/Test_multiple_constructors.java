@@ -43,20 +43,20 @@ class Triplet {
 public class Test_multiple_constructors {
     public static void main(String[] args) {
         Triplet _triplet3 = new Triplet(1, 2, 3);
-        print _triplet3.getFirst();
-        print _triplet3.getSecond();
-        print _triplet3.getThird();
+        println _triplet3.getFirst();
+        println _triplet3.getSecond();
+        println _triplet3.getThird();
         Triplet _triplet2 = new Triplet(4, 5);
-        print _triplet2.getFirst();
-        print _triplet2.getSecond();
-        print _triplet2.getThird();
+        println _triplet2.getFirst();
+        println _triplet2.getSecond();
+        println _triplet2.getThird();
         Triplet _triplet1 = new Triplet(6);
-        print _triplet1.getFirst();
-        print _triplet1.getSecond();
-        print _triplet1.getThird();
+        println _triplet1.getFirst();
+        println _triplet1.getSecond();
+        println _triplet1.getThird();
         Triplet _triplet0 = new Triplet(); 
-        print _triplet0.getFirst();
-        print _triplet0.getSecond();
-        print _triplet0.getThird();
+        println _triplet0.getFirst();
+        println _triplet0.getSecond();
+        println _triplet0.getThird();
     }
 }

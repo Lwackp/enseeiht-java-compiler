@@ -82,7 +82,11 @@ public class ClassTypeImpl implements ClassType {
     @Override
     public ClassElement getElement(String _name) {
         for (ClassElement _element : this.declaration.getElements()) {
-            if (_element.getName().equals(_name)) {
+            String _elementName = _element.getName();
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                _elementName = ((FunctionDeclaration) _element.getDeclaration()).getSignature().getName();
+            }
+            if (_elementName.equals(_name)) {
                 return _element;
             }
         }
@@ -113,22 +117,17 @@ public class ClassTypeImpl implements ClassType {
             }
         }
         */
-        System.out.println("==========================\nConstructors:\n");
         for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
                 if ((_element.getDeclaration()).getValueType() instanceof ConstructorType) {
                     _constructors.add((FunctionDeclaration) _element.getDeclaration());
-                    System.out.println(String.valueOf((FunctionDeclaration) _element.getDeclaration()));
                 }
             }
         }
-        System.out.println("==========================\n");
 
         int _indParam;
         Type _t;
-        System.out.println("==========================\nConstructor checked:\n");
         for (FunctionDeclaration _currentConst : _constructors) {
-            String.valueOf(_currentConst);
             if (_currentConst.getParameters().size() != _parameters.size()) {
                 continue;
             }
@@ -143,7 +142,6 @@ public class ClassTypeImpl implements ClassType {
                     return (FunctionDeclaration) _currentConst;
                 }
             }
-            System.out.println("==========================\n");
         }
         return null;
     }

@@ -88,14 +88,7 @@ public class ObjectAllocationImpl implements ObjectAllocation {
             _fragment.add(_factory.createLoad(Register.ST, -2, 1));
             _fragment.add(_factory.createStoreI(1));
         } else {
-
-            System.out.println("============================\n");
-            System.out.println(String.valueOf(_constructor));
-            System.out.println("============================\n");
             _fragment.add(_factory.createCall(_constructor.getLabel(), Register.LB));
-
-
-            //_fragment.add(_factory.createCall(_constructors.get(0).getLabel(), Register.LB));
         }
 
         return _fragment;

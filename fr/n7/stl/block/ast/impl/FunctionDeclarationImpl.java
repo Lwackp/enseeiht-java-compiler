@@ -51,7 +51,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
     @Override
     public String getName() {
-        return this.signature.getName();
+        return this.signature.toString();
     }
 
     /**
