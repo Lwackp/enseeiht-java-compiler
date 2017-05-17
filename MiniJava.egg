@@ -101,6 +101,7 @@ sugar faux			    		is    "false";
 sugar si						is    "if";
 sugar sinon					    is    "else";
 sugar afficher					is    "print";
+sugar afficherln				is    "println";
 sugar nouveau			    	is    "new";
 sugar tant_que			    	is    "while";
 sugar retour					is    "return";
@@ -1093,6 +1094,13 @@ Instruction -> afficher Expression point_virgule #ast;
 #ast {
 do
     Instruction^ast := Instruction^factory.createPrinter(Expression^ast);
+end
+}
+
+Instruction -> afficherln Expression point_virgule #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createPrinterln(Expression^ast);
 end
 }
 

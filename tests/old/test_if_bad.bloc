@@ -1,4 +1,0 @@
-test_if_bad {
-    if (true)
-        print(42)
-}

@@ -322,6 +322,14 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new PrinterImpl(_value);
 	}
 
+	/* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.InstructionFactory#createPrinterln(fr.n7.stl.block.ast.Expression)
+	 */
+	@Override
+	public Instruction createPrinterln(Expression _value) {
+		return new PrinterlnImpl(_value);
+	}
+	
 	/**
 	 * Create a void instruction node in the Abstract Syntax Tree.
 	 *
