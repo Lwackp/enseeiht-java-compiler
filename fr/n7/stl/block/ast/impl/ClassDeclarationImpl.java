@@ -231,13 +231,15 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     	
     	// Ajout des éléments propre à la classe. Override si nécessaire
     	for (ClassElement ce : this.elements) {
-    		int i = indexOf(res, ce);
-    		if (i != -1) {
-    			// if the element already exists, override it
-    			res.set(i, ce);
-    		} else {
-    			// the element doesn't exist, add it
+    		List<Integer> _indices = indicesOf(res, ce);
+    		if (_indices.isEmpty()) {
+    			// the element doesn't exist, add it at the end
     			res.add(ce);
+    		} else {
+    			// if the element already exists, override it. Many times if it implements differents interfaces
+    			for (int i : _indices) {
+    				res.set(i, ce);
+    			}
     		}
     	}
 
@@ -245,13 +247,14 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 	}
     
     /* Returns -1 if not found */
-    private int indexOf(List<ClassElement> l, ClassElement ce) {
+    private List<Integer> indicesOf(List<ClassElement> l, ClassElement ce) {
+    	List<Integer> _res = new LinkedList<Integer>();
     	for (int i = 0; i<l.size() ; i++) {
     		if (conflictualDeclaration(ce,l.get(i))) {
-    			return i;
+    			_res.add(i);
     		}
     	}
-    	return -1;
+    	return _res;
     }
     
     private static boolean conflictualDeclaration(ClassElement ce1, ClassElement ce2) {
