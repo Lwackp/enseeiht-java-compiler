@@ -371,14 +371,22 @@ end
 }
 
 
-Classe -> classe identificateur_type #inh Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante #ast;
+Classe -> classe identificateur_type Genericite HeritageClasse #inh ImplantationInterface accolade_ouvrante
+ElementsClasse accolade_fermante #ast;
 #inh {
+local
+    s : SymbolTable;
+    h : ClassDeclaration;
+    he: List<ClassElement>;
 do
-
-    Genericite^tds := Classe^tds;
-    HeritageClasse^tds := Classe^tds;
-    ImplantationInterface^tds := Classe^tds;
-    ElementsClasse^tds := new SymbolTable(Classe^tds);
+    s := new SymbolTable(Classe^tds);
+    if HeritageClasse^ast != null then
+        h := HeritageClasse^ast.getDeclaration();
+        he:= h.getHeritableElements();
+        ElementsClasse^tds := new SymbolTable(Classe^factory.addInheritedElements(s, he));
+    else
+        ElementsClasse^tds := s;
+    end
 end
 }
 #ast {
@@ -692,7 +700,7 @@ end
 ElementsClasse -> DroitAcces ElementClasse #inh ElementsClasse #ast;
 #inh {
 do
-    if !ElementsClasse^tds.knows(ElementClasse^ast.getName()) then
+    if !ElementsClasse^tds.contains(ElementClasse^ast.getName()) then
         ElementsClasse^tds.register(ElementClasse^ast);
         ElementsClasse1^tds := ElementsClasse^tds;
     else
@@ -1123,6 +1131,9 @@ do
     if SuiteAffectation^ast != SpecialValue.NoValue then
         e := Affectation^ast;
         match e
+        with ArrayAccessImpl then
+            Expression^ast := Expression^factory.createAssignment(
+                                Expression^factory.createArrayAssignment(e), SuiteAffectation^ast);
         with Usage then
             d := e.getDeclaration();
             Expression^ast := Expression^factory.createAssignment(d, SuiteAffectation^ast);
@@ -1223,7 +1234,7 @@ do
 end
 }
 
---Condition
+
 Condition -> Terme #inh SuiteTerme #ast ;
 #inh {
 do
@@ -1353,7 +1364,7 @@ end
 Facteur -> accolade_ouvrante Expressions accolade_fermante #ast;
 #ast {
 do
-   Facteur^ast := Facteur^factory.createExpressions(Expressions^ast);
+   Facteur^ast := Facteur^factory.createSequence(Expressions^ast);
 end
 }
 

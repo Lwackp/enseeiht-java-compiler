@@ -1,3 +1,0 @@
-test_on_initialisation_bad {
-    int i;
-}

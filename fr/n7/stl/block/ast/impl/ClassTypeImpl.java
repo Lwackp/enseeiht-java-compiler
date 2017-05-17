@@ -32,7 +32,8 @@ public class ClassTypeImpl implements ClassType {
      */
     @Override
     public boolean equalsTo(Type _other) {
-        return false;
+        return _other instanceof ClassType && ((ClassType) _other).getDeclaration().equals
+                (this.declaration);
     }
 
     /**
@@ -45,9 +46,10 @@ public class ClassTypeImpl implements ClassType {
      * @param _other The other type
      * @return True if the types are compatibles, False otherwise.
      */
+    //TODO Heritage
     @Override
     public boolean compatibleWith(Type _other) {
-        return false;
+        return this.equalsTo(_other);
     }
 
     /**

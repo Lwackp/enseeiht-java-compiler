@@ -65,7 +65,7 @@ public class RepetitionImpl implements Instruction {
 		fragment.add(_factory.createJump("debut_while" + id));
 
 		fragment.addPrefix("debut_while" + id);
-		fragment.addSuffix("fin_while" + id);
+		fragment.addSuffix("fin_while" + id + ":");
 
 		return fragment;
 	}

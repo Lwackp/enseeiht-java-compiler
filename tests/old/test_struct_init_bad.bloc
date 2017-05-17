@@ -1,3 +1,0 @@
-test_struct_init_bad {
-   struct T { int n; int m; } s = {2};
-}

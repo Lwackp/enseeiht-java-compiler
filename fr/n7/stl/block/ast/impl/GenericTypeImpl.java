@@ -20,8 +20,11 @@ public class GenericTypeImpl implements GenericType {
     public GenericTypeImpl(Type _type, List<GenericType> _args){
         this.type = _type;
         this.arguments = _args;
-        //System.out.println("Coucou " + _type.toString() + " args: " + _args.toString());
-        assert  ((ClassType) this.type).getDeclaration().checkGenericsParameter(_args);
+        if (this.type instanceof ClassType) {
+            if (!((ClassType) this.type).getDeclaration().checkGenericsParameter(_args)) {
+                throw new IllegalArgumentException("Args not compatible");
+            }
+        }
     }
 
     @Override
@@ -32,7 +35,8 @@ public class GenericTypeImpl implements GenericType {
 
     @Override
     public boolean compatibleWith(Type _other) {
-        return true;
+        return _other instanceof GenericTypeImpl && this.type.compatibleWith(((GenericTypeImpl)
+                _other).type);
     }
 
     @Override

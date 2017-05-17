@@ -62,5 +62,7 @@ public interface ClassDeclaration extends TypeDeclaration, Labellable {
 
     List<VariableDeclaration> getAttributes();
 
+    Fragment getVirtualMethodTableCode(TAMFactory _factory);
+
     boolean checkGenericsParameter(List<GenericType> _params);
 }

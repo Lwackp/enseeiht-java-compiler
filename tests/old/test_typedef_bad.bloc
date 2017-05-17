@@ -1,5 +1,0 @@
-test_typedef_bad {
-   typedef int Entier;
-   <int, int> i = {2, 3};
-   Entier j = i;
-}

@@ -20,6 +20,10 @@ public class ArrayAssignmentImpl extends ArrayAccessImpl implements Assignable {
 		super(_array, _index);
 	}
 
+	public ArrayAssignmentImpl(ArrayAccessImpl _acces) {
+		super(_acces.array, _acces.index);
+	}
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.impl.ArrayAccessImpl#getCode(fr.n7.stl.tam.ast.TAMFactory)
 	 */
@@ -28,7 +32,6 @@ public class ArrayAssignmentImpl extends ArrayAccessImpl implements Assignable {
 		Fragment fragment = _factory.createFragment();
 
 		fragment.append(this.array.getCode(_factory));
-		fragment.add(_factory.createLoadI(1));
 		fragment.append(this.index.getCode(_factory));
 		fragment.add(_factory.createLoadL(this.getType().length()));
 		fragment.add(Library.IMul);

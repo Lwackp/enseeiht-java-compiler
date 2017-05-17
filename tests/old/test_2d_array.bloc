@@ -1,8 +1,0 @@
-test_2d_array {
-//    typedef int[] tint;
-//    int t[][] = {{1, 2}, {3, 4}};
-//    print(t[1][0]);
-
-    // Should work but egg rules are false
-    int tab[][] = new int[4][5];
-}

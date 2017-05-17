@@ -32,8 +32,7 @@ public class PrinterImpl implements Instruction {
 	 */
 	@Override
 	public boolean checkType() {
-		return this.parameter.getType() instanceof AtomicType
-            || this.parameter.getType() instanceof PointerType;
+		return this.parameter.getType() instanceof AtomicType;
 	}
 
 	/* (non-Javadoc)

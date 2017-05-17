@@ -12,7 +12,6 @@ class Box <T extends Carton> {
 
 public class Test_genericite {
     public static void main(String[] args) {
-        //Box<int, int> b = new Box<int, int>();
-        Box<boolean> b = new Box<Carton>();
+        Box<Boolean> b = new Box<Carton>();
     }
 }
