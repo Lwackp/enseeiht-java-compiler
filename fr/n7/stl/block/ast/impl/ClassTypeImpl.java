@@ -1,7 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
-
 import java.util.LinkedList;
 import java.util.List;
 
