@@ -16,7 +16,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     private String name;
     private List<GenericParameter> generics;
     private InheritanceDeclaration<ClassDeclaration> inheritance;
-    private List<InheritanceDeclaration<InterfaceDeclaration>> interfaces = new LinkedList<>();
+    private List<InheritanceDeclaration<InterfaceDeclaration>> interfaces = new LinkedList<InheritanceDeclaration<InterfaceDeclaration>>();
     private List<ClassElement> elements;
     private ClassThisUse thisElement = new ClassThisUseImpl();
     private String label;
@@ -39,7 +39,9 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         this.name = _name;
         this.generics = _generics;
         this.inheritance = _inheritance;
-        this.interfaces = new LinkedList<>(_interfaces);
+        if (_interfaces != null) {
+            this.interfaces = new LinkedList<InheritanceDeclaration<InterfaceDeclaration>>(_interfaces);
+        }
         this.elements = this.sortElements(_elements);
         this.classType = new ClassTypeImpl(this);
     }
@@ -218,23 +220,29 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     @Override
     public List<ClassElement> getElements() {
     	LinkedList<ClassElement> res = new LinkedList<>();
+    	// Récupration des éléments hérités
     	if (this.inheritance != null) {
     		res.addAll(this.inheritance.getDeclaration().getHeritableElements());
-    		for (ClassElement ce : this.elements) {
-    			int i = indexOf(res, ce);
-    			if (i != -1) {
-    				// if the element already exists, override it
-    				res.set(i, ce);
-    			} else {
-    				// the element doesn't exist, add it
-    				res.add(ce);
-    			}
-    		}
-    	} else {
-    		res.addAll(this.elements);
     	}
+    	// Implement new interfaces
+    	for (InterfaceDeclaration i : this.getNewInterfaces()) {
+    		res.addAll(i.getElements());
+    	}
+    	
+    	// Ajout des éléments propre à la classe. Override si nécessaire
+    	for (ClassElement ce : this.elements) {
+    		int i = indexOf(res, ce);
+    		if (i != -1) {
+    			// if the element already exists, override it
+    			res.set(i, ce);
+    		} else {
+    			// the element doesn't exist, add it
+    			res.add(ce);
+    		}
+    	}
+
     	return res;
-    }
+	}
     
     /* Returns -1 if not found */
     private int indexOf(List<ClassElement> l, ClassElement ce) {
@@ -402,12 +410,38 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return _functions;
     }
 
+    private List<InterfaceDeclaration> getNewInterfaces() {
+    	List<InterfaceDeclaration> _heritedInterfaces;
+    	List<InterfaceDeclaration> _newInterfaces = new LinkedList<InterfaceDeclaration>();
+    	if (this.inheritance == null) {
+    		_heritedInterfaces = new LinkedList<>();
+    	} else {
+    		_heritedInterfaces = this.inheritance.getDeclaration().getInterfaces();
+    	}
+    	
+    	for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
+    		if (_heritedInterfaces.contains(_interface.getDeclaration())) {
+    			_newInterfaces.add(_interface.getDeclaration());
+    		}
+    	}
+        return _heritedInterfaces;
+    }
+    
     @Override
     public List<InterfaceDeclaration> getInterfaces() {
-        List<InterfaceDeclaration> _interfaces = new LinkedList<>();
-        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
-            _interfaces.add(_interface.getDeclaration());
-        }
+    	List<InterfaceDeclaration> _interfaces;
+    	if (this.inheritance == null) {
+    		_interfaces = new LinkedList<>();
+    	} else {
+    		_interfaces = this.inheritance.getDeclaration().getInterfaces();
+    	}
+    	
+    	for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
+    		if (!_interfaces.contains(_interface.getDeclaration())) {
+    			_interfaces.add(_interface.getDeclaration());
+    		}
+    	}
+        
         return _interfaces;
     }
 

@@ -1,9 +1,6 @@
 package fr.n7.stl.block.ast.impl;
 
-import fr.n7.stl.block.ast.ClassType;
-import fr.n7.stl.block.ast.GenericType;
-import fr.n7.stl.block.ast.Type;
-import fr.n7.stl.block.ast.VariableDeclaration;
+import fr.n7.stl.block.ast.*;
 
 import java.util.LinkedList;
 import java.util.List;
