@@ -716,4 +716,7 @@ public class BlockFactoryImpl implements BlockFactory {
 		}
 		return _s;
 	}
+
+	@Override
+	public Type createWildCardType() {return new WildCardImpl();}
 }
