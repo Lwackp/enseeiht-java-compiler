@@ -25,7 +25,8 @@ for f in tests/*.ast; do
         diff <(sed -e '$a\' ${file}.res) <(sed -e '$a\' ${file}.out); okOut
     else
         printf " - Failing = "
-        [ "$(tail -n 2 ${file}.ast | head -n 1 | tail -c 3 | head -c 2)" != "$(tail -n 1 ${file}.ast | tail -c 3 | head -c 2)" ]; \
+        [ "$(tail -n 2 ${file}.ast | head -n 1 | tail -c 3 | head -c 2)" != "$(tail -n 1 ${file}.ast | tail -c 3 |
+        head -c 2)" ] || [ $(cat ${file}.ast | sed '/^\s*$/d' | wc -l) -lt 3 ]; \
         okOut
     fi
     echo ''
