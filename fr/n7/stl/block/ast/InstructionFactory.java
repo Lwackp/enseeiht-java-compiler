@@ -253,6 +253,14 @@ public interface InstructionFactory {
 	 * @return A Printer node in the Abstract Syntax Tree.
 	 */
     Instruction createPrinter(Expression _value);
+    
+	/**
+	 * Create a printer node in the Abstract Syntax Tree.
+	 * @param _value Expression node in the Abstract Syntax Tree whose value is printed when the Printer node is executed.
+	 *               This node is assigned to the Value branch of the Printer node.
+	 * @return A Printer node in the Abstract Syntax Tree.
+	 */
+    Instruction createPrinterln(Expression _value);
 
 	/**
 	 * Create a void instruction node in the Abstract Syntax Tree.
