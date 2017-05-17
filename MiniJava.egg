@@ -763,7 +763,12 @@ do
 end
 }
 
-ElementClasse -> Constructeur #ast;
+ElementClasse -> #inh Constructeur #ast;
+#inh {
+do
+    Constructeur^tds := new SymbolTable(ElementClasse^tds);
+end
+}
 #ast {
 do
     ElementClasse^ast := ElementClasse^factory.createClassElement(Constructeur^ast);
@@ -868,7 +873,7 @@ do
         Parametres^tds.register(Parametre^ast);
         SuiteParametres^tds := Parametres^tds;
     else
-          error(MiniJava_Parameter_Definition, Parametre^ast);
+        error(MiniJava_Parameter_Definition, Parametre^ast);
     end
 end
 }

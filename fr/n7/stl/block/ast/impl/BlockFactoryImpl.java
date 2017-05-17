@@ -3,6 +3,7 @@ package fr.n7.stl.block.ast.impl;
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.util.SymbolTable;
 
+import java.lang.instrument.IllegalClassFormatException;
 import java.util.List;
 
 /**
@@ -81,6 +82,12 @@ public class BlockFactoryImpl implements BlockFactory {
 												   InheritanceDeclaration<ClassDeclaration> _inheritance,
 												   List<InheritanceDeclaration<InterfaceDeclaration>> _interfaces,
 												   List<ClassElement> _elements) {
+		for (InheritanceDeclaration<InterfaceDeclaration> _interface : _interfaces) {
+			if (!_interface.getDeclaration().isImplementedBy(_elements)) {
+				throw new RuntimeException("Interface " + _interface.getDeclaration().getName() + "is not " +
+						"implemented by class " + _name);
+			}
+		}
 		return new ClassDeclarationImpl(_name, _generics, _inheritance, _interfaces, _elements);
 	}
 

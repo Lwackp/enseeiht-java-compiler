@@ -44,4 +44,8 @@ public interface InterfaceDeclaration extends Declaration, Labellable {
 	List<ClassElement> getElements();
 
 	List<ClassElement> getStaticElements();
+
+	List<SignatureDeclaration> getFunctions();
+
+	boolean isImplementedBy(List<ClassElement> _elements);
 }

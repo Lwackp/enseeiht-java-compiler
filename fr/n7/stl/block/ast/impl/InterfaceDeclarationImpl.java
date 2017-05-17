@@ -207,4 +207,33 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         }
         return _staticElements;
     }
+
+    @Override
+    public List<SignatureDeclaration> getFunctions() {
+        List<SignatureDeclaration> _functions = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (_element.getType() instanceof FunctionType) {
+                _functions.add((SignatureDeclaration) _element.getDeclaration());
+            }
+        }
+        return _functions;
+    }
+
+    @Override
+    public boolean isImplementedBy(List<ClassElement> _elements) {
+        boolean _return = true;
+        for (SignatureDeclaration _interfaceElement : this.getFunctions()) {
+            boolean _implemented = false;
+            for (ClassElement _element : _elements) {
+                if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                    if (((FunctionDeclaration) _element.getDeclaration()).getSignature().toString()
+                            .equals(_interfaceElement.toString())) {
+                        _implemented = true;
+                    }
+                }
+            }
+            _return &= _implemented;
+        }
+        return _return;
+    }
 }
