@@ -459,6 +459,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 
     @Override
     public boolean checkGenericsParameter(List<GenericType> _params){
+
         if (_params.size() == this.generics.size()){
             for (int i = 0; i < _params.size(); i++) {
                 for (GenericType _type: this.generics.get(i).getInheritance()) {
