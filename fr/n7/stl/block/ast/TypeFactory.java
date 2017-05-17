@@ -61,4 +61,12 @@ public interface TypeFactory {
 	 * @return Abstract Syntax Tree node for a generic type.
 	 */
 	GenericType createGenericType(Type _type, List<GenericType> _args);
+
+	/**
+	 * Create an Abstract Syntax Tree node for a Wildcard Type
+	 * @return Abstract Syntax Tree node for a WildCard type.
+	 */
+	Type createWildCardType();
+
+
 }

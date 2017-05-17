@@ -564,7 +564,15 @@ end
 }
 
 --TODO: Wildcard Genericite
---ArgumentGenericite -> choix HeritageGenericite ;
+ArgumentGenericite -> choix HeritageGenericite #ast;
+#ast {
+do
+    ArgumentGenericite^ast := ArgumentGenericite^factory.createGenericType
+                                    (ArgumentGenericite^factory.createWildCardType(),
+                                     HeritageGenericite^ast);
+end
+}
+
 
 
 HeritageGenericite -> extension identificateur_type InstanceGenericite SuiteHeritageGenericite #ast;
