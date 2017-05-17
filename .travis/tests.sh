@@ -1,6 +1,7 @@
 #!/bin/bash
 
 allTests=0
+failedTest=0
 
 function okOut {
     if [ $? = 0 ] ; then
@@ -14,6 +15,7 @@ function okOut {
 for f in tests/*.ast; do
     file=${f%.*}
     echo "Test $(basename ${file}): "
+    tmp=${allTests}
     if [[ $(basename ${file}) != *_bad ]] ; then
         printf " - Format = "
         [ "$(tail -n 2 ${file}.ast | head -n 1)" == "Format: OK" ]; okOut
@@ -29,11 +31,14 @@ for f in tests/*.ast; do
         head -c 2)" ] || [ $(cat ${file}.ast | sed '/^\s*$/d' | wc -l) -lt 3 ]; \
         okOut
     fi
+    if [ ${allTests} -ne ${tmp} ] ; then
+        failedTest=$[failedTest+1]
+    fi
     echo ''
 done
 
 printf "Tests: "
-[ ${allTests} = 0 ]; okOut; allTests=$[allTests-1]
-printf "On %d Tests, %d Succeded and %d Failed\n" $(ls -1 tests/*.ast | wc -l) $[$(ls -1 tests/*.ast | wc -l)-allTests] $allTests
+[ ${failedTest} = 0 ]; okOut
+printf "On %d Tests, %d Succeded and %d Failed\n" $(ls -1 tests/*.ast | wc -l) $[$(ls -1 tests/*.ast | wc -l)-failedTest] ${failedTest}
 
-[ ${allTests} = 0 ]; exit $?
+[ ${failedTest} = 0 ]; exit $?

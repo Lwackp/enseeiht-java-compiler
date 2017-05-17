@@ -352,14 +352,11 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     public Fragment getCode(TAMFactory _factory) {
         Fragment _fragment = _factory.createFragment();
 
-        //TODO: Sort element regarding final, static, public, ...
         for (ClassElement _element : this.elements) {
             _fragment.append(_element.getCode(_factory));
         }
 
         _fragment.append(this.getVirtualMethodTableCode(_factory));
-
-        //TODO: Inheritance
 
         return _fragment;
     }
@@ -490,6 +487,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         for (FunctionDeclaration _function : this.getFunctions()) {
             _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
         }
+
+        //getImplementedInterface(FunctionDeclaration)
         for (InterfaceDeclaration _interface : this.getInterfaces()) {
             //_virtualMethodTable.add();
         }

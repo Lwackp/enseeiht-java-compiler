@@ -38,14 +38,24 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     public String toString() {
         StringBuilder _local = new StringBuilder();
 
-        _local.append(this.name);
+        _local.append(this.name).append(" ");
 
-        if (this.generics != null) {
-            _local.append(this.generics);
+        if (this.generics != null && !this.generics.isEmpty()) {
+            _local.append("<");
+            boolean first2 = true;
+            for (GenericParameter _param: this.generics){
+                if (!first2) {
+                    _local.append(", ");
+                }
+                _local.append(_param);
+                first2 = false;
+            }
+            _local.append("> ");
+
         }
 
-        if (this.inheritance != null) {
-            _local.append(" extends ");
+        if (this.inheritance != null && !this.inheritance.isEmpty()) {
+            _local.append("extends ");
             boolean first = true;
             for (InheritanceDeclaration _interface : this.inheritance) {
                 if (!first) {
@@ -54,9 +64,10 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
                 _local.append(_interface);
                 first = false;
             }
+            _local.append(" ");
         }
 
-        _local.append(" {\n");
+        _local.append("{\n");
         for (ClassElement _element : this.elements) {
             _local.append(_element).append("\n");
         }
