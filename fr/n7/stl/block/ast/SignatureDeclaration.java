@@ -31,4 +31,7 @@ public interface SignatureDeclaration extends Declaration {
 	 * @return List of parameters declarations.
 	 */
 	List<ParameterDeclaration> getParameters();
+	
+	/** Check Name, returned type and parameters type) */
+	boolean equalsTo(SignatureDeclaration _other);
 }

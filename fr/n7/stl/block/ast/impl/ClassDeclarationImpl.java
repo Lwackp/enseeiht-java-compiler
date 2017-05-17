@@ -427,6 +427,17 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return _heritedInterfaces;
     }
     
+	@Override
+	public List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd) {
+		List<InterfaceDeclaration> _res = new LinkedList<InterfaceDeclaration>();
+		for (InterfaceDeclaration i : this.getInterfaces()) {
+			if (i.contains(_fd.getSignature())) {
+				_res.add(i);
+			}
+		}
+		return _res;
+	}
+    
     @Override
     public List<InterfaceDeclaration> getInterfaces() {
     	List<InterfaceDeclaration> _interfaces;
@@ -508,4 +519,5 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         }
         return true;
     }
+
 }

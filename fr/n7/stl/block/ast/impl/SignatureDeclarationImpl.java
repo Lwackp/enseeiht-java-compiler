@@ -65,6 +65,11 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
         return new FunctionTypeImpl(this.type, _params);
     }
 
+    @Override
+    public boolean equalsTo(SignatureDeclaration _other) {
+    	return (this.getType().equalsTo(_other.getType()) && this.getName().equals(_other.getName()));
+    }
+    
     /**
      * Synthesized semantics attribute for the register used to compute the address of the variable.
      *

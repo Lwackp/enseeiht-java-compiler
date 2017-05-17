@@ -236,4 +236,14 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         }
         return _return;
     }
+
+	@Override
+	public boolean contains(SignatureDeclaration _function) {
+		for (SignatureDeclaration _sd : this.getFunctions()) {
+			if (_sd.equalsTo(_function)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

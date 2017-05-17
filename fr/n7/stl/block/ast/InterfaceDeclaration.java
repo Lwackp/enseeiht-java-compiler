@@ -48,4 +48,6 @@ public interface InterfaceDeclaration extends Declaration, Labellable {
 	List<SignatureDeclaration> getFunctions();
 
 	boolean isImplementedBy(List<ClassElement> _elements);
+
+	boolean contains(SignatureDeclaration function);
 }
