@@ -1,4 +1,0 @@
-test_constant_bad {
-   const int c = 0;
-   c = 2;
-}

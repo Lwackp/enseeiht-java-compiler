@@ -1,4 +1,0 @@
-test_print_bad {
-   < int, int > c = {1,2};
-   print(c);
-}
