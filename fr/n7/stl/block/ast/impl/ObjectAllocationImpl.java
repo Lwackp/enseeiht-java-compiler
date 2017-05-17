@@ -15,9 +15,11 @@ import java.util.List;
 public class ObjectAllocationImpl implements ObjectAllocation {
 
     private Type type;
+    private List<Type> parameters;
 
     public ObjectAllocationImpl(Type _type) {
         this.type = _type;
+        this.parameters = new LinkedList<>();
     }
 
     /* (non-Javadoc)
@@ -75,18 +77,31 @@ public class ObjectAllocationImpl implements ObjectAllocation {
             _ctype = ((GenericType) this.type).getClassType();
         }
         //TODO: Constructor matching parameters
-        List<FunctionDeclaration> _constructors = _ctype.getConstructor();
+        List<FunctionDeclaration> _constructors = _ctype.getConstructors();
+        FunctionDeclaration _constructor;
+        _constructor = _ctype.getConstructor(this.parameters);
 
-        if (_constructors.isEmpty()) {
+        if (_constructor == null || _constructors.isEmpty()) {
             //Initialize Object with default constructor == virtual method table linking
             _fragment.add(_factory.createLoad(_ctype.getDeclaration().getRegister(),
                     _ctype.getDeclaration().getOffset(), 1));
             _fragment.add(_factory.createLoad(Register.ST, -2, 1));
             _fragment.add(_factory.createStoreI(1));
         } else {
-            _fragment.add(_factory.createCall(_constructors.get(0).getLabel(), Register.LB));
+
+            System.out.println("============================\n");
+            System.out.println(String.valueOf(_constructor));
+            System.out.println("============================\n");
+            _fragment.add(_factory.createCall(_constructor.getLabel(), Register.LB));
+
+
+            //_fragment.add(_factory.createCall(_constructors.get(0).getLabel(), Register.LB));
         }
 
         return _fragment;
+    }
+
+    public void setParameters(List<Type> _parameters) {
+        this.parameters = _parameters;
     }
 }

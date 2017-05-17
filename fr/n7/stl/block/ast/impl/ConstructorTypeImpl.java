@@ -4,12 +4,15 @@ import fr.n7.stl.block.ast.ClassDeclaration;
 import fr.n7.stl.block.ast.ConstructorType;
 import fr.n7.stl.block.ast.Type;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static fr.n7.stl.block.ast.AtomicType.ErrorType;
 
 /**
  * Created by thibault on 09/05/17.
  */
-public class ConstructorTypeImpl implements ConstructorType {
+public class ConstructorTypeImpl extends FunctionTypeImpl implements ConstructorType {
     private ClassDeclaration classDeclaration;
 
     public ConstructorTypeImpl() {}
@@ -17,6 +20,16 @@ public class ConstructorTypeImpl implements ConstructorType {
     public ConstructorTypeImpl(ClassDeclaration _classDeclaration) {
         this();
         this.classDeclaration = _classDeclaration;
+        this.parameters = new LinkedList<>();
+    }
+
+    public ConstructorTypeImpl(ClassDeclaration _classDeclaration, Iterable<Type> _parameters) {
+        this();
+        this.classDeclaration = _classDeclaration;
+        this.parameters = new LinkedList<>();
+        for (Type _type : _parameters) {
+            this.parameters.add(_type);
+        }
     }
 
     /**
@@ -88,5 +101,9 @@ public class ConstructorTypeImpl implements ConstructorType {
     @Override
     public void setClassDeclaration(ClassDeclaration _classDeclaration) {
         this.classDeclaration = _classDeclaration;
+    }
+
+    public List<Type> getParameters() {
+        return this.parameters;
     }
 }

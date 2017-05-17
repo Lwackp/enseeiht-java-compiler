@@ -1,8 +1,12 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.function.Function;
 
 /**
  * Created by thibault on 05/05/17.
@@ -86,7 +90,7 @@ public class ClassTypeImpl implements ClassType {
     }
 
     @Override
-    public List<FunctionDeclaration> getConstructor() {
+    public List<FunctionDeclaration> getConstructors() {
         List<FunctionDeclaration> _constructors = new LinkedList<>();
         for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
@@ -96,6 +100,52 @@ public class ClassTypeImpl implements ClassType {
             }
         }
         return _constructors;
+    }
+
+    @Override
+    public FunctionDeclaration getConstructor(List<Type> _parameters) {
+        List<FunctionDeclaration> _constructors = new LinkedList<>();
+
+        /*
+        for (FunctionDeclaration _const : this.getConstructors()) {
+            if (_const instanceof ConstructorType) {
+                _constructors.add((ConstructorTypeImpl) _const);
+            }
+        }
+        */
+        System.out.println("==========================\nConstructors:\n");
+        for (ClassElement _element : this.declaration.getElements()) {
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                if ((_element.getDeclaration()).getValueType() instanceof ConstructorType) {
+                    _constructors.add((FunctionDeclaration) _element.getDeclaration());
+                    System.out.println(String.valueOf((FunctionDeclaration) _element.getDeclaration()));
+                }
+            }
+        }
+        System.out.println("==========================\n");
+
+        int _indParam;
+        Type _t;
+        System.out.println("==========================\nConstructor checked:\n");
+        for (FunctionDeclaration _currentConst : _constructors) {
+            String.valueOf(_currentConst);
+            if (_currentConst.getParameters().size() != _parameters.size()) {
+                continue;
+            }
+
+            _indParam = 0;
+            for (ParameterDeclaration _p : _currentConst.getParameters()) {
+                _t = _p.getType();
+                if (!_t.compatibleWith(_parameters.get(_indParam))) {
+                    break;
+                }
+                if (_indParam == _parameters.size() - 1) {
+                    return (FunctionDeclaration) _currentConst;
+                }
+            }
+            System.out.println("==========================\n");
+        }
+        return null;
     }
 
     @Override

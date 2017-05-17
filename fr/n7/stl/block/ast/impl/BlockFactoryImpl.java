@@ -647,7 +647,7 @@ public class BlockFactoryImpl implements BlockFactory {
 	 */
 	@Override
 	public Expression createFunctionAccess(Expression _variable, List<Expression> _parameters) {
-		return new FunctionCallImpl(_variable, _parameters);
+		return new FunctionCallImpl(_variable, (List<Expression>) _parameters);
 	}
 
 	/**

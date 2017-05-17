@@ -1,6 +1,7 @@
 package fr.n7.stl.block.ast.impl;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.n7.stl.block.ast.*;
@@ -17,14 +18,19 @@ public class FunctionCallImpl implements FunctionCall {
 
 	private Expression function;
 	private List<Expression> parameters;
+	private List<Type> paramTypes = new LinkedList<>();
 
 	public FunctionCallImpl(Expression _function) {
 		this.function = _function;
+		this.parameters = new LinkedList<>();
 	}
 
 	public FunctionCallImpl(Expression _function, List<Expression> _parameters) {
-		this(_function);
+		this.function = _function;
 		this.parameters = _parameters;
+        for (Expression e : parameters) {
+            paramTypes.add(e.getType());
+        }
 	}
 
 	@Override
@@ -49,6 +55,7 @@ public class FunctionCallImpl implements FunctionCall {
 	@Override
 	public void add(Expression _parameter) {
 		this.parameters.add(_parameter);
+		this.paramTypes.add(_parameter.getType());
 	}
 
 	/* (non-Javadoc)
@@ -65,6 +72,7 @@ public class FunctionCallImpl implements FunctionCall {
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment _fragment = _factory.createFragment();
+        List<Type> _paramAux;
 
 		if (this.parameters != null) {
 			for (Expression _parameter : this.parameters) {
@@ -73,10 +81,25 @@ public class FunctionCallImpl implements FunctionCall {
 		}
 
 		//TODO: A function MUST know its parameters
+
+        _paramAux = new LinkedList<>();
+        for (Expression p : parameters)
+        {
+            _paramAux.add(p.getType());
+            System.out.println(String.valueOf(p.getType()));
+        }
+        if (this.function instanceof ObjectAllocation) {
+            ((ObjectAllocationImpl) this.function).setParameters(_paramAux);
+        }
+
 		//TODO: Function's code puts function's address in ST
 		_fragment.append(this.function.getCode(_factory));
 
 		return _fragment;
 	}
+
+	public List<Type> getParamTypes() {
+        return this.paramTypes;
+    }
 
 }

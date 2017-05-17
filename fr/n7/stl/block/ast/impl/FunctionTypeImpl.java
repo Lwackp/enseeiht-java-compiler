@@ -14,10 +14,8 @@ import fr.n7.stl.block.ast.Type;
  */
 public class FunctionTypeImpl implements FunctionType {
 
-
-
 	private Type result;
-	private List<Type> parameters;
+	protected List<Type> parameters;
 
 	public FunctionTypeImpl(Type _result, Iterable<Type> _parameters) {
 		this.result = _result;
@@ -26,6 +24,11 @@ public class FunctionTypeImpl implements FunctionType {
 			this.parameters.add(_type);
 		}
 	}
+
+	/*
+	NOT to be used - useful only in ConstructorTypeImpl class
+	 */
+	public FunctionTypeImpl() {}
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.Type#equalsTo(fr.n7.stl.block.ast.Type)
