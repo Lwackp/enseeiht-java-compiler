@@ -97,6 +97,9 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
 
     @Override
     public List<ParameterDeclaration> getParameters() {
+        if (this.parameters == null) {
+            return new LinkedList<>();
+        }
         return this.parameters;
     }
 

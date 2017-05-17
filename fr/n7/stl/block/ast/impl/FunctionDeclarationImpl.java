@@ -81,7 +81,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
      */
     @Override
     public int getOffset() {
-        return this.signature.getOffset();
+        return this.offset;
     }
 
     @Override
@@ -99,10 +99,10 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
             _paramssize += this.getValueType().length();
         }
 
-        //List<ParameterDeclaration> reversedParameters = new LinkedList<>(this.getParameters());
-        //Collections.reverse(reversedParameters);
+        List<ParameterDeclaration> reversedParameters = new LinkedList<>(this.getParameters());
+        Collections.reverse(reversedParameters);
 
-        for (ParameterDeclaration _parameter : this.getParameters()) {
+        for (ParameterDeclaration _parameter : reversedParameters) {
             _paramssize += _parameter.allocateMemory(Register.LB, -1*_paramssize);
         }
 

@@ -21,7 +21,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     private ClassThisUse thisElement = new ClassThisUseImpl();
     private String label;
 
-    private Type classType;
+    private ClassType classType;
 
     private Register register;
     private int offset;
@@ -55,50 +55,50 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      * 			private attributes
      */
     private LinkedList<ClassElement> sortElements(List<ClassElement> lce) {
-    	LinkedList<ClassElement> res = new LinkedList<>();
-    	LinkedList<ClassElement> publicmethods = new LinkedList<>();
-    	LinkedList<ClassElement> publicattributes = new LinkedList<>();
-    	LinkedList<ClassElement> protectedmethods = new LinkedList<>();
-    	LinkedList<ClassElement> protectedattributes = new LinkedList<>();
-    	LinkedList<ClassElement> privatemethods = new LinkedList<>();
-    	LinkedList<ClassElement> privateattributes = new LinkedList<>();
+        LinkedList<ClassElement> res = new LinkedList<>();
+        LinkedList<ClassElement> publicmethods = new LinkedList<>();
+        LinkedList<ClassElement> publicattributes = new LinkedList<>();
+        LinkedList<ClassElement> protectedmethods = new LinkedList<>();
+        LinkedList<ClassElement> protectedattributes = new LinkedList<>();
+        LinkedList<ClassElement> privatemethods = new LinkedList<>();
+        LinkedList<ClassElement> privateattributes = new LinkedList<>();
 
-    	for (ClassElement ce : lce) {
-    		switch (ce.getAccessModifier()) {
-			case Public:
-				if (ce instanceof VariableDeclaration) {
-					publicattributes.add(ce);
-				} else {
-					publicmethods.add(ce);
-				}
-				break;
-			case Protected:
-				if (ce instanceof VariableDeclaration) {
-					protectedattributes.add(ce);
-				} else {
-					protectedmethods.add(ce);
-				}
-				break;
-			case Private:
-				if (ce instanceof VariableDeclaration) {
-					privateattributes.add(ce);
-				} else {
-					privatemethods.add(ce);
-				}
-				break;
-			default:
-				throw new RuntimeException("Modifier " + ce.getAccessModifier() + " is not defined.");
-			}
-    	}
-    	res.addAll(publicmethods);
-    	res.addAll(publicattributes);
-    	res.addAll(protectedmethods);
-    	res.addAll(protectedattributes);
-    	res.addAll(privatemethods);
-    	res.addAll(privateattributes);
-    	return res;
+        for (ClassElement ce : lce) {
+            switch (ce.getAccessModifier()) {
+                case Public:
+                    if (ce instanceof VariableDeclaration) {
+                        publicattributes.add(ce);
+                    } else {
+                        publicmethods.add(ce);
+                    }
+                    break;
+                case Protected:
+                    if (ce instanceof VariableDeclaration) {
+                        protectedattributes.add(ce);
+                    } else {
+                        protectedmethods.add(ce);
+                    }
+                    break;
+                case Private:
+                    if (ce instanceof VariableDeclaration) {
+                        privateattributes.add(ce);
+                    } else {
+                        privatemethods.add(ce);
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("Modifier " + ce.getAccessModifier() + " is not defined.");
+            }
+        }
+        res.addAll(publicmethods);
+        res.addAll(publicattributes);
+        res.addAll(protectedmethods);
+        res.addAll(protectedattributes);
+        res.addAll(privatemethods);
+        res.addAll(privateattributes);
+        return res;
     }
-    
+
     /**
      * Provide the identifier (i.e. name) given to the declaration.
      *
@@ -219,99 +219,99 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public List<ClassElement> getElements() {
-    	LinkedList<ClassElement> res = new LinkedList<>();
-    	// Récupration des éléments hérités
-    	if (this.inheritance != null) {
-    		res.addAll(this.inheritance.getDeclaration().getHeritableElements());
-    	}
-    	// Implement new interfaces
-    	for (InterfaceDeclaration i : this.getNewInterfaces()) {
-    		res.addAll(i.getElements());
-    	}
-    	
-    	// Ajout des éléments propre à la classe. Override si nécessaire
-    	for (ClassElement ce : this.elements) {
-    		List<Integer> _indices = indicesOf(res, ce);
-    		if (_indices.isEmpty()) {
-    			// the element doesn't exist, add it at the end
-    			res.add(ce);
-    		} else {
-    			// if the element already exists, override it. Many times if it implements differents interfaces
-    			for (int i : _indices) {
-    				res.set(i, ce);
-    			}
-    		}
-    	}
+        LinkedList<ClassElement> res = new LinkedList<>();
+        // Récupration des éléments hérités
+        if (this.inheritance != null) {
+            res.addAll(this.inheritance.getDeclaration().getHeritableElements());
+        }
+        // Implement new interfaces
+        for (InterfaceDeclaration i : this.getNewInterfaces()) {
+            res.addAll(i.getElements());
+        }
 
-    	return res;
-	}
-    
+        // Ajout des éléments propre à la classe. Override si nécessaire
+        for (ClassElement ce : this.elements) {
+            List<Integer> _indices = indicesOf(res, ce);
+            if (_indices.isEmpty()) {
+                // the element doesn't exist, add it at the end
+                res.add(ce);
+            } else {
+                // if the element already exists, override it. Many times if it implements differents interfaces
+                for (int i : _indices) {
+                    res.set(i, ce);
+                }
+            }
+        }
+
+        return res;
+    }
+
     /* Returns -1 if not found */
     private List<Integer> indicesOf(List<ClassElement> l, ClassElement ce) {
-    	List<Integer> _res = new LinkedList<Integer>();
-    	for (int i = 0; i<l.size() ; i++) {
-    		if (conflictualDeclaration(ce,l.get(i))) {
-    			_res.add(i);
-    		}
-    	}
-    	return _res;
+        List<Integer> _res = new LinkedList<Integer>();
+        for (int i = 0; i<l.size() ; i++) {
+            if (conflictualDeclaration(ce,l.get(i))) {
+                _res.add(i);
+            }
+        }
+        return _res;
     }
-    
+
     private static boolean conflictualDeclaration(ClassElement ce1, ClassElement ce2) {
-    	if (ce1.getDeclaration().getClass().equals(ce2.getDeclaration().getClass())) {
-    		// Meme type de déclaration (variable, const, fonction, ...)
-    		if (ce1.getDeclaration().getName().equals(ce2.getDeclaration().getName())) {
-    			// Noms identiques
-    			if (ce1.getDeclaration().getType().equalsTo(ce2.getDeclaration().getType())) {
-    				// Type identique
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+        if (ce1.getDeclaration().getClass().equals(ce2.getDeclaration().getClass())) {
+            // Meme type de déclaration (variable, const, fonction, ...)
+            if (ce1.getDeclaration().getName().equals(ce2.getDeclaration().getName())) {
+                // Noms identiques
+                if (ce1.getDeclaration().getType().equalsTo(ce2.getDeclaration().getType())) {
+                    // Type identique
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-    
-	@Override
-	public List<ClassElement> getPrivateElements() {
-		LinkedList<ClassElement> resu = new LinkedList<>();
-		for (ClassElement e : this.getElements()) {
-			if (e.getAccessModifier() == AccessModifier.Private) {
-				resu.add(e);
-			}
-		}
-		return resu;
-	}
-    
-	@Override
-	public List<ClassElement> getProtectedElements() {
-		LinkedList<ClassElement> resu = new LinkedList<>();
-		for (ClassElement e : this.getElements()) {
-			if (e.getAccessModifier() == AccessModifier.Protected) {
-				resu.add(e);
-			}
-		}
-		return resu;
-	}
-    
-	@Override
-	public List<ClassElement> getPublicElements() {
-		LinkedList<ClassElement> resu = new LinkedList<>();
-		for (ClassElement e : this.getElements()) {
-			if (e.getAccessModifier() == AccessModifier.Public) {
-				resu.add(e);
-			}
-		}
-		return resu;
-	}
-	
-	@Override
-	public List<ClassElement> getHeritableElements() {
-		LinkedList<ClassElement> resu = new LinkedList<>();
-		resu.addAll(this.getPublicElements());
-		resu.addAll(this.getProtectedElements());
-		return resu;
-	}
-	/**
+
+    @Override
+    public List<ClassElement> getPrivateElements() {
+        LinkedList<ClassElement> resu = new LinkedList<>();
+        for (ClassElement e : this.getElements()) {
+            if (e.getAccessModifier() == AccessModifier.Private) {
+                resu.add(e);
+            }
+        }
+        return resu;
+    }
+
+    @Override
+    public List<ClassElement> getProtectedElements() {
+        LinkedList<ClassElement> resu = new LinkedList<>();
+        for (ClassElement e : this.getElements()) {
+            if (e.getAccessModifier() == AccessModifier.Protected) {
+                resu.add(e);
+            }
+        }
+        return resu;
+    }
+
+    @Override
+    public List<ClassElement> getPublicElements() {
+        LinkedList<ClassElement> resu = new LinkedList<>();
+        for (ClassElement e : this.getElements()) {
+            if (e.getAccessModifier() == AccessModifier.Public) {
+                resu.add(e);
+            }
+        }
+        return resu;
+    }
+
+    @Override
+    public List<ClassElement> getHeritableElements() {
+        LinkedList<ClassElement> resu = new LinkedList<>();
+        resu.addAll(this.getPublicElements());
+        resu.addAll(this.getProtectedElements());
+        return resu;
+    }
+    /**
      * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.
      * Synthesized Semantics attribute that compute the size of the allocated memory.
      *
@@ -329,15 +329,20 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             _staticLength += _element.allocateMemory(Register.LB, _staticLength);
         }
 
+        for (FunctionDeclaration _element : this.classType.getConstructors()) {
+            ((ConstructorType)(_element.getValueType())).setClassDeclaration(this);
+             _element.allocateMemory(Register.LB, 0);
+        }
+
+        int _methodLength = 0;
+        for (FunctionDeclaration _element : this.getFunctions()) {
+            _methodLength += _element.allocateMemory(Register.LB, _methodLength);
+            _methodLength += 1;
+        }
+
         //1 is Virtual Method table size
         int _length = 1;
-        for (ClassElement _element : this.getNonStaticElements()) {
-            if (_element.getDeclaration() instanceof FunctionDeclaration) {
-                if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {
-                    ((ConstructorType)((FunctionDeclaration)(_element.getDeclaration())).getValueType())
-                            .setClassDeclaration(this);
-                }
-            }
+        for (VariableDeclaration _element : this.getAttributes()) {
             _length += _element.allocateMemory(Register.LB, _length);
         }
 
@@ -411,48 +416,48 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     }
 
     private List<InterfaceDeclaration> getNewInterfaces() {
-    	List<InterfaceDeclaration> _heritedInterfaces;
-    	List<InterfaceDeclaration> _newInterfaces = new LinkedList<InterfaceDeclaration>();
-    	if (this.inheritance == null) {
-    		_heritedInterfaces = new LinkedList<>();
-    	} else {
-    		_heritedInterfaces = this.inheritance.getDeclaration().getInterfaces();
-    	}
-    	
-    	for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
-    		if (_heritedInterfaces.contains(_interface.getDeclaration())) {
-    			_newInterfaces.add(_interface.getDeclaration());
-    		}
-    	}
+        List<InterfaceDeclaration> _heritedInterfaces;
+        List<InterfaceDeclaration> _newInterfaces = new LinkedList<InterfaceDeclaration>();
+        if (this.inheritance == null) {
+            _heritedInterfaces = new LinkedList<>();
+        } else {
+            _heritedInterfaces = this.inheritance.getDeclaration().getInterfaces();
+        }
+
+        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
+            if (_heritedInterfaces.contains(_interface.getDeclaration())) {
+                _newInterfaces.add(_interface.getDeclaration());
+            }
+        }
         return _heritedInterfaces;
     }
-    
-	@Override
-	public List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd) {
-		List<InterfaceDeclaration> _res = new LinkedList<InterfaceDeclaration>();
-		for (InterfaceDeclaration i : this.getInterfaces()) {
-			if (i.contains(_fd.getSignature())) {
-				_res.add(i);
-			}
-		}
-		return _res;
-	}
-    
+
+    @Override
+    public List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd) {
+        List<InterfaceDeclaration> _res = new LinkedList<InterfaceDeclaration>();
+        for (InterfaceDeclaration i : this.getInterfaces()) {
+            if (i.contains(_fd.getSignature())) {
+                _res.add(i);
+            }
+        }
+        return _res;
+    }
+
     @Override
     public List<InterfaceDeclaration> getInterfaces() {
-    	List<InterfaceDeclaration> _interfaces;
-    	if (this.inheritance == null) {
-    		_interfaces = new LinkedList<>();
-    	} else {
-    		_interfaces = this.inheritance.getDeclaration().getInterfaces();
-    	}
-    	
-    	for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
-    		if (!_interfaces.contains(_interface.getDeclaration())) {
-    			_interfaces.add(_interface.getDeclaration());
-    		}
-    	}
-        
+        List<InterfaceDeclaration> _interfaces;
+        if (this.inheritance == null) {
+            _interfaces = new LinkedList<>();
+        } else {
+            _interfaces = this.inheritance.getDeclaration().getInterfaces();
+        }
+
+        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
+            if (!_interfaces.contains(_interface.getDeclaration())) {
+                _interfaces.add(_interface.getDeclaration());
+            }
+        }
+
         return _interfaces;
     }
 
@@ -472,7 +477,8 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         List<VariableDeclaration> _attributes = new LinkedList<>();
 
         for (ClassElement _element : this.getElements()) {
-            if (_element.getDeclaration() instanceof VariableDeclaration) {
+            if (_element.getDeclaration() instanceof VariableDeclaration
+                    && !_element.isStatic()) {
                 _attributes.add((VariableDeclaration) _element.getDeclaration());
             }
         }

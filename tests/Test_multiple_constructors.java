@@ -54,7 +54,7 @@ public class Test_multiple_constructors {
         println _triplet1.getFirst();
         println _triplet1.getSecond();
         println _triplet1.getThird();
-        Triplet _triplet0 = new Triplet(); 
+        Triplet _triplet0 = new Triplet();
         println _triplet0.getFirst();
         println _triplet0.getSecond();
         println _triplet0.getThird();

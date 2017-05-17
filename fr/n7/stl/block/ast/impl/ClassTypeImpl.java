@@ -127,20 +127,10 @@ public class ClassTypeImpl implements ClassType {
 
         int _indParam;
         Type _t;
+        FunctionType _wConst = new FunctionTypeImpl(new ConstructorTypeImpl(this.declaration), _parameters);
         for (FunctionDeclaration _currentConst : _constructors) {
-            if (_currentConst.getParameters().size() != _parameters.size()) {
-                continue;
-            }
-
-            _indParam = 0;
-            for (ParameterDeclaration _p : _currentConst.getParameters()) {
-                _t = _p.getType();
-                if (!_t.compatibleWith(_parameters.get(_indParam))) {
-                    break;
-                }
-                if (_indParam == _parameters.size() - 1) {
-                    return (FunctionDeclaration) _currentConst;
-                }
+            if (_currentConst.getType().equalsTo(_wConst)) {
+                return _currentConst;
             }
         }
         return null;

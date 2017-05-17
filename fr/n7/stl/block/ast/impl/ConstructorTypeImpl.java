@@ -32,28 +32,17 @@ public class ConstructorTypeImpl extends FunctionTypeImpl implements Constructor
         }
     }
 
-    /**
-     * Check if two types are equals.
-     * This must be an equivalence relation.
-     *
-     * @param _other The other type (with respect to self).
-     * @return True if the type is equals with the type _other, False otherwise.
-     */
+    /* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.Type#equalsTo(fr.n7.stl.block.ast.Type)
+	 */
     @Override
     public boolean equalsTo(Type _other) {
-        return this == _other;
+        return _other instanceof ConstructorType;
     }
 
-    /**
-     * Check if two types are compatibles. A subtype is compatibleWith a supertype,
-     * but a supertype is not compatible with a subtype.
-     * This must be a partial order relation.
-     * Check that the self type is compatible with the _other type, i.e. all values of self can be
-     * used as a value of _other.
-     *
-     * @param _other The other type
-     * @return True if the types are compatibles, False otherwise.
-     */
+    /* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.Type#compatibleWith(fr.n7.stl.block.ast.Type)
+	 */
     @Override
     public boolean compatibleWith(Type _other) {
         return this.equalsTo(_other);

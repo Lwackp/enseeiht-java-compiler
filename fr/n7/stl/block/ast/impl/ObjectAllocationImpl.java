@@ -76,7 +76,7 @@ public class ObjectAllocationImpl implements ObjectAllocation {
         } else if (this.type instanceof GenericType) {
             _ctype = ((GenericType) this.type).getClassType();
         }
-        //TODO: Constructor matching parameters
+
         List<FunctionDeclaration> _constructors = _ctype.getConstructors();
         FunctionDeclaration _constructor;
         _constructor = _ctype.getConstructor(this.parameters);

@@ -74,6 +74,8 @@ public class FieldAccessImpl implements Expression {
 
 			Declaration _declaration = ((ClassElement) _field).getDeclaration();
 			if (_declaration instanceof FunctionDeclaration) {
+				//Record adress is a parameter for the function, so need to be loaded twice
+				_fragment.append(this.record.getCode(_factory));
 				//Load virtual method table address
 				_fragment.add(_factory.createLoadI(1));
 				//Load method's address from virtual method table (may have problem on functions coming from interface)

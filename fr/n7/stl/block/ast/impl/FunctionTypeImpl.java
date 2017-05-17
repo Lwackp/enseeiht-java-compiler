@@ -40,8 +40,8 @@ public class FunctionTypeImpl implements FunctionType {
 			boolean _res = (this.result.equalsTo(_otherType.result))
 						&& (this.parameters.size() == _otherType.parameters.size());
 
-			for (int i = 0; i < this.parameters.size(); i++) {
-				_res &= this.parameters.get(i).equalsTo(_otherType.parameters.get(i));
+			for (int i = 0; i < this.parameters.size() && _res; i++) {
+				_res = this.parameters.get(i).equalsTo(_otherType.parameters.get(i));
 			}
 
 			return _res;
