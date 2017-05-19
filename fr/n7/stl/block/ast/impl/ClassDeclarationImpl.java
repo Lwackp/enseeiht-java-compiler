@@ -2,11 +2,11 @@ package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Thibault Meunier on 02/05/17.
@@ -334,10 +334,26 @@ public class ClassDeclarationImpl implements ClassDeclaration {
              _element.allocateMemory(Register.LB, 0);
         }
 
+        Map<FunctionDeclaration, Integer> _functions = new HashMap<>();
+        InterfaceDeclaration _currentInterface = null;
         int _methodLength = 0;
         for (FunctionDeclaration _element : this.getFunctions()) {
             _methodLength += _element.allocateMemory(Register.LB, _methodLength);
-            _methodLength += 1;
+            if (!_functions.containsKey(_element)) {
+                _functions.put(_element, 0);
+            }
+            int _interfaceNumber = _functions.get(_element);
+            _functions.put(_element, _interfaceNumber+1);
+            List<InterfaceDeclaration> _implementedInterfaces = this.getImplementedInterfaces(_element);
+            if (!_implementedInterfaces.isEmpty()) {
+                InterfaceDeclaration _interface = _implementedInterfaces.get(_interfaceNumber);
+                if (_interface != _currentInterface) {
+                    _currentInterface = _interface;
+                    _methodLength += 1;
+                }
+            } else {
+                _methodLength += 1;
+            }
         }
 
         //1 is Virtual Method table size
@@ -390,7 +406,6 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return _staticElements;
     }
 
-    //TODO: separation between function, attributes, static, inheritance, ...
     public List<ClassElement> getNonStaticElements() {
         List<ClassElement> _nonStaticElements = new LinkedList<>();
         for (ClassElement _element : this.getElements()) {
@@ -434,7 +449,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
 
     @Override
     public List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd) {
-        List<InterfaceDeclaration> _res = new LinkedList<InterfaceDeclaration>();
+        List<InterfaceDeclaration> _res = new ArrayList<>();
         for (InterfaceDeclaration i : this.getInterfaces()) {
             if (i.contains(_fd.getSignature())) {
                 _res.add(i);
@@ -467,7 +482,11 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         for (ClassElement _element : this.getStaticElements()) {
             _length += _element.getType().length();
         }
-        _length += this.getFunctions().size();
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            if (this.getImplementedInterfaces(_function).isEmpty()) {
+                _length += 1;
+            }
+        }
         _length += this.getInterfaces().size();
         return _length;
     }
@@ -493,14 +512,46 @@ public class ClassDeclarationImpl implements ClassDeclaration {
                 _virtualMethodTable.append(_element.getCode(_factory));
             }
         }
+
+        Map<FunctionDeclaration, Integer> _functions = new HashMap<>();
+        InterfaceDeclaration _currentInterface = null;
+        int _offsetInterface = 0;
         for (FunctionDeclaration _function : this.getFunctions()) {
-            _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
+            //If function implements an interface, put it in the right virtual method table
+            if (!_functions.containsKey(_function)) {
+                _functions.put(_function, 0);
+            }
+            int _interfaceNumber = _functions.get(_function);
+            _functions.put(_function, _interfaceNumber+1);
+            List<InterfaceDeclaration> _implementedInterfaces = this.getImplementedInterfaces(_function);
+            if (!_implementedInterfaces.isEmpty()) {
+                InterfaceDeclaration _interface = _implementedInterfaces.get(_interfaceNumber);
+                if (_interface != _currentInterface) {
+                    _currentInterface = _interface;
+                    _offsetInterface = 0;
+                    int _length = _interface.getFunctions().size();
+                    _virtualMethodTable.add(_factory.createLoadL(_length));
+                    _virtualMethodTable.add(Library.MAlloc);
+                } else {
+                    _offsetInterface++;
+                }
+                //Load function address
+                _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
+                //Load Virtual Method Table Address
+                _virtualMethodTable.add(_factory.createLoad(Register.ST, -2, 1));
+                //Get address where function should be stored
+                _virtualMethodTable.add(_factory.createLoadL(_offsetInterface));
+                _virtualMethodTable.add(Library.IAdd);
+                //Store function address
+                _virtualMethodTable.add(_factory.createStoreI(1));
+            } else {
+                _currentInterface = null;
+                _offsetInterface = 0;
+                //Load function address
+                _virtualMethodTable.add(_factory.createLoadA(_function.getLabel()));
+            }
         }
 
-        //getImplementedInterface(FunctionDeclaration)
-        for (InterfaceDeclaration _interface : this.getInterfaces()) {
-            //_virtualMethodTable.add();
-        }
         _virtualMethodTable.add(_factory.createLoad(Register.LB, -1, 1));
         _virtualMethodTable.add(_factory.createStoreI(this.getVirtualMethodTableLength()));
         _virtualMethodTable.add(_factory.createReturn(0, 0));
@@ -526,6 +577,35 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int getInterfaceOffset(InterfaceDeclaration _interface) {
+        int _offset = 0;
+
+        Map<FunctionDeclaration, Integer> _functions = new HashMap<>();
+        InterfaceDeclaration _currentInterface = null;
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            if (!_functions.containsKey(_function)) {
+                _functions.put(_function, 0);
+            }
+            int _interfaceNumber = _functions.get(_function);
+            _functions.put(_function, _interfaceNumber+1);
+            List<InterfaceDeclaration> _interfaces = this.getImplementedInterfaces(_function);
+            if (!_interfaces.isEmpty()) {
+                InterfaceDeclaration _implementedInterface = _interfaces.get(_interfaceNumber);
+                if (_implementedInterface == _interface) {
+                    return _offset;
+                } else if (_implementedInterface != _currentInterface) {
+                    _currentInterface = _implementedInterface;
+                    _offset++;
+                }
+            } else {
+                _currentInterface = null;
+                _offset++;
+            }
+        }
+        return _offset;
     }
 
 }

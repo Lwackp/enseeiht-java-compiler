@@ -1,6 +1,7 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.ClassType;
+import fr.n7.stl.block.ast.InterfaceDeclaration;
 import fr.n7.stl.block.ast.InterfaceType;
 import fr.n7.stl.block.ast.Type;
 
@@ -9,10 +10,10 @@ import fr.n7.stl.block.ast.Type;
  */
 public class InterfaceTypeImpl implements InterfaceType {
 
-    private String name;
+    private InterfaceDeclaration declaration;
 
-    public InterfaceTypeImpl(String name) {
-        this.name = name;
+    public InterfaceTypeImpl(InterfaceDeclaration _declaration) {
+        this.declaration = _declaration;
     }
 
     /* (non-Javadoc)
@@ -20,7 +21,7 @@ public class InterfaceTypeImpl implements InterfaceType {
 	 */
     @Override
     public String toString() {
-        return this.name;
+        return this.declaration.getName();
     }
 
     /**
@@ -32,7 +33,7 @@ public class InterfaceTypeImpl implements InterfaceType {
      */
     @Override
     public boolean equalsTo(Type _other) {
-        return false;
+        return _other instanceof InterfaceType && _other == this;
     }
 
     /**
@@ -70,6 +71,11 @@ public class InterfaceTypeImpl implements InterfaceType {
      */
     @Override
     public int length() {
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public InterfaceDeclaration getDeclaration() {
+        return this.declaration;
     }
 }

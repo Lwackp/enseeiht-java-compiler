@@ -89,9 +89,9 @@ public class AssignmentImpl implements Expression, Instruction {
 	public Fragment getCode(TAMFactory _factory) {
 		Fragment _fragment = _factory.createFragment();
 
-		_fragment.append(value.getCode(_factory));
+		_fragment.append(this.value.getCode(_factory));
 		if (this.declaration == null) {
-			_fragment.append(assignable.getCode(_factory));
+			_fragment.append(this.assignable.getCode(_factory));
 			_fragment.add(_factory.createStoreI(this.value.getType().length()));
 		} else {
 			//Loading object address == this
@@ -106,6 +106,35 @@ public class AssignmentImpl implements Expression, Instruction {
 			}
 
 			_fragment.add(_factory.createStoreI(this.value.getType().length()));
+
+			System.err.println("-----------------------" + this.declaration.getType() + " - " + this.value.getType());
+			if (this.declaration.getType() instanceof InterfaceType) {
+				if (this.declaration instanceof ClassElement) {
+					_fragment.add(_factory.createLoad(Register.LB, -1, 1));
+					//Charge taille de ce qu'il y a avant
+					_fragment.add(_factory.createLoadL(this.declaration.getOffset()));
+					_fragment.add(Library.IAdd);
+				} else {
+					_fragment.add(_factory.createLoadA(this.declaration.getRegister(), this.declaration.getOffset()));
+				}
+				//Load Element Address
+				_fragment.add(_factory.createLoadI(1));
+				//Load current virtual method table address
+				_fragment.add(_factory.createLoadI(1));
+				//TODO: How do Interface to Interface assignment is managed?
+				if (this.value.getType() instanceof ClassType) {
+					_fragment.add(_factory.createLoadL(
+					((ClassType) this.value.getType()).getDeclaration()
+							.getInterfaceOffset(((InterfaceType) this.declaration.getType()).getDeclaration())
+					));
+				}
+				_fragment.add(Library.IAdd);
+				//Load Interface Virtual Method Table
+				_fragment.add(_factory.createLoadI(1));
+
+				_fragment.add(_factory.createLoad(Register.ST, -2, 1));
+				_fragment.add(_factory.createStoreI(1));
+			}
 		}
 
 		return _fragment;

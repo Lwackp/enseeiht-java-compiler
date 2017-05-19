@@ -71,4 +71,5 @@ public interface ClassDeclaration extends TypeDeclaration, Labellable {
      */
 	List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd);
 
+    int getInterfaceOffset(InterfaceDeclaration _interface);
 }

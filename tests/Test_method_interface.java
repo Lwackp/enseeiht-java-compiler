@@ -2,16 +2,25 @@ interface Animal {
     String bruit();
 }
 
-class Chien implements Animal {
+interface Toto {
+    String toto();
+}
+
+class Chien implements Toto, Animal {
     private String cri;
 
     public Chien(String _cri) {
         cri = _cri;
     }
 
+    public String toto() {
+        return "";
+    }
+
     public String bruit() {
         return "Le chien " + cri;
     }
+
 }
 
 class Chat implements Animal {

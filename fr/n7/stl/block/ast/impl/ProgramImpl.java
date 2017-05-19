@@ -74,7 +74,7 @@ public class ProgramImpl implements Program {
     public int allocateMemory(Register _register, int _offset) {
         int _length = _offset;
         for (InterfaceDeclaration _interface : this.interfaces) {
-            _length += _interface.allocateMemory(_register, _length);
+            _interface.allocateMemory(_register, _length);
         }
         for (ClassDeclaration _class : this.classes) {
             _length += _class.allocateMemory(_register, _length);

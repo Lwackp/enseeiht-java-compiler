@@ -93,7 +93,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public Type getType() {
-        return new InterfaceTypeImpl(this.name);
+        return new InterfaceTypeImpl(this);
     }
 
     /**
@@ -152,7 +152,10 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
         int _length = 0;
         for (ClassElement _element : this.elements) {
-            _length += _element.allocateMemory(Register.LB, _length);
+            _element.allocateMemory(Register.LB, _length);
+            if (!(_element.getDeclaration() instanceof SignatureDeclaration)) {
+                _length += 1;
+            }
         }
 
         return 1;
@@ -220,6 +223,17 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     }
 
     @Override
+    public List<ClassElement> getNonStaticElements() {
+        List<ClassElement> _nonStaticElements = new LinkedList<>();
+        for (ClassElement _element : this.getElements()) {
+            if (!_element.isStatic()) {
+                _nonStaticElements.add(_element);
+            }
+        }
+        return _nonStaticElements;
+    }
+
+    @Override
     public List<SignatureDeclaration> getFunctions() {
         List<SignatureDeclaration> _functions = new LinkedList<>();
         for (ClassElement _element : this.getElements()) {
@@ -257,4 +271,18 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 		}
 		return false;
 	}
+
+    @Override
+    public ClassElement getElement(String _name) {
+        for (ClassElement _element : this.getElements()) {
+            String _elementName = _element.getName();
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                _elementName = ((FunctionDeclaration) _element.getDeclaration()).getSignature().getName();
+            }
+            if (_elementName.equals(_name)) {
+                return _element;
+            }
+        }
+        return null;
+    }
 }

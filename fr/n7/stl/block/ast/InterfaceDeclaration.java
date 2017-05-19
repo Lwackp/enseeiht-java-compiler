@@ -45,9 +45,13 @@ public interface InterfaceDeclaration extends Declaration, Labellable {
 
 	List<ClassElement> getStaticElements();
 
-	List<SignatureDeclaration> getFunctions();
+    List<ClassElement> getNonStaticElements();
+
+    List<SignatureDeclaration> getFunctions();
 
 	boolean isImplementedBy(List<ClassElement> _elements);
 
 	boolean contains(SignatureDeclaration function);
+
+    ClassElement getElement(String _name);
 }

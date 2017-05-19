@@ -5,7 +5,6 @@ import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
-import sun.util.resources.cldr.de.CalendarData_de_LI;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,8 +48,8 @@ public class FieldAccessImpl implements Expression {
 		Declaration _declaration = this.getField();
 		if (_declaration instanceof ClassElement) {
 			Declaration _dec = ((ClassElement) _declaration).getDeclaration();
-			if (_dec instanceof FunctionDeclaration) {
-				return ((FunctionDeclaration) _dec).getValueType();
+			if (_dec instanceof FunctionDeclaration || _dec instanceof SignatureDeclaration) {
+				return _dec.getValueType();
 			}
 		}
 //		if (_declaration instanceof VariableDeclaration) {
@@ -73,7 +72,7 @@ public class FieldAccessImpl implements Expression {
 			_fragment.append(this.record.getCode(_factory));
 
 			Declaration _declaration = ((ClassElement) _field).getDeclaration();
-			if (_declaration instanceof FunctionDeclaration) {
+			if (_declaration instanceof FunctionDeclaration  || _declaration instanceof SignatureDeclaration) {
 				//Record adress is a parameter for the function, so need to be loaded twice
 				_fragment.append(this.record.getCode(_factory));
 				//Load virtual method table address
@@ -87,9 +86,6 @@ public class FieldAccessImpl implements Expression {
 				//Because CallI doesn't work, load the address twice
 				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
 				_fragment.add(_factory.createCallI());
-				FunctionDeclaration _functionDeclaration = (FunctionDeclaration) _declaration;
-//				//_fragment.add(_factory.createLoad(_functionDeclaration.));
-//				_fragment.add(_factory.createCall(((FunctionDeclaration) _declaration).getLabel(), Register.LB));
 			} else {
 				_fragment.add(_factory.createLoadL(_declaration.getOffset()));
 				_fragment.add(Library.IAdd);
@@ -108,10 +104,11 @@ public class FieldAccessImpl implements Expression {
 	protected Declaration getField() {
 		if (this.field == null) {
 			Type _recordType = this.record.getType();
+			//TODO: With matching parameters
 			if (_recordType instanceof ClassType) {
 				return ((ClassType) _recordType).getElement(this.name);
 			} else if (_recordType instanceof InterfaceType) {
-				return ((VariableUseImpl)this.record).getDeclaration();
+				return ((InterfaceType) _recordType).getDeclaration().getElement(this.name);
 			}
 		}
 		return field;

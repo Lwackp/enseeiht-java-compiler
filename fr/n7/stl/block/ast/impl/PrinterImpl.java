@@ -58,7 +58,7 @@ public class PrinterImpl implements Instruction {
 			_fragment.add(Library.IOut);
 		} else if (_parameterType.compatibleWith(AtomicType.StringType)) {
 			_fragment.add(Library.SOut);
-		} else if (_parameterType.compatibleWith(AtomicType.StringType)) {
+		} else if (_parameterType.compatibleWith(AtomicType.CharacterType)) {
 			_fragment.add(Library.COut);
 		}
 
