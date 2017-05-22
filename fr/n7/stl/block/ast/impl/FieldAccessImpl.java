@@ -6,6 +6,7 @@ import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -125,6 +126,10 @@ public class FieldAccessImpl implements Expression {
 				return ((ClassType) _recordType).getElement(this.name);
 			} else if (_recordType instanceof InterfaceType) {
 				return ((InterfaceType) _recordType).getDeclaration().getElement(this.name);
+			} else if (_recordType instanceof GenericType) {
+				return ((GenericType) _recordType).getClassType().getElement(this.name);
+			} else if (_recordType instanceof GenericParameterType) {
+				throw new RuntimeException("Call for method is not possible on Generic parameters");
 			}
 		}
 		return field;

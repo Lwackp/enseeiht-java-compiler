@@ -32,8 +32,8 @@ public class GenericTypeImpl implements GenericType {
 
     @Override
     public boolean compatibleWith(Type _other) {
-        return _other instanceof GenericTypeImpl && this.type.compatibleWith(((GenericTypeImpl)
-                _other).type);
+        return _other instanceof GenericTypeImpl
+                && this.type.compatibleWith(((GenericTypeImpl) _other).type);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class GenericTypeImpl implements GenericType {
 
     @Override
     public int length() {
-        return 0;
+        return type.length();
     }
 
     @Override

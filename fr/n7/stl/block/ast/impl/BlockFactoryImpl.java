@@ -1,6 +1,9 @@
 package fr.n7.stl.block.ast.impl;
 
 import fr.n7.stl.block.ast.*;
+import fr.n7.stl.tam.ast.Fragment;
+import fr.n7.stl.tam.ast.Register;
+import fr.n7.stl.tam.ast.TAMFactory;
 import fr.n7.stl.util.SymbolTable;
 
 import java.lang.instrument.IllegalClassFormatException;
@@ -348,7 +351,7 @@ public class BlockFactoryImpl implements BlockFactory {
 		if (_expression instanceof Instruction) {
 			return (Instruction) _expression;
 		}
-		return null;
+		return new VoidInstructionImpl(_expression);
 	}
 
 	/* (non-Javadoc)

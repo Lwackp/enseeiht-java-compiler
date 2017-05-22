@@ -127,6 +127,7 @@ public class ClassElementImpl implements ClassElement {
      */
     @Override
     public int allocateMemory(Register _register, int _offset) {
+//        System.out.println("------------------------------" + this.declaration.get);
         int _length = this.declaration.allocateMemory(_register, _offset);
         if (this.b_static) {
             return _length;

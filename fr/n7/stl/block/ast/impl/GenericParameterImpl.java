@@ -18,6 +18,9 @@ public class GenericParameterImpl implements GenericParameter {
     private String name;
     private List<GenericType> inheritance;
 
+    private Register register;
+    private int offset;
+
     GenericParameterImpl(String _identificateur, List<GenericType> _inheritance){
         this.name = _identificateur;
         this.inheritance = _inheritance;
@@ -31,22 +34,22 @@ public class GenericParameterImpl implements GenericParameter {
 
     @Override
     public Type getType() {
-        return new GenericParameterTypeImpl(this.name);
+        return new GenericParameterTypeImpl(this);
     }
 
     @Override
     public Type getValueType() {
-        return null;
+        return this.getType();
     }
 
     @Override
     public Register getRegister() {
-        return null;
+        return this.register;
     }
 
     @Override
     public int getOffset() {
-        return 0;
+        return this.offset;
     }
 
     @Override
@@ -75,6 +78,8 @@ public class GenericParameterImpl implements GenericParameter {
 
     @Override
     public int allocateMemory(Register _register, int _offset) {
+        this.register = _register;
+        this.offset = _offset;
         return 0;
     }
 

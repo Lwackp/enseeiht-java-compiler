@@ -94,10 +94,8 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
         this.register = _register;
         this.offset = _offset;
 
-        int _paramssize = 0;
-        if (this.signature.getValueType() instanceof ConstructorType) {
-            _paramssize += this.getValueType().length();
-        }
+        //Always loading address of the object on which function is called
+        int _paramssize = 1;
 
         List<ParameterDeclaration> reversedParameters = new LinkedList<>(this.getParameters());
         Collections.reverse(reversedParameters);

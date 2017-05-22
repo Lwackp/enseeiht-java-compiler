@@ -36,8 +36,8 @@ public class ClassTypeImpl implements ClassType {
      */
     @Override
     public boolean equalsTo(Type _other) {
-        return _other instanceof ClassType && ((ClassType) _other).getDeclaration().equals
-                (this.declaration);
+        return _other instanceof ClassType
+                && ((ClassType) _other).getDeclaration().equals(this.declaration);
     }
 
     /**
@@ -98,7 +98,7 @@ public class ClassTypeImpl implements ClassType {
         List<FunctionDeclaration> _constructors = new LinkedList<>();
         for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
-                if (((FunctionDeclaration)(_element.getDeclaration())).getValueType() instanceof ConstructorType) {
+                if (_element.getDeclaration().getValueType() instanceof ConstructorType) {
                     _constructors.add((FunctionDeclaration) _element.getDeclaration());
                 }
             }

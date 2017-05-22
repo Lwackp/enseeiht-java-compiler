@@ -33,7 +33,8 @@ public class InterfaceTypeImpl implements InterfaceType {
      */
     @Override
     public boolean equalsTo(Type _other) {
-        return _other instanceof InterfaceType && _other == this;
+        return _other instanceof InterfaceType
+                && ((InterfaceType) _other).getDeclaration().equals(this.declaration);
     }
 
     /**
@@ -48,7 +49,13 @@ public class InterfaceTypeImpl implements InterfaceType {
      */
     @Override
     public boolean compatibleWith(Type _other) {
-        return false;
+        boolean _res = this.equalsTo(_other);
+
+        for (InterfaceDeclaration _interface : this.getDeclaration().getInheritedInterfaces()) {
+            _res |= _other.compatibleWith(_interface.getType());
+        }
+
+        return _res;
     }
 
     /**

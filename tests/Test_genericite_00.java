@@ -16,7 +16,7 @@ class Box <T, H> {
     }
 }
 
-public class Test_genericite {
+public class Test_genericite_00 {
     public static void main(String[] args) {
         Box<int,int> b = new Box<int, int>(42, 7);
 

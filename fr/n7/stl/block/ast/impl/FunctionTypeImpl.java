@@ -60,7 +60,7 @@ public class FunctionTypeImpl implements FunctionType {
 					&& (this.parameters.size() == _otherType.parameters.size());
 
 			for (int i = 0; i < this.parameters.size(); i++) {
-				_res &= this.parameters.get(i).equalsTo(_otherType.parameters.get(i));
+				_res &= this.parameters.get(i).compatibleWith(_otherType.parameters.get(i));
 			}
 
 			return _res;
