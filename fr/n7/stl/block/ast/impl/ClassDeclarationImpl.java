@@ -450,7 +450,9 @@ public class ClassDeclarationImpl implements ClassDeclaration {
     @Override
     public List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd) {
         List<InterfaceDeclaration> _res = new ArrayList<>();
-        for (InterfaceDeclaration i : this.getInterfaces()) {
+        List<InterfaceDeclaration> _interfaces = this.getInterfaces();
+        _interfaces.addAll(this.getInheritedInterfaces());
+        for (InterfaceDeclaration i : _interfaces) {
             if (i.contains(_fd.getSignature())) {
                 _res.add(i);
             }
@@ -474,6 +476,22 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         }
 
         return _interfaces;
+    }
+
+    @Override
+    public List<InterfaceDeclaration> getInheritedInterfaces() {
+        List<InterfaceDeclaration> _interfaces = this.getInterfaces();
+        List<InterfaceDeclaration> _inheritedInterfaces = new LinkedList<>();
+
+        for (InterfaceDeclaration _interface : _interfaces) {
+            for (InterfaceDeclaration _inheritedInterface : _interface.getInheritedInterfaces()) {
+                if (!_interfaces.contains(_inheritedInterface) && !_inheritedInterfaces.contains(_inheritedInterface)) {
+                    _inheritedInterfaces.add(_inheritedInterface);
+                }
+            }
+        }
+
+        return _inheritedInterfaces;
     }
 
     @Override
@@ -605,7 +623,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
                 _offset++;
             }
         }
-        return _offset;
+        return _offset-1;
     }
 
 }

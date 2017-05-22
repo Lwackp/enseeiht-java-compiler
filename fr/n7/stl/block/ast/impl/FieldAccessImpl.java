@@ -72,7 +72,7 @@ public class FieldAccessImpl implements Expression {
 			_fragment.append(this.record.getCode(_factory));
 
 			Declaration _declaration = ((ClassElement) _field).getDeclaration();
-			if (_declaration instanceof FunctionDeclaration  || _declaration instanceof SignatureDeclaration) {
+			if (_declaration instanceof FunctionDeclaration) {
 				//Record adress is a parameter for the function, so need to be loaded twice
 				_fragment.append(this.record.getCode(_factory));
 				//Load virtual method table address
@@ -86,7 +86,23 @@ public class FieldAccessImpl implements Expression {
 				//Because CallI doesn't work, load the address twice
 				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
 				_fragment.add(_factory.createCallI());
-			} else {
+			} else if (_declaration instanceof SignatureDeclaration) {
+				//Load Interface object
+				_fragment.add(_factory.createLoadI(2));
+
+				//Load Virtual method table address
+				_fragment.add(_factory.createLoad(Register.ST, -2, 1));
+				//Load method's address from virtual method table (may have problem on functions coming from interface)
+				_fragment.add(_factory.createLoadL(_field.getOffset()));
+				_fragment.add(Library.IAdd);
+				//Load function address
+				_fragment.add(_factory.createLoadI(1));
+
+				//Because CallI doesn't work, load the address twice
+				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
+				_fragment.add(_factory.createCallI());
+			}
+			else {
 				_fragment.add(_factory.createLoadL(_declaration.getOffset()));
 				_fragment.add(Library.IAdd);
 				_fragment.add(_factory.createLoadI(_declaration.getType().length()));

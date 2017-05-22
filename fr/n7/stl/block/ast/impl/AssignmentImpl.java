@@ -105,20 +105,14 @@ public class AssignmentImpl implements Expression, Instruction {
 				_fragment.add(_factory.createLoadA(this.declaration.getRegister(), this.declaration.getOffset()));
 			}
 
-			_fragment.add(_factory.createStoreI(this.value.getType().length()));
-
-			System.err.println("-----------------------" + this.declaration.getType() + " - " + this.value.getType());
-			if (this.declaration.getType() instanceof InterfaceType) {
-				if (this.declaration instanceof ClassElement) {
-					_fragment.add(_factory.createLoad(Register.LB, -1, 1));
-					//Charge taille de ce qu'il y a avant
-					_fragment.add(_factory.createLoadL(this.declaration.getOffset()));
-					_fragment.add(Library.IAdd);
-				} else {
-					_fragment.add(_factory.createLoadA(this.declaration.getRegister(), this.declaration.getOffset()));
-				}
-				//Load Element Address
+			if (!(this.declaration.getType() instanceof InterfaceType)) {
+				_fragment.add(_factory.createStoreI(this.value.getType().length()));
+			} else if (this.declaration.getType() instanceof InterfaceType) {
+				//Load object address
 				_fragment.add(_factory.createLoadI(1));
+
+				//Load Object address
+				_fragment.add(_factory.createLoad(Register.ST, -2, 1));
 				//Load current virtual method table address
 				_fragment.add(_factory.createLoadI(1));
 				//TODO: How do Interface to Interface assignment is managed?
@@ -132,8 +126,22 @@ public class AssignmentImpl implements Expression, Instruction {
 				//Load Interface Virtual Method Table
 				_fragment.add(_factory.createLoadI(1));
 
-				_fragment.add(_factory.createLoad(Register.ST, -2, 1));
-				_fragment.add(_factory.createStoreI(1));
+				//Load pointed object address
+				_fragment.add(_factory.createLoad(Register.ST, -3, 1));
+
+				//Load Object address
+				if (this.declaration instanceof ClassElement) {
+					_fragment.add(_factory.createLoad(Register.LB, -1, 1));
+					//Charge taille de ce qu'il y a avant
+					_fragment.add(_factory.createLoadL(this.declaration.getOffset()));
+					_fragment.add(Library.IAdd);
+				} else {
+					_fragment.add(_factory.createLoadA(this.declaration.getRegister(), this.declaration.getOffset()));
+				}
+				_fragment.add(_factory.createLoadI(1));
+
+				_fragment.add(_factory.createStoreI(2));
+				_fragment.add(_factory.createPop(0, 2));
 			}
 		}
 

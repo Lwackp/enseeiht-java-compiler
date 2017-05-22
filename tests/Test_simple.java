@@ -28,7 +28,7 @@ class Hydravion implements Avion, Bateau {
     }
 
     public int isTitanic(int id_titanic) {
-        if (id == id_titanic) {
+        if (id != id_titanic) {
             return 0;
         }
         return 1;
@@ -43,6 +43,6 @@ public class Test_simple {
 
         Bateau bateau = ha_jaune;
 
-        print(bateau.isTitanic(1));
+        print bateau.isTitanic(1);
     }
 }

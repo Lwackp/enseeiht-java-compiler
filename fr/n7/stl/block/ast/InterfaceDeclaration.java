@@ -54,4 +54,6 @@ public interface InterfaceDeclaration extends Declaration, Labellable {
 	boolean contains(SignatureDeclaration function);
 
     ClassElement getElement(String _name);
+
+    List<InterfaceDeclaration> getInheritedInterfaces();
 }

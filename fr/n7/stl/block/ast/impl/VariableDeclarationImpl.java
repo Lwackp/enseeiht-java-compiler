@@ -143,11 +143,45 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 
 	@Override
 	public Fragment getCode(TAMFactory _factory) {
-		Fragment fragment = _factory.createFragment();
+		Fragment _fragment = _factory.createFragment();
 
-		fragment.append(this.value.getCode(_factory));
+		_fragment.append(this.value.getCode(_factory));
 
-		return fragment;
+		if (this.type instanceof InterfaceType) {
+			if (this.value == SpecialValue.NoValue) {
+				_fragment.add(_factory.createPop(0, 1));
+			}
+			_fragment.add(_factory.createLoadL(2));
+			_fragment.add(Library.MAlloc);
+			if (this.value != SpecialValue.NoValue) {
+				//Duplicate object address
+				_fragment.add(_factory.createLoad(Register.ST, -2, 1));
+
+				//Load current virtual method table address
+				_fragment.add(_factory.createLoadI(1));
+				//TODO: How do Interface to Interface assignment is managed?
+				if (this.value.getType() instanceof ClassType) {
+					_fragment.add(_factory.createLoadL(
+							((ClassType) this.value.getType()).getDeclaration()
+									.getInterfaceOffset(((InterfaceType) this.type).getDeclaration())
+					));
+				}
+				_fragment.add(Library.IAdd);
+				//Load Interface Virtual Method Table
+				_fragment.add(_factory.createLoadI(1));
+
+
+				//Duplicate object address
+				_fragment.add(_factory.createLoad(Register.ST, -3, 1));
+				//Load address where it should be stored
+				_fragment.add(_factory.createLoad(Register.ST, -3, 1));
+				//Size of pointer to object and to its virtual method table
+				_fragment.add(_factory.createStoreI(2));
+				_fragment.add(_factory.createPop(1, 1));
+			}
+		}
+
+		return _fragment;
 	}
 
 }

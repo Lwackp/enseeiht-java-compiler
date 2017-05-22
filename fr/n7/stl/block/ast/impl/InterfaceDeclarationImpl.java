@@ -285,4 +285,23 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         }
         return null;
     }
+
+    @Override
+    public List<InterfaceDeclaration> getInheritedInterfaces() {
+        List<InterfaceDeclaration> _interfaces = new LinkedList<>();
+
+        if (this.inheritance != null) {
+            for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.inheritance) {
+                for (InterfaceDeclaration _inherited : _interface.getDeclaration().getInheritedInterfaces()) {
+                    if (!_interfaces.contains(_inherited)) {
+                        _interfaces.add(_inherited);
+                    }
+                }
+                if (!_interfaces.contains(_interface)) {
+                    _interfaces.add(_interface.getDeclaration());
+                }
+            }
+        }
+        return _interfaces;
+    }
 }
