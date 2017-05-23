@@ -188,7 +188,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         //TODO: Inheritance
 
         //TODO: Sort element regarding final, static, public, ...
-        for (ClassElement _element : this.elements) {
+        for (ClassElement _element : this.getElements()) {
             _fragment.append(_element.getCode(_factory));
         }
 
@@ -207,10 +207,64 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     @Override
     public List<ClassElement> getElements() {
-        //TODO: Inheritance
-        return this.elements;
-    }
+        LinkedList<ClassElement> allElements = new LinkedList<>();
+        // Récupration des éléments hérités
+        for (InterfaceDeclaration i : this.getNewInterfaces()) {
+            allElements.addAll(i.getElements());
+        }
 
+        // Ajout des éléments propre à la classe. Override si nécessaire
+        for (ClassElement ce : this.elements) {
+            List<Integer> _indices = indicesOf(allElements, ce);
+            if (_indices.isEmpty()) {
+                // the element doesn't exist, add it at the end
+                allElements.add(ce);
+            } else {
+                // if the element already exists, override it. Many times if it implements differents interfaces
+                for (int i : _indices) {
+                    allElements.set(i, ce);
+                }
+            }
+        }
+
+        return allElements;
+    
+    //	return this.elements;
+    }
+    
+    /* Returns empty list if not found */
+    private List<Integer> indicesOf(List<ClassElement> l, ClassElement ce) {
+        List<Integer> _res = new LinkedList<Integer>();
+        for (int i = 0; i<l.size() ; i++) {
+            if (conflictualDeclaration(ce,l.get(i))) {
+                _res.add(i);
+            }
+        }
+        return _res;
+    }
+    
+    private static boolean conflictualDeclaration(ClassElement ce1, ClassElement ce2) {
+        if (ce1.getDeclaration().getClass().equals(ce2.getDeclaration().getClass())) {
+        	// Meme type de déclaration (fonction, signature ...)
+        	if (ce1.getDeclaration().getType().equalsTo(ce2.getDeclaration().getType())) {
+        		// Type & Nom identiques
+        		return true;
+        	}
+        }
+        return false;
+    }
+    
+    private List<InterfaceDeclaration> getNewInterfaces() {
+        List<InterfaceDeclaration> _newInterfaces = new LinkedList<InterfaceDeclaration>();
+
+        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.inheritance) {
+            if (!this.getInheritedInterfaces().contains(_interface.getDeclaration())) {
+                _newInterfaces.add(_interface.getDeclaration());
+            }
+        }
+        return _newInterfaces;
+    }
+    
     @Override
     public List<ClassElement> getStaticElements() {
         List<ClassElement> _staticElements = new LinkedList<>();

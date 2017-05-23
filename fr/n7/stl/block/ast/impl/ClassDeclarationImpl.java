@@ -219,34 +219,34 @@ public class ClassDeclarationImpl implements ClassDeclaration {
      */
     @Override
     public List<ClassElement> getElements() {
-        LinkedList<ClassElement> res = new LinkedList<>();
+        LinkedList<ClassElement> allElements = new LinkedList<>();
         // Récupration des éléments hérités
         if (this.inheritance != null) {
-            res.addAll(this.inheritance.getDeclaration().getHeritableElements());
+            allElements.addAll(this.inheritance.getDeclaration().getHeritableElements());
         }
         // Implement new interfaces
         for (InterfaceDeclaration i : this.getNewInterfaces()) {
-            res.addAll(i.getElements());
+            allElements.addAll(i.getElements());
         }
 
         // Ajout des éléments propre à la classe. Override si nécessaire
         for (ClassElement ce : this.elements) {
-            List<Integer> _indices = indicesOf(res, ce);
+            List<Integer> _indices = indicesOf(allElements, ce);
             if (_indices.isEmpty()) {
                 // the element doesn't exist, add it at the end
-                res.add(ce);
+                allElements.add(ce);
             } else {
                 // if the element already exists, override it. Many times if it implements differents interfaces
-                for (int i : _indices) {
-                    res.set(i, ce);
+            	for (int i : _indices) {
+                    allElements.set(i, ce);
                 }
             }
         }
 
-        return res;
+        return allElements;
     }
 
-    /* Returns -1 if not found */
+    /* Returns empty list if not found */
     private List<Integer> indicesOf(List<ClassElement> l, ClassElement ce) {
         List<Integer> _res = new LinkedList<Integer>();
         for (int i = 0; i<l.size() ; i++) {
@@ -440,11 +440,11 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         }
 
         for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.interfaces) {
-            if (_heritedInterfaces.contains(_interface.getDeclaration())) {
+            if (!_heritedInterfaces.contains(_interface.getDeclaration())) {
                 _newInterfaces.add(_interface.getDeclaration());
             }
         }
-        return _heritedInterfaces;
+        return _newInterfaces;
     }
 
     @Override
