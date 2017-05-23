@@ -32,6 +32,7 @@ inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Argumen
 inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
+inh parentTds: SymbolTable for AttributOuMethode;
 
 syn ast     : Program for Fichier, Programme;
 syn ast     : Block for Bloc, SuiteConditionnelle;
@@ -757,7 +758,12 @@ end
 }
 
 
-ElementClasse -> statique AttributOuMethode #ast;
+ElementClasse -> statique #inh AttributOuMethode #ast;
+#inh {
+do
+    AttributOuMethode^parentTds := ElementClasse^tds;
+end
+}
 #ast {
 do
     -- This method just set bool static to true;
@@ -765,7 +771,13 @@ do
 end
 }
 
-ElementClasse -> AttributOuMethode #ast;
+ElementClasse -> #inh AttributOuMethode #ast;
+#inh {
+do
+    AttributOuMethode^tds := new SymbolTable(ElementClasse^tds);
+    AttributOuMethode^parentTds := ElementClasse^tds;
+end
+}
 #ast {
 do
     ElementClasse^ast := ElementClasse^factory.createClassElement(AttributOuMethode^ast);
@@ -791,7 +803,7 @@ local
     sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
-        if (AttributOuMethode^tds.contains(identificateur^txt)) then
+        if (AttributOuMethode^parentTds.contains(identificateur^txt)) then
             error(MiniJava_ClassElement_Definition, identificateur^txt);
         else
             if SuiteAttributOuMethode^value = null then

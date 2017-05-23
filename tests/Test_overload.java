@@ -39,7 +39,7 @@ class Triplet {
         return z;
     }
 
-    public void set(int _x) {
+    public void set1(int _x) {
         x = _x;
     }
 
@@ -53,9 +53,31 @@ class Triplet {
         y = _y;
         z = _z;
     }
+
+    public int get(int _index) {
+        if (_index == 1) {
+            return x;
+        } else {
+            if(_index == 2) {
+                return y;
+            }
+            else {
+                if(_index == 3) {
+                    return z;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    public int get() {
+        return 0;
+    }
 }
 
-public class Test_multiple_constructors {
+public class Test_overload {
     public static void main(String[] args) {
         Triplet _triplet3 = new Triplet(1, 2, 3);
         println _triplet3.getFirst();
@@ -66,17 +88,20 @@ public class Test_multiple_constructors {
         println _triplet2.getSecond();
         println _triplet2.getThird();
         
-        println "======================\n";
+ //       println "======================\n";
 
-        _triplet3.set(9, 8);
-        println _triplet3.getFirst();
-        println _triplet3.getSecond();
-        println _triplet3.getThird();
+        println _triplet3.get(1);
+        println _triplet3.get();
+//        _triplet3.set1(10);
+//        _triplet3.set(9, 8);
+//        println _triplet3.getFirst();
+//        println _triplet3.getSecond();
+//        println _triplet3.getThird();
 
-        _triplet2.set(15, 13, 17);
-        println _triplet2.getFirst();
-        println _triplet2.getSecond();
-        println _triplet2.getThird();
+//        _triplet2.set(15, 13, 17);
+//        println _triplet2.getFirst();
+//        println _triplet2.getSecond();
+//        println _triplet2.getThird();
 
     }
 }
