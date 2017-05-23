@@ -18,6 +18,17 @@ public class RepetitionImpl implements Instruction {
 	private Expression condition;
 	private Block body;
 
+	public RepetitionImpl(Expression _condition, Block _body, Instruction _next){
+        this(_condition, _body);
+        this.body = new BlockImpl();
+        for (Instruction instr: _body.getInstructions()) {
+            this.body.add(instr);
+
+        }
+        this.body.add(_next);
+    }
+
+
 	public RepetitionImpl(Expression _condition, Block _body) {
 		this.condition = _condition;
 		this.body = _body;

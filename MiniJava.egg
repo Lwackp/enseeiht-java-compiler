@@ -104,6 +104,7 @@ sugar afficher					is    "print";
 sugar afficherln				is    "println";
 sugar nouveau			    	is    "new";
 sugar tant_que			    	is    "while";
+sugar pour                      is    "for";
 sugar retour					is    "return";
 sugar type_int			    	is    "int";
 sugar type_bool 				is    "boolean";
@@ -563,7 +564,6 @@ do
 end
 }
 
---TODO: Wildcard Genericite
 ArgumentGenericite -> choix HeritageGenericite #ast;
 #ast {
 do
@@ -1101,6 +1101,16 @@ Instruction -> tant_que parenthese_ouvrante Expression parenthese_fermante Bloc 
 #ast {
 do
     Instruction^ast := Instruction^factory.createRepetition(Expression^ast, Bloc^ast);
+end
+}
+
+-- TODO: FOR loop
+Instruction -> pour parenthese_ouvrante Expression point_virgule Expression point_virgule
+ Expression parenthese_fermante Bloc #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createForLoop(Expression^ast,Expression1^ast,
+    Instruction^factory.createVoidInstruction(Expression2^ast), Bloc^ast);
 end
 }
 

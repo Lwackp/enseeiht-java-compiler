@@ -5,9 +5,7 @@ import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Implementation of the Abstract Syntax Tree node for an instruction block.
@@ -46,6 +44,11 @@ public class FunctionBodyImpl implements FunctionBody {
 	@Override
 	public void add(Instruction _instruction) {
 		this.body.add(_instruction);
+	}
+
+	@Override
+	public List<Instruction> getInstructions() {
+		return this.body.getInstructions();
 	}
 
 	/**
