@@ -341,6 +341,62 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
     }
 
     @Override
+    public ClassElement getElement(String _name, List<Type> _parameters) {
+        List<ClassElement> _wellNamedElements = new LinkedList<>();
+        Type _returnedType;
+
+        for (ClassElement _element : this.getElements()) {
+            String _elementName = _element.getName();
+
+            if (_element.getDeclaration() instanceof SignatureDeclaration) {
+
+                if (_elementName.equals(_name)) {
+                    _wellNamedElements.add(_element);
+                }
+            }
+        }
+
+        if (_wellNamedElements.size() <= 0) {
+            return null;
+        }
+        _returnedType = _wellNamedElements.get(0).getValueType();
+
+        List<ClassElement> _compatibleElements = new LinkedList<>();
+        for (ClassElement _element : _wellNamedElements) {
+            List<ParameterDeclaration> _signatureParams = new LinkedList<>(((SignatureDeclaration)_element.getDeclaration()).getParameters());
+
+            if (_signatureParams.size() != _parameters.size()) {
+                continue;
+            }
+
+            List<Type> _signatureParamTypes = new LinkedList<>();
+
+            for (ParameterDeclaration _param : _signatureParams) {
+                _signatureParamTypes.add(_param.getType());
+            }
+
+            Boolean _compatible;
+            if (_signatureParamTypes.equals(_parameters)) {
+                return (ClassElement) _element;
+            } else {
+                int _indParam = 0;
+                _compatible = true;
+                for (_indParam = 0; _indParam < _parameters.size(); _indParam++) {
+                    _compatible &= _parameters.get(_indParam).compatibleWith(_signatureParamTypes.get(_indParam));
+                }
+                if (_compatible) {
+                    _compatibleElements.add(_element);
+                }
+            }
+        }
+
+        if (_compatibleElements.size() > 0) {
+            return (ClassElement) _compatibleElements.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public List<InterfaceDeclaration> getInheritedInterfaces() {
         List<InterfaceDeclaration> _interfaces = new LinkedList<>();
 

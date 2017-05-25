@@ -39,7 +39,7 @@ class Triplet {
         return z;
     }
 
-    public void set1(int _x) {
+    public void set(int _x) {
         x = _x;
     }
 
@@ -88,20 +88,19 @@ public class Test_overload {
         println _triplet2.getSecond();
         println _triplet2.getThird();
         
- //       println "======================\n";
-
         println _triplet3.get(1);
         println _triplet3.get();
-//        _triplet3.set1(10);
-//        _triplet3.set(9, 8);
-//        println _triplet3.getFirst();
-//        println _triplet3.getSecond();
-//        println _triplet3.getThird();
+        _triplet3.set(10);
+        println _triplet3.get(1);
+        _triplet3.set(9, 8);
+        println _triplet3.getFirst();
+        println _triplet3.getSecond();
+        println _triplet3.getThird();
 
-//        _triplet2.set(15, 13, 17);
-//        println _triplet2.getFirst();
-//        println _triplet2.getSecond();
-//        println _triplet2.getThird();
+        _triplet2.set(15, 13, 17);
+        println _triplet2.getFirst();
+        println _triplet2.getSecond();
+        println _triplet2.getThird();
 
     }
 }

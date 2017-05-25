@@ -122,8 +122,19 @@ public class FieldAccessImpl implements Expression {
 	protected Declaration getField() {
 		if (this.field == null) {
 			Type _recordType = this.record.getType();
-			//TODO: With matching parameters
-
+            if (this.parameters != null) {
+                if (_recordType instanceof ClassType) {
+                    return ((ClassType) _recordType).getElement(this.name, this.parameters);
+                } else if (_recordType instanceof InterfaceType) {
+                    return ((InterfaceType) _recordType).getDeclaration().getElement(this.name, this.parameters);
+                    /*
+                } else if (_recordType instanceof GenericType) {
+                    return ((GenericType) _recordType).getClassType().getElement(this.name, this.parameters);
+                    */
+                } else if (_recordType instanceof GenericParameterType) {
+                    throw new RuntimeException("Call for method is not possible on Generic parameters");
+                }
+            }
 			if (_recordType instanceof ClassType) {
 				return ((ClassType) _recordType).getElement(this.name);
 			} else if (_recordType instanceof InterfaceType) {

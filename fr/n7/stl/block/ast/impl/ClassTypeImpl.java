@@ -95,7 +95,7 @@ public class ClassTypeImpl implements ClassType {
 
     @Override
     public ClassElement getElement(String _name, List<Type> _parameters) {
-        List<FunctionDeclaration> _wellNamedElements = new LinkedList<>();
+        List<ClassElement> _wellNamedElements = new LinkedList<>();
         Type _returnedType;
 
         for (ClassElement _element : this.declaration.getElements()) {
@@ -104,7 +104,7 @@ public class ClassTypeImpl implements ClassType {
                 _elementName = ((FunctionDeclaration) _element.getDeclaration()).getSignature().getName();
 
                 if (_elementName.equals(_name)) {
-                    _wellNamedElements.add((FunctionDeclaration) _element);
+                    _wellNamedElements.add(_element);
                 }
             }
         }
@@ -114,9 +114,9 @@ public class ClassTypeImpl implements ClassType {
         }
         _returnedType = _wellNamedElements.get(0).getValueType();
 
-        List<FunctionDeclaration> _compatibleElements = new LinkedList<>();
-        for (FunctionDeclaration _element : _wellNamedElements) {
-            List<ParameterDeclaration> _signatureParams = new LinkedList<>(_element.getSignature().getParameters());
+        List<ClassElement> _compatibleElements = new LinkedList<>();
+        for (ClassElement _element : _wellNamedElements) {
+            List<ParameterDeclaration> _signatureParams = new LinkedList<>(((FunctionDeclaration)_element.getDeclaration()).getSignature().getParameters());
 
             if (_signatureParams.size() != _parameters.size()) {
                 continue;
