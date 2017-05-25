@@ -9,6 +9,8 @@ public interface ClassType extends Type {
 
     ClassElement getElement(String _name);
 
+    ClassElement getElement(String _name, List<Type> _parameters);
+
     List<FunctionDeclaration> getConstructors();
 
     FunctionDeclaration getConstructor(List<Type> _parameters);

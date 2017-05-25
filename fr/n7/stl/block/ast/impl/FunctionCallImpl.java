@@ -90,6 +90,9 @@ public class FunctionCallImpl implements FunctionCall {
         if (this.function instanceof ObjectAllocation) {
             ((ObjectAllocationImpl) this.function).setParameters(_paramAux);
         }
+		if (this.function instanceof FieldAccessImpl) {
+			((FieldAccessImpl) this.function).setParameters(_paramAux);
+		}
 
 		//TODO: Function's code puts function's address in ST
 		_fragment.append(this.function.getCode(_factory));

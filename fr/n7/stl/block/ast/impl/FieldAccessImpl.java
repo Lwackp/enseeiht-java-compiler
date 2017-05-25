@@ -21,6 +21,7 @@ public class FieldAccessImpl implements Expression {
 	protected Expression record;
 	private String name;
 	private Declaration field;
+	private List<Type> parameters;
 
 	public FieldAccessImpl(Expression _record, String _name) {
 		this.record = _record;
@@ -122,6 +123,7 @@ public class FieldAccessImpl implements Expression {
 		if (this.field == null) {
 			Type _recordType = this.record.getType();
 			//TODO: With matching parameters
+
 			if (_recordType instanceof ClassType) {
 				return ((ClassType) _recordType).getElement(this.name);
 			} else if (_recordType instanceof InterfaceType) {
@@ -150,5 +152,9 @@ public class FieldAccessImpl implements Expression {
 			}
 		}
 		return precLength;
+	}
+
+	public void setParameters(List<Type> _parameters) {
+		this.parameters = _parameters;
 	}
 }
