@@ -207,7 +207,7 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         boolean _result = true;
 
         for (ClassElement _element : this.elements) {
-            //_result = _result && _element.checkType();
+            _result = _result && _element.checkType();
         }
         return _result;
     }

@@ -129,12 +129,18 @@ public class ClassTypeImpl implements ClassType {
             }
 
             Boolean _compatible;
+
             if (_signatureParamTypes.equals(_parameters)) {
                 return (ClassElement) _element;
             } else {
                 int _indParam = 0;
                 _compatible = true;
                 for (_indParam = 0; _indParam < _parameters.size(); _indParam++) {
+                    // TODO : change following quick fix
+                    if (_signatureParamTypes.get(_indParam) instanceof GenericParameterType) {
+                        continue;
+                    }
+
                     _compatible &= _parameters.get(_indParam).compatibleWith(_signatureParamTypes.get(_indParam));
                 }
                 if (_compatible) {
