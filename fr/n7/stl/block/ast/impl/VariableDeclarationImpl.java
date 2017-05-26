@@ -117,7 +117,7 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 	public Register getRegister() {
 		return this.register;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.VariableDeclaration#getOffset()
 	 */
@@ -157,22 +157,24 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 				//Duplicate object address
 				_fragment.add(_factory.createLoad(Register.ST, -2, 1));
 
-				//Load current virtual method table address
-				_fragment.add(_factory.createLoadI(1));
-				//TODO: How do Interface to Interface assignment is managed?
 				if (this.value.getType() instanceof ClassType) {
+					//Load current virtual method table address
+					_fragment.add(_factory.createLoadI(1));
+					//TODO: How do Interface to Interface assignment is managed?
 					_fragment.add(_factory.createLoadL(
 							((ClassType) this.value.getType()).getDeclaration()
 									.getInterfaceOffset(((InterfaceType) this.type).getDeclaration())
 					));
+					_fragment.add(Library.IAdd);
+					//Load Interface Virtual Method Table
+					_fragment.add(_factory.createLoadI(1));
+
+
+					//Duplicate object address
+					_fragment.add(_factory.createLoad(Register.ST, -3, 1));
+				} else {
+					_fragment.add(_factory.createLoadI(2));
 				}
-				_fragment.add(Library.IAdd);
-				//Load Interface Virtual Method Table
-				_fragment.add(_factory.createLoadI(1));
-
-
-				//Duplicate object address
-				_fragment.add(_factory.createLoad(Register.ST, -3, 1));
 				//Load address where it should be stored
 				_fragment.add(_factory.createLoad(Register.ST, -3, 1));
 				//Size of pointer to object and to its virtual method table

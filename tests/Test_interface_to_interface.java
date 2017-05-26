@@ -6,7 +6,7 @@ interface I2 extends I1 {
     int getI2();
 }
 
-class C implements I2 {
+class C implements I1, I2 {
     public int getI1() {
         return 1;
     }

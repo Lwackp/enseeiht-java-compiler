@@ -14,7 +14,9 @@ public interface SignatureDeclaration extends Declaration {
 	 */
 	String getName();
 
-	/**
+    boolean equalsTo(Declaration _other);
+
+    /**
 	 * Synthesized semantics attribute for the type of the returned variable.
 	 * @return Type of the returned variable.
 	 */
@@ -31,7 +33,5 @@ public interface SignatureDeclaration extends Declaration {
 	 * @return List of parameters declarations.
 	 */
 	List<ParameterDeclaration> getParameters();
-	
-	/** Check Name, returned type and parameters type) */
-	boolean equalsTo(SignatureDeclaration _other);
+
 }

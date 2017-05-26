@@ -6,6 +6,7 @@ import fr.n7.stl.tam.ast.Library;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -207,8 +208,35 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     @Override
     public List<ClassElement> getElements() {
-        //TODO: Inheritance
-        return this.elements;
+        List<ClassElement> _elements = new ArrayList<>();
+
+        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.inheritance) {
+            for (ClassElement _element : _interface.getDeclaration().getElements()) {
+                boolean _unique = true;
+                for (ClassElement _other : _elements) {
+                    if (_element.getDeclaration() instanceof SignatureDeclaration) {
+                        _unique &= !((SignatureDeclaration) _element.getDeclaration()).equalsTo(_other);
+                    }
+                }
+                if (_unique) {
+                    _elements.add(_element);
+                }
+            }
+        }
+
+        for (ClassElement _element : this.elements) {
+            boolean _unique = true;
+            for (ClassElement _other : _elements) {
+                if (_element.getDeclaration() instanceof SignatureDeclaration) {
+                    _unique &= !((SignatureDeclaration) _element.getDeclaration()).equalsTo(_other);
+                }
+            }
+            if (_unique) {
+                _elements.add(_element);
+            }
+        }
+
+        return _elements;
     }
 
     @Override

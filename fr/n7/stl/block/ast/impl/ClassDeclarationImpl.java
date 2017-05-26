@@ -531,6 +531,19 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             }
         }
 
+
+        Map<InterfaceDeclaration, Queue<FunctionDeclaration>> _interfacesFunctions = new HashMap<>();
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            for (InterfaceDeclaration _interface : this.getImplementedInterfaces(_function)) {
+                if (!_interfacesFunctions.containsKey(_interface)) {
+                    _interfacesFunctions.put(_interface, new ArrayDeque<>());
+                }
+                _interfacesFunctions.get(_interface).add(_function);
+            }
+        }
+
+
+
         Map<FunctionDeclaration, Integer> _functions = new HashMap<>();
         InterfaceDeclaration _currentInterface = null;
         int _offsetInterface = 0;

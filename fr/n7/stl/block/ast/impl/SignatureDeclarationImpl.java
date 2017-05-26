@@ -3,6 +3,7 @@ package fr.n7.stl.block.ast.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.n7.stl.block.ast.Declaration;
 import fr.n7.stl.block.ast.ParameterDeclaration;
 import fr.n7.stl.block.ast.SignatureDeclaration;
 import fr.n7.stl.block.ast.Type;
@@ -66,7 +67,7 @@ public class SignatureDeclarationImpl implements SignatureDeclaration {
     }
 
     @Override
-    public boolean equalsTo(SignatureDeclaration _other) {
+    public boolean equalsTo(Declaration _other) {
     	return (this.getType().equalsTo(_other.getType()) && this.getName().equals(_other.getName()));
     }
     

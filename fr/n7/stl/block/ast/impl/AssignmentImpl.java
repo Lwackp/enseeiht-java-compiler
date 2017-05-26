@@ -121,8 +121,8 @@ public class AssignmentImpl implements Expression, Instruction {
 					((ClassType) this.value.getType()).getDeclaration()
 							.getInterfaceOffset(((InterfaceType) this.declaration.getType()).getDeclaration())
 					));
+					_fragment.add(Library.IAdd);
 				}
-				_fragment.add(Library.IAdd);
 				//Load Interface Virtual Method Table
 				_fragment.add(_factory.createLoadI(1));
 

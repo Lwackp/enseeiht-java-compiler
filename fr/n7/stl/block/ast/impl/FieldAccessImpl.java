@@ -85,7 +85,7 @@ public class FieldAccessImpl implements Expression {
 				_fragment.add(_factory.createLoadI(1));
 
 				//Because CallI doesn't work, load the address twice
-				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
+				//_fragment.add(_factory.createLoad(Register.ST, -1, 1));
 				_fragment.add(_factory.createCallI());
 			} else if (_declaration instanceof SignatureDeclaration) {
 				//Load Interface object
@@ -100,7 +100,6 @@ public class FieldAccessImpl implements Expression {
 				_fragment.add(_factory.createLoadI(1));
 
 				//Because CallI doesn't work, load the address twice
-				_fragment.add(_factory.createLoad(Register.ST, -1, 1));
 				_fragment.add(_factory.createCallI());
 			}
 			else {
