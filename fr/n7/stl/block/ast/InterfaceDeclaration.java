@@ -55,5 +55,7 @@ public interface InterfaceDeclaration extends Declaration, Labellable {
 
     ClassElement getElement(String _name);
 
+    ClassElement getElement(String _name, List<Type> _parameters);
+
     List<InterfaceDeclaration> getInheritedInterfaces();
 }

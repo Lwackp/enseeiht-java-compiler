@@ -94,6 +94,68 @@ public class ClassTypeImpl implements ClassType {
     }
 
     @Override
+    public ClassElement getElement(String _name, List<Type> _parameters) {
+        List<ClassElement> _wellNamedElements = new LinkedList<>();
+        Type _returnedType;
+
+        for (ClassElement _element : this.declaration.getElements()) {
+            String _elementName = _element.getName();
+            if (_element.getDeclaration() instanceof FunctionDeclaration) {
+                _elementName = ((FunctionDeclaration) _element.getDeclaration()).getSignature().getName();
+
+                if (_elementName.equals(_name)) {
+                    _wellNamedElements.add(_element);
+                }
+            }
+        }
+
+        if (_wellNamedElements.size() <= 0) {
+            return null;
+        }
+        _returnedType = _wellNamedElements.get(0).getValueType();
+
+        List<ClassElement> _compatibleElements = new LinkedList<>();
+        for (ClassElement _element : _wellNamedElements) {
+            List<ParameterDeclaration> _signatureParams = new LinkedList<>(((FunctionDeclaration)_element.getDeclaration()).getSignature().getParameters());
+
+            if (_signatureParams.size() != _parameters.size()) {
+                continue;
+            }
+
+            List<Type> _signatureParamTypes = new LinkedList<>();
+
+            for (ParameterDeclaration _param : _signatureParams) {
+                _signatureParamTypes.add(_param.getType());
+            }
+
+            Boolean _compatible;
+
+            if (_signatureParamTypes.equals(_parameters)) {
+                return (ClassElement) _element;
+            } else {
+                int _indParam = 0;
+                _compatible = true;
+                for (_indParam = 0; _indParam < _parameters.size(); _indParam++) {
+                    // TODO : change following quick fix
+                    if (_signatureParamTypes.get(_indParam) instanceof GenericParameterType) {
+                        continue;
+                    }
+
+                    _compatible &= _parameters.get(_indParam).compatibleWith(_signatureParamTypes.get(_indParam));
+                }
+                if (_compatible) {
+                    _compatibleElements.add(_element);
+                }
+            }
+        }
+
+        if (_compatibleElements.size() > 0) {
+            return (ClassElement) _compatibleElements.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public List<FunctionDeclaration> getConstructors() {
         List<FunctionDeclaration> _constructors = new LinkedList<>();
         for (ClassElement _element : this.declaration.getElements()) {
@@ -110,13 +172,6 @@ public class ClassTypeImpl implements ClassType {
     public FunctionDeclaration getConstructor(List<Type> _parameters) {
         List<FunctionDeclaration> _constructors = new LinkedList<>();
 
-        /*
-        for (FunctionDeclaration _const : this.getConstructors()) {
-            if (_const instanceof ConstructorType) {
-                _constructors.add((ConstructorTypeImpl) _const);
-            }
-        }
-        */
         for (ClassElement _element : this.declaration.getElements()) {
             if (_element.getDeclaration() instanceof FunctionDeclaration) {
                 if ((_element.getDeclaration()).getValueType() instanceof ConstructorType) {

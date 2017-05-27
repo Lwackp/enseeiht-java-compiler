@@ -189,7 +189,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         //TODO: Inheritance
 
         //TODO: Sort element regarding final, static, public, ...
-        for (ClassElement _element : this.elements) {
+        for (ClassElement _element : this.getElements()) {
             _fragment.append(_element.getCode(_factory));
         }
 
@@ -208,37 +208,64 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     @Override
     public List<ClassElement> getElements() {
-        List<ClassElement> _elements = new ArrayList<>();
+        LinkedList<ClassElement> allElements = new LinkedList<>();
+        // Récupration des éléments hérités
+        for (InterfaceDeclaration i : this.getNewInterfaces()) {
+            allElements.addAll(i.getElements());
+        }
+
+        // Ajout des éléments propre à la classe. Override si nécessaire
+        for (ClassElement ce : this.elements) {
+            List<Integer> _indices = indicesOf(allElements, ce);
+            if (_indices.isEmpty()) {
+                // the element doesn't exist, add it at the end
+                allElements.add(ce);
+            } else {
+                // if the element already exists, override it. Many times if it implements differents interfaces
+                for (int i : _indices) {
+                    allElements.set(i, ce);
+                }
+            }
+        }
+
+        return allElements;
+    
+    //	return this.elements;
+    }
+    
+    /* Returns empty list if not found */
+    private List<Integer> indicesOf(List<ClassElement> l, ClassElement ce) {
+        List<Integer> _res = new LinkedList<Integer>();
+        for (int i = 0; i<l.size() ; i++) {
+            if (conflictualDeclaration(ce,l.get(i))) {
+                _res.add(i);
+            }
+        }
+        return _res;
+    }
+    
+    private static boolean conflictualDeclaration(ClassElement ce1, ClassElement ce2) {
+        if (ce1.getDeclaration().getClass().equals(ce2.getDeclaration().getClass())) {
+        	// Meme type de déclaration (fonction, signature ...)
+        	if (ce1.getDeclaration().getType().equalsTo(ce2.getDeclaration().getType())) {
+        		// Type & Nom identiques
+        		return true;
+        	}
+        }
+        return false;
+    }
+    
+    private List<InterfaceDeclaration> getNewInterfaces() {
+        List<InterfaceDeclaration> _newInterfaces = new LinkedList<InterfaceDeclaration>();
 
         for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.inheritance) {
-            for (ClassElement _element : _interface.getDeclaration().getElements()) {
-                boolean _unique = true;
-                for (ClassElement _other : _elements) {
-                    if (_element.getDeclaration() instanceof SignatureDeclaration) {
-                        _unique &= !((SignatureDeclaration) _element.getDeclaration()).equalsTo(_other);
-                    }
-                }
-                if (_unique) {
-                    _elements.add(_element);
-                }
+            if (!this.getInheritedInterfaces().contains(_interface.getDeclaration())) {
+                _newInterfaces.add(_interface.getDeclaration());
             }
         }
-
-        for (ClassElement _element : this.elements) {
-            boolean _unique = true;
-            for (ClassElement _other : _elements) {
-                if (_element.getDeclaration() instanceof SignatureDeclaration) {
-                    _unique &= !((SignatureDeclaration) _element.getDeclaration()).equalsTo(_other);
-                }
-            }
-            if (_unique) {
-                _elements.add(_element);
-            }
-        }
-
-        return _elements;
+        return _newInterfaces;
     }
-
+    
     @Override
     public List<ClassElement> getStaticElements() {
         List<ClassElement> _staticElements = new LinkedList<>();
@@ -310,6 +337,62 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
             if (_elementName.equals(_name)) {
                 return _element;
             }
+        }
+        return null;
+    }
+
+    @Override
+    public ClassElement getElement(String _name, List<Type> _parameters) {
+        List<ClassElement> _wellNamedElements = new LinkedList<>();
+        Type _returnedType;
+
+        for (ClassElement _element : this.getElements()) {
+            String _elementName = _element.getName();
+
+            if (_element.getDeclaration() instanceof SignatureDeclaration) {
+
+                if (_elementName.equals(_name)) {
+                    _wellNamedElements.add(_element);
+                }
+            }
+        }
+
+        if (_wellNamedElements.size() <= 0) {
+            return null;
+        }
+        _returnedType = _wellNamedElements.get(0).getValueType();
+
+        List<ClassElement> _compatibleElements = new LinkedList<>();
+        for (ClassElement _element : _wellNamedElements) {
+            List<ParameterDeclaration> _signatureParams = new LinkedList<>(((SignatureDeclaration)_element.getDeclaration()).getParameters());
+
+            if (_signatureParams.size() != _parameters.size()) {
+                continue;
+            }
+
+            List<Type> _signatureParamTypes = new LinkedList<>();
+
+            for (ParameterDeclaration _param : _signatureParams) {
+                _signatureParamTypes.add(_param.getType());
+            }
+
+            Boolean _compatible;
+            if (_signatureParamTypes.equals(_parameters)) {
+                return (ClassElement) _element;
+            } else {
+                int _indParam = 0;
+                _compatible = true;
+                for (_indParam = 0; _indParam < _parameters.size(); _indParam++) {
+                    _compatible &= _parameters.get(_indParam).compatibleWith(_signatureParamTypes.get(_indParam));
+                }
+                if (_compatible) {
+                    _compatibleElements.add(_element);
+                }
+            }
+        }
+
+        if (_compatibleElements.size() > 0) {
+            return (ClassElement) _compatibleElements.get(0);
         }
         return null;
     }

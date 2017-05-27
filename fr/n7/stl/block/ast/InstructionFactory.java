@@ -234,6 +234,20 @@ public interface InstructionFactory {
     Instruction createRepetition(Expression _condition, Block _body);
 
 	/**
+	 * Create a for loop node in the Abstract Syntax Tree.
+	 * @param _init  Expression node in the Abstract Syntax Tree
+	 * @param _next  Instruction node in the Abstract Syntax Tree
+	 * @param _condition Expression node in the Abstract Syntax Tree whose value is used
+	 *                   as condition in the evaluation of the repetition when the Repetition node is executed.
+	 *                   This node is assigned to the Condition branch of the Repetition node.
+	 * @param _body TAMInstruction node in the Abstract Syntax Tree that is evaluated if the condition value is true
+	 *              before repeating the repetition.
+	 * @return A Repetition node in the Abstract Syntax Tree.
+	 */
+	Instruction createForLoop(Expression _init, Expression _condition,Instruction _next,
+							  Block _body);
+
+	/**
 	 * Create a return node in the Abstract Syntax Tree.
 	 * @param _return Expression node in the Abstract Syntax Tree whose value is returned.
 	 * @return A Return node in the Abstract Syntax Tree.

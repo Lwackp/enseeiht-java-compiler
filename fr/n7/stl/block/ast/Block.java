@@ -1,6 +1,7 @@
 package fr.n7.stl.block.ast;
 
 import java.util.Iterator;
+import java.util.List;
 
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
@@ -28,8 +29,10 @@ public interface Block {
 	 * @param _instruction Instruction node in the AST added to the block node.
 	 */
     void add(Instruction _instruction);
-	
-	/**
+
+    List<Instruction> getInstructions();
+
+    /**
 	 * Add a sequence of instruction in a block.
 	 * @param _instructions Sequence of instruction nodes in the AST added to the block node.
 	 */

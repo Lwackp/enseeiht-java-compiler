@@ -295,6 +295,12 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new RepetitionImpl(_condition,_body);
 	}
 
+	@Override
+	public Instruction createForLoop(Expression _init, Expression _condition,Instruction _next,
+							  Block _body){
+		return new ForLoopImpl(_init, _condition,_next,_body);
+	}
+
 	/**
 	 * Create a return node in the Abstract Syntax Tree.
 	 *

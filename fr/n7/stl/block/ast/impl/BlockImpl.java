@@ -1,14 +1,13 @@
 package fr.n7.stl.block.ast.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-
 import fr.n7.stl.block.ast.*;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
-import fr.n7.stl.tam.ast.impl.FragmentImpl;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementation of the Abstract Syntax Tree node for an instruction block.
@@ -106,6 +105,11 @@ public class BlockImpl implements Block {
 		if (_instruction instanceof Declaration) {
 			this.register((Declaration)_instruction);
 		}
+	}
+
+	@Override
+	public List<Instruction> getInstructions(){
+		return this.instructions;
 	}
 
 	/* (non-Javadoc)

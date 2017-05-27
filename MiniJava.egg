@@ -32,6 +32,7 @@ inh tds     : SymbolTable for   Acces, Affectation, Appel, AppelOuAcces, Argumen
 inh support : Expression for AppelOuAcces, Appel, Acces, Arguments;
 inh gauche	: Expression for SuiteTerme, SuiteFacteur, SuiteCondition;
 inh type    : Type for SuiteTypeAtomique, SuiteNouveau;
+inh parentTds: SymbolTable for AttributOuMethode;
 
 syn ast     : Program for Fichier, Programme;
 syn ast     : Block for Bloc, SuiteConditionnelle;
@@ -104,6 +105,7 @@ sugar afficher					is    "print";
 sugar afficherln				is    "println";
 sugar nouveau			    	is    "new";
 sugar tant_que			    	is    "while";
+sugar pour                      is    "for";
 sugar retour					is    "return";
 sugar type_int			    	is    "int";
 sugar type_bool 				is    "boolean";
@@ -563,7 +565,6 @@ do
 end
 }
 
---TODO: Wildcard Genericite
 ArgumentGenericite -> choix HeritageGenericite #ast;
 #ast {
 do
@@ -757,7 +758,12 @@ end
 }
 
 
-ElementClasse -> statique AttributOuMethode #ast;
+ElementClasse -> statique #inh AttributOuMethode #ast;
+#inh {
+do
+    AttributOuMethode^parentTds := ElementClasse^tds;
+end
+}
 #ast {
 do
     -- This method just set bool static to true;
@@ -765,7 +771,13 @@ do
 end
 }
 
-ElementClasse -> AttributOuMethode #ast;
+ElementClasse -> #inh AttributOuMethode #ast;
+#inh {
+do
+    AttributOuMethode^tds := new SymbolTable(ElementClasse^tds);
+    AttributOuMethode^parentTds := ElementClasse^tds;
+end
+}
 #ast {
 do
     ElementClasse^ast := ElementClasse^factory.createClassElement(AttributOuMethode^ast);
@@ -791,7 +803,7 @@ local
     sam: Object;
 do
     if SuiteAttributOuMethode^type = ClassElementType.Attribute then
-        if (AttributOuMethode^tds.contains(identificateur^txt)) then
+        if (AttributOuMethode^parentTds.contains(identificateur^txt)) then
             error(MiniJava_ClassElement_Definition, identificateur^txt);
         else
             if SuiteAttributOuMethode^value = null then
@@ -1101,6 +1113,16 @@ Instruction -> tant_que parenthese_ouvrante Expression parenthese_fermante Bloc 
 #ast {
 do
     Instruction^ast := Instruction^factory.createRepetition(Expression^ast, Bloc^ast);
+end
+}
+
+-- TODO: FOR loop
+Instruction -> pour parenthese_ouvrante Expression point_virgule Expression point_virgule
+ Expression parenthese_fermante Bloc #ast;
+#ast {
+do
+    Instruction^ast := Instruction^factory.createForLoop(Expression^ast,Expression1^ast,
+    Instruction^factory.createVoidInstruction(Expression2^ast), Bloc^ast);
 end
 }
 
