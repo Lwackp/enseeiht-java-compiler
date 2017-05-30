@@ -59,7 +59,6 @@ public class Main{
                 System.out.println("Format: ERROR");
             }
             if (bloc.get_ast().checkType()) {
-                System.out.println( "Typing: OK" );
 
                 try{
                     String filename = args.length == 1 ?
@@ -71,8 +70,10 @@ public class Main{
                     Fragment code = bloc.get_ast().getCode(factory);
                     writer.println(code);
                     writer.close();
+                    System.out.println( "Typing: OK" );
                 } catch (IOException e) {
                     e.printStackTrace();
+                    System.out.println( "Typing: ERROR" );
                 }
 
             } else {
