@@ -15,6 +15,7 @@ interface I4 extends I1, I3 {
 }
 
 class C implements I4 {
+
     public int getI1() {
         return 1;
     }

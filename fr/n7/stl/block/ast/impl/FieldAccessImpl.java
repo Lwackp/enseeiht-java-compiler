@@ -79,6 +79,21 @@ public class FieldAccessImpl implements Expression {
 				_fragment.append(this.record.getCode(_factory));
 				//Load virtual method table address
 				_fragment.add(_factory.createLoadI(1));
+				//Load virtual method table of interface
+				//Check if function is an implementation of interface inside the class
+				VariableDeclaration _var = (VariableDeclaration)(((VariableUseImpl) (this.record)).getDeclaration());
+				ClassDeclaration _class;
+				if (_var.getType() instanceof ClassType) {
+					_class = ((ClassType) _var.getType()).getDeclaration();
+				} else if (_var.getType() instanceof GenericType) {
+					_class = ((GenericType) _var.getType()).getClassType().getDeclaration();
+				} else {
+					//Error
+					_class = null;
+				}
+				if (!_class.getImplementedInterfaces((FunctionDeclaration) _declaration).isEmpty()) {
+					_fragment.add(_factory.createLoadI(1));
+				}
 				//Load method's address from virtual method table (may have problem on functions coming from interface)
 				_fragment.add(_factory.createLoadL(_field.getOffset()));
 				_fragment.add(Library.IAdd);
@@ -121,18 +136,18 @@ public class FieldAccessImpl implements Expression {
 	protected Declaration getField() {
 		if (this.field == null) {
 			Type _recordType = this.record.getType();
-			
-            if (this.parameters != null) {
-                if (_recordType instanceof ClassType) {
-                    return ((ClassType) _recordType).getElement(this.name, this.parameters);
-                } else if (_recordType instanceof InterfaceType) {
-                    return ((InterfaceType) _recordType).getDeclaration().getElement(this.name, this.parameters);
-                } else if (_recordType instanceof GenericType) {
-                    return ((GenericType) _recordType).getClassType().getElement(this.name, this.parameters);
-                } else if (_recordType instanceof GenericParameterType) {
-                    throw new RuntimeException("Call for method is not possible on Generic parameters");
-                }
-            }
+
+			if (this.parameters != null) {
+				if (_recordType instanceof ClassType) {
+					return ((ClassType) _recordType).getElement(this.name, this.parameters);
+				} else if (_recordType instanceof InterfaceType) {
+					return ((InterfaceType) _recordType).getDeclaration().getElement(this.name, this.parameters);
+				} else if (_recordType instanceof GenericType) {
+					return ((GenericType) _recordType).getClassType().getElement(this.name, this.parameters);
+				} else if (_recordType instanceof GenericParameterType) {
+					throw new RuntimeException("Call for method is not possible on Generic parameters");
+				}
+			}
 			if (_recordType instanceof ClassType) {
 				return ((ClassType) _recordType).getElement(this.name);
 			} else if (_recordType instanceof InterfaceType) {
