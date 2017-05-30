@@ -84,7 +84,6 @@ public interface InstructionFactory {
 	 */
 	VariableDeclaration createVariableDeclaration(String _name, Type _type, Expression _value);
 
-    //TODO: Change Object to generics' type
 	/**
 	 * Create a interface declaration node in the Abstract Syntax Tree.
 	 * @param _name Name of the declared interface.
@@ -97,7 +96,6 @@ public interface InstructionFactory {
 													List<InheritanceDeclaration<InterfaceDeclaration>> _inheritance,
 													List<ClassElement> _elements);
 
-	//TODO: Change Object to generics' type
 	/**
 	 * Create a class declaration node in the Abstract Syntax Tree.
 	 * @param _name Name of the declared class.

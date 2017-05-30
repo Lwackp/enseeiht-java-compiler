@@ -160,7 +160,6 @@ public class VariableDeclarationImpl implements VariableDeclaration {
 				if (this.value.getType() instanceof ClassType) {
 					//Load current virtual method table address
 					_fragment.add(_factory.createLoadI(1));
-					//TODO: How do Interface to Interface assignment is managed?
 					_fragment.add(_factory.createLoadL(
 							((ClassType) this.value.getType()).getDeclaration()
 									.getInterfaceOffset(((InterfaceType) this.type).getDeclaration())

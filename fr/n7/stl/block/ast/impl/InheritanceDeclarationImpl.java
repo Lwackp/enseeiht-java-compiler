@@ -57,17 +57,6 @@ public class InheritanceDeclarationImpl<T extends Declaration> implements Inheri
     }
 
     /**
-     * Synthesized Semantics attribute to check that an instruction if well typed.
-     *
-     * @return Synthesized True if the instruction is well typed, False if not.
-     */
-    /*@Override
-    public boolean checkType() {
-        //TODO What do we need to check?
-        return true;
-    }*/
-
-    /**
      * Inherited Semantics attribute to allocate memory for the variables declared in the instruction.
      * Synthesized Semantics attribute that compute the size of the allocated memory.
      *

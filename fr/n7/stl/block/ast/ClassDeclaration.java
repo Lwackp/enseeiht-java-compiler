@@ -67,10 +67,12 @@ public interface ClassDeclaration extends TypeDeclaration, Labellable {
     Fragment getVirtualMethodTableCode(TAMFactory _factory);
 
     boolean checkGenericsParameter(List<GenericType> _params);
-    
-    /* 
-     * Returns the list of herited interfaces in which the element is declared.
-     */
+
+    List<FunctionDeclaration> getDuplicateFunctions();
+
+    /*
+         * Returns the list of herited interfaces in which the element is declared.
+         */
 	List<InterfaceDeclaration> getImplementedInterfaces(FunctionDeclaration _fd);
 
     int getInterfaceOffset(InterfaceDeclaration _interface);

@@ -134,7 +134,7 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
      */
     @Override
     public boolean checkType() {
-        //TODO: Inheritance checkType
+        //TODO: checkType on generics
         return true;
     }
 
@@ -152,10 +152,14 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         this.offset = _offset;
 
         int _length = 0;
-        for (ClassElement _element : this.elements) {
-            _element.allocateMemory(Register.LB, _length);
+        int _methodOffset = 0;
+        for (ClassElement _element : this.getElements()) {
             if (!(_element.getDeclaration() instanceof SignatureDeclaration)) {
+                _element.allocateMemory(Register.LB, _length);
                 _length += 1;
+            } else {
+                _element.allocateMemory(Register.LB, _methodOffset);
+                _methodOffset += 1;
             }
         }
 
@@ -186,9 +190,6 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
         this.label = "interface_" + this.name + _factory.createLabelNumber();
         _fragment.addPrefix(this.label);
 
-        //TODO: Inheritance
-
-        //TODO: Sort element regarding final, static, public, ...
         for (ClassElement _element : this.getElements()) {
             _fragment.append(_element.getCode(_factory));
         }
@@ -208,29 +209,35 @@ public class InterfaceDeclarationImpl implements InterfaceDeclaration {
 
     @Override
     public List<ClassElement> getElements() {
-        LinkedList<ClassElement> allElements = new LinkedList<>();
-        // Récupration des éléments hérités
-        for (InterfaceDeclaration i : this.getNewInterfaces()) {
-            allElements.addAll(i.getElements());
-        }
+        List<ClassElement> _elements = new ArrayList<>();
 
-        // Ajout des éléments propre à la classe. Override si nécessaire
-        for (ClassElement ce : this.elements) {
-            List<Integer> _indices = indicesOf(allElements, ce);
-            if (_indices.isEmpty()) {
-                // the element doesn't exist, add it at the end
-                allElements.add(ce);
-            } else {
-                // if the element already exists, override it. Many times if it implements differents interfaces
-                for (int i : _indices) {
-                    allElements.set(i, ce);
+        for (InheritanceDeclaration<InterfaceDeclaration> _interface : this.inheritance) {
+            for (ClassElement _element : _interface.getDeclaration().getElements()) {
+                boolean _unique = true;
+                for (ClassElement _other : _elements) {
+                    if (_element.getDeclaration() instanceof SignatureDeclaration) {
+                        _unique &= !((SignatureDeclaration) _element.getDeclaration()).equalsTo(_other);
+                    }
+                }
+                if (_unique) {
+                    _elements.add(_element);
                 }
             }
         }
 
-        return allElements;
-    
-    //	return this.elements;
+        for (ClassElement _element : this.elements) {
+            boolean _unique = true;
+            for (ClassElement _other : _elements) {
+                if (_element.getDeclaration() instanceof SignatureDeclaration) {
+                    _unique &= !((SignatureDeclaration) _element.getDeclaration()).equalsTo(_other);
+                }
+            }
+            if (_unique) {
+                _elements.add(_element);
+            }
+        }
+
+        return _elements;
     }
     
     /* Returns empty list if not found */

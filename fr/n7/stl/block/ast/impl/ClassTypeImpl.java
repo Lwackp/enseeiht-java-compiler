@@ -50,7 +50,6 @@ public class ClassTypeImpl implements ClassType {
      * @param _other The other type
      * @return True if the types are compatibles, False otherwise.
      */
-    //TODO Heritage
     @Override
     public boolean compatibleWith(Type _other) {
         return this.equalsTo(_other);

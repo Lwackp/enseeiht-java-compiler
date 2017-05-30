@@ -430,6 +430,68 @@ public class ClassDeclarationImpl implements ClassDeclaration {
         return _functions;
     }
 
+    private List<FunctionDeclaration> getNewFunctions() {
+        List<FunctionDeclaration> _functions = new LinkedList<>();
+        if (this.inheritance == null) {
+            return this.getFunctions();
+        }
+
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            boolean _newFunction = true;
+            for (FunctionDeclaration _inheritedFunction : this.inheritance.getDeclaration().getFunctions()) {
+                _newFunction &= !_function.getSignature().equalsTo(_inheritedFunction.getSignature());
+            }
+            if (_newFunction) {
+                _functions.add(_function);
+            }
+        }
+
+        return _functions;
+    }
+
+    @Override
+    public List<FunctionDeclaration> getDuplicateFunctions() {
+        List<FunctionDeclaration> _functions = new LinkedList<>();
+
+        if (this.inheritance != null) {
+            for (FunctionDeclaration _function : this.inheritance.getDeclaration().getDuplicateFunctions()) {
+                boolean _overriden = false;
+                for (FunctionDeclaration _f : this.getFunctions()) {
+                    if (_function.getSignature().equalsTo(_f.getSignature())) {
+                        _functions.add(_f);
+                        _overriden = true;
+                        break;
+                    }
+                }
+                if (!_overriden) {
+                    _functions.add(_function);
+                }
+            }
+        }
+
+        Map<InterfaceDeclaration, Queue<FunctionDeclaration>> _interfacesFunctions = new HashMap<>();
+        for (FunctionDeclaration _function : this.getFunctions()) {
+            for (InterfaceDeclaration _interface : this.getImplementedInterfaces(_function)) {
+                if (!_interfacesFunctions.containsKey(_interface)) {
+                    _interfacesFunctions.put(_interface, new ArrayDeque<>());
+                }
+                _interfacesFunctions.get(_interface).add(_function);
+            }
+        }
+
+        for (InterfaceDeclaration _interface : this.getNewInterfaces()) {
+            _functions.addAll(_interfacesFunctions.get(_interface));
+        }
+
+        for (FunctionDeclaration _function : this.getNewFunctions()) {
+            if (this.getImplementedInterfaces(_function).isEmpty()) {
+                _functions.add(_function);
+            }
+        }
+
+        return _functions;
+    }
+
     private List<InterfaceDeclaration> getNewInterfaces() {
         List<InterfaceDeclaration> _heritedInterfaces;
         List<InterfaceDeclaration> _newInterfaces = new LinkedList<InterfaceDeclaration>();
@@ -531,23 +593,10 @@ public class ClassDeclarationImpl implements ClassDeclaration {
             }
         }
 
-
-        Map<InterfaceDeclaration, Queue<FunctionDeclaration>> _interfacesFunctions = new HashMap<>();
-        for (FunctionDeclaration _function : this.getFunctions()) {
-            for (InterfaceDeclaration _interface : this.getImplementedInterfaces(_function)) {
-                if (!_interfacesFunctions.containsKey(_interface)) {
-                    _interfacesFunctions.put(_interface, new ArrayDeque<>());
-                }
-                _interfacesFunctions.get(_interface).add(_function);
-            }
-        }
-
-
-
         Map<FunctionDeclaration, Integer> _functions = new HashMap<>();
         InterfaceDeclaration _currentInterface = null;
         int _offsetInterface = 0;
-        for (FunctionDeclaration _function : this.getFunctions()) {
+        for (FunctionDeclaration _function : this.getDuplicateFunctions()) {
             //If function implements an interface, put it in the right virtual method table
             if (!_functions.containsKey(_function)) {
                 _functions.put(_function, 0);

@@ -80,8 +80,6 @@ public class FunctionCallImpl implements FunctionCall {
 			}
 		}
 
-		//TODO: A function MUST know its parameters
-
         _paramAux = new LinkedList<>();
         for (Expression p : parameters)
         {
@@ -94,7 +92,6 @@ public class FunctionCallImpl implements FunctionCall {
 			((FieldAccessImpl) this.function).setParameters(_paramAux);
 		}
 
-		//TODO: Function's code puts function's address in ST
 		_fragment.append(this.function.getCode(_factory));
 
 		return _fragment;

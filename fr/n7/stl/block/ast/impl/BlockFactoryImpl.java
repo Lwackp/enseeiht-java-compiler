@@ -672,7 +672,6 @@ public class BlockFactoryImpl implements BlockFactory {
 		return new FieldAccessImpl(classUse, _id);
 	}
 
-	//TODO: affectation = suiteAffectation
 	/**
 	 * Create a node for an access to the accessed function in an expression in the Abstract Syntax Tree.
 	 *

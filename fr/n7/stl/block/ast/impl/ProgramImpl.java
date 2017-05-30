@@ -123,7 +123,6 @@ public class ProgramImpl implements Program {
                     }
                 }
                 for (ClassDeclaration _class : this.classes) {
-                    //TODO: Function for malloc size
                     int _length = _class.getVirtualMethodTableLength();
 
                     if (_length > 0) {

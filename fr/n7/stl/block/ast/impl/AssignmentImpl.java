@@ -95,7 +95,6 @@ public class AssignmentImpl implements Expression, Instruction {
 			_fragment.add(_factory.createStoreI(this.value.getType().length()));
 		} else {
 			//Loading object address == this
-			//TODO: Not valid for static method
 			if (this.declaration instanceof ClassElement) {
 				_fragment.add(_factory.createLoad(Register.LB, -1, 1));
 				//Charge taille de ce qu'il y a avant

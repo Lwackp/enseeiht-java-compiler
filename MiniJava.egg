@@ -852,7 +852,6 @@ do
 end
 }
 
---TODO (Parametres must have a new TDS)
 --TODO (Bloc must inherit SuiteAttributOuMethode^tds with Parametres^tds included)
 SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
@@ -1116,7 +1115,6 @@ do
 end
 }
 
--- TODO: FOR loop
 Instruction -> pour parenthese_ouvrante Expression point_virgule Expression point_virgule
  Expression parenthese_fermante Bloc #ast;
 #ast {
