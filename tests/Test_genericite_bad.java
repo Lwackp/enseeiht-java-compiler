@@ -10,8 +10,12 @@ class Box <T extends Carton> {
     public T get() { return t; }
 }
 
+class A {
+
+}
+
 public class Test_genericite {
     public static void main(String[] args) {
-        Box<Boolean> b = new Box<Carton>();
+        Box<A> b = new Box<A>();
     }
 }
